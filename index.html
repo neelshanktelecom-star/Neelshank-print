@@ -21,10 +21,10 @@
     /* A4 शीट का असली लुक देने वाला प्रीव्यू */
     .a4-sheet {
       width: 100%;
-      max-width: 330px;
-      aspect-ratio: 1 / 1.414; /* A4 अनुपात */
+      max-width: 320px;
+      aspect-ratio: 1 / 1.414;
       background: #ffffff;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
       border: 1px solid #cbd5e1;
       border-radius: 6px;
       margin: 0 auto;
@@ -38,7 +38,7 @@
 
     .card-frame {
       width: 78%;
-      aspect-ratio: 85.6 / 54; /* मानक आईडी कार्ड साइज */
+      aspect-ratio: 85.6 / 54;
       border: 1px dashed #94a3b8;
       border-radius: 4px;
       overflow: hidden;
@@ -114,55 +114,55 @@
       <!-- ================= STEP 1: फ़ाइल अपलोड ================= -->
       <section id="step-1">
         <div class="grid grid-cols-2 gap-2 p-1 bg-slate-100 rounded-xl mb-4">
-          <button id="mode-id-btn" onclick="switchMode('id')" class="py-2 rounded-lg text-xs font-bold bg-white shadow text-indigo-700 flex items-center justify-center gap-1.5">
+          <button id="mode-id-btn" type="button" onclick="switchMode('id')" class="py-2 rounded-lg text-xs font-bold bg-white shadow text-indigo-700 flex items-center justify-center gap-1.5">
             <i class="fa-solid fa-id-card"></i> आईडी कार्ड (2 साइड)
           </button>
-          <button id="mode-pdf-btn" onclick="switchMode('pdf')" class="py-2 rounded-lg text-xs font-bold text-slate-600 flex items-center justify-center gap-1.5">
+          <button id="mode-pdf-btn" type="button" onclick="switchMode('pdf')" class="py-2 rounded-lg text-xs font-bold text-slate-600 flex items-center justify-center gap-1.5">
             <i class="fa-solid fa-file-pdf"></i> PDF फ़ाइल
           </button>
         </div>
 
-        <!-- आईडी कार्ड इनपुट -->
+        <!-- आईडी कार्ड इनपुट (फ़्रंट & बैक) -->
         <div id="id-inputs" class="space-y-3">
-          <!-- फ्रंट साइड -->
-          <div class="border-2 border-dashed border-indigo-200 rounded-xl p-3 text-center hover:border-indigo-400 bg-indigo-50/30">
-            <input type="file" id="front-file" accept="image/jpeg, image/png, image/webp" class="hidden" onchange="handleImageUpload(event, 'front')">
-            <!-- Label को साफ़ तरीके से क्लिकेबल बनाया गया है -->
-            <label for="front-file" class="cursor-pointer block w-full h-full">
+          <!-- फ्रंट साइड बॉक्स -->
+          <div class="relative border-2 border-dashed border-indigo-300 rounded-xl p-4 text-center hover:border-indigo-500 bg-indigo-50/40">
+            <input type="file" id="front-file" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onchange="handleImageUpload(event, 'front')">
+            <div class="pointer-events-none">
               <span class="text-xs font-bold text-slate-700 block mb-1">
                 <i class="fa-solid fa-image text-indigo-500 mr-1"></i> फ्रंट साइड (आगे का भाग)
               </span>
-              <p id="front-status" class="text-xs text-slate-400">फोटो चुनें या यहाँ क्लिक करें</p>
+              <p id="front-status" class="text-xs text-slate-500">यहाँ टच करके फ़ोटो चुनें</p>
               <img id="front-thumb" class="hidden max-h-24 mx-auto mt-2 rounded border shadow-sm object-contain" alt="Front Preview">
-            </label>
+            </div>
           </div>
 
-          <!-- बैक साइड -->
-          <div class="border-2 border-dashed border-indigo-200 rounded-xl p-3 text-center hover:border-indigo-400 bg-indigo-50/30">
-            <input type="file" id="back-file" accept="image/jpeg, image/png, image/webp" class="hidden" onchange="handleImageUpload(event, 'back')">
-            <label for="back-file" class="cursor-pointer block w-full h-full">
+          <!-- बैक साइड बॉक्स -->
+          <div class="relative border-2 border-dashed border-indigo-300 rounded-xl p-4 text-center hover:border-indigo-500 bg-indigo-50/40">
+            <input type="file" id="back-file" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onchange="handleImageUpload(event, 'back')">
+            <div class="pointer-events-none">
               <span class="text-xs font-bold text-slate-700 block mb-1">
                 <i class="fa-solid fa-image text-indigo-500 mr-1"></i> बैक साइड (पीछे का भाग)
               </span>
-              <p id="back-status" class="text-xs text-slate-400">फोटो चुनें या यहाँ क्लिक करें</p>
+              <p id="back-status" class="text-xs text-slate-500">यहाँ टच करके फ़ोटो चुनें</p>
               <img id="back-thumb" class="hidden max-h-24 mx-auto mt-2 rounded border shadow-sm object-contain" alt="Back Preview">
-            </label>
+            </div>
           </div>
         </div>
 
-        <!-- PDF इनपुट -->
+        <!-- PDF इनपुट बॉक्स -->
         <div id="pdf-inputs" class="hidden">
-          <div class="border-2 border-dashed border-slate-300 rounded-xl p-6 text-center bg-slate-50">
-            <input type="file" id="pdf-file" accept="application/pdf" class="hidden" onchange="handlePdfUpload(event)">
-            <label for="pdf-file" class="cursor-pointer block w-full h-full">
-              <i class="fa-solid fa-file-arrow-up text-3xl text-indigo-500 mb-1"></i>
-              <p class="text-xs font-bold text-slate-700">अपनी PDF फ़ाइल चुनें</p>
+          <div class="relative border-2 border-dashed border-indigo-300 rounded-xl p-8 text-center bg-slate-50 hover:border-indigo-500">
+            <input type="file" id="pdf-file" accept="application/pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onchange="handlePdfUpload(event)">
+            <div class="pointer-events-none">
+              <i class="fa-solid fa-file-pdf text-4xl text-indigo-500 mb-2"></i>
+              <p class="text-sm font-bold text-slate-700">अपनी PDF फ़ाइल चुनें</p>
+              <p id="pdf-status" class="text-xs text-slate-400 mt-1">यहाँ टच करके फ़ाइल सेलेक्ट करें</p>
               <p id="pdf-name" class="mt-2 text-xs font-bold text-indigo-600"></p>
-            </label>
+            </div>
           </div>
         </div>
 
-        <button onclick="goToStep2()" class="w-full mt-5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl shadow-md transition flex items-center justify-center gap-2 text-xs">
+        <button type="button" onclick="goToStep2()" class="w-full mt-5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl shadow-md transition flex items-center justify-center gap-2 text-xs">
           एडिटिंग & सेटिंग्स के लिए आगे बढ़ें <i class="fa-solid fa-arrow-right"></i>
         </button>
       </section>
@@ -175,8 +175,8 @@
           <div class="flex justify-between items-center mb-2">
             <span class="text-xs font-bold text-slate-700">क्रॉप साइड चुनें:</span>
             <div class="space-x-1">
-              <button onclick="switchCropSide('front')" id="edit-front-tab" class="px-3 py-1 bg-indigo-600 text-white rounded text-xs font-bold">फ्रंट</button>
-              <button onclick="switchCropSide('back')" id="edit-back-tab" class="px-3 py-1 bg-slate-200 text-slate-700 rounded text-xs font-bold">बैक</button>
+              <button type="button" onclick="switchCropSide('front')" id="edit-front-tab" class="px-3 py-1 bg-indigo-600 text-white rounded text-xs font-bold">फ्रंट</button>
+              <button type="button" onclick="switchCropSide('back')" id="edit-back-tab" class="px-3 py-1 bg-slate-200 text-slate-700 rounded text-xs font-bold">बैक</button>
             </div>
           </div>
 
@@ -187,26 +187,26 @@
 
           <!-- क्रॉप बटन कंट्रोल्स -->
           <div class="flex flex-wrap gap-2 justify-center mb-3">
-            <button onclick="cropperRotate(-90)" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-xs font-semibold rounded border">
+            <button type="button" onclick="cropperRotate(-90)" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-xs font-semibold rounded border">
               <i class="fa-solid fa-rotate-left"></i> घुमाएं
             </button>
-            <button onclick="cropperRotate(90)" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-xs font-semibold rounded border">
+            <button type="button" onclick="cropperRotate(90)" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-xs font-semibold rounded border">
               <i class="fa-solid fa-rotate-right"></i> घुमाएं
             </button>
-            <button onclick="cropperFlip()" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-xs font-semibold rounded border">
+            <button type="button" onclick="cropperFlip()" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-xs font-semibold rounded border">
               <i class="fa-solid fa-arrows-left-right"></i> फ्लिप
             </button>
-            <button onclick="saveCurrentCrop()" class="px-3 py-1 bg-green-600 text-white text-xs font-bold rounded shadow hover:bg-green-700">
+            <button type="button" onclick="saveCurrentCrop()" class="px-3 py-1 bg-green-600 text-white text-xs font-bold rounded shadow hover:bg-green-700">
               <i class="fa-solid fa-check"></i> क्रॉप डन करें
             </button>
           </div>
         </div>
 
-        <!-- एडजस्टमेंट टूल्स (ब्राइटनेस, कंट्रास्ट, एक्सपोज़र) -->
+        <!-- क्वालिटी कंट्रोल्स (ब्राइटनेस, कंट्रास्ट, एक्सपोज़र) -->
         <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 mb-3 space-y-2.5">
           <div class="text-[11px] font-bold text-slate-700 border-b pb-1 flex justify-between items-center">
             <span>डॉक्यूमेंट क्वालिटी एडजस्ट करें:</span>
-            <button onclick="resetFilters()" class="text-indigo-600 text-[10px] hover:underline">रीसेट करें</button>
+            <button type="button" onclick="resetFilters()" class="text-indigo-600 text-[10px] hover:underline">रीसेट करें</button>
           </div>
 
           <!-- ब्राइटनेस -->
@@ -242,7 +242,7 @@
           </label>
         </div>
 
-        <!-- एडिट स्टेप में भी मिनी प्रीव्यू -->
+        <!-- एडिट स्टेप में मिनी प्रीव्यू -->
         <div class="p-2 bg-slate-100 rounded-xl mb-3 border text-center">
           <p class="text-[10px] text-slate-500 font-bold mb-1">एडिटेड इमेज प्रीव्यू:</p>
           <div class="flex gap-2 justify-center">
@@ -252,8 +252,8 @@
         </div>
 
         <div class="flex gap-2">
-          <button onclick="goTo(1)" class="w-1/3 border py-2.5 rounded-xl font-bold text-xs text-slate-600">वापस</button>
-          <button onclick="goTo(3)" class="w-2/3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl text-xs shadow-md">
+          <button type="button" onclick="goTo(1)" class="w-1/3 border py-2.5 rounded-xl font-bold text-xs text-slate-600">वापस</button>
+          <button type="button" onclick="goTo(3)" class="w-2/3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl text-xs shadow-md">
             A4 फ़ाइनल प्रीव्यू देखें <i class="fa-solid fa-arrow-right ml-1"></i>
           </button>
         </div>
@@ -289,8 +289,8 @@
         </div>
 
         <div class="flex gap-2">
-          <button onclick="goTo(2)" class="w-1/3 border py-3 rounded-xl font-bold text-xs text-slate-600">सुधारें (Edit)</button>
-          <button id="agree-proceed-btn" onclick="goTo(4)" disabled class="w-2/3 bg-slate-300 text-slate-500 font-bold py-3 rounded-xl text-xs shadow transition cursor-not-allowed">
+          <button type="button" onclick="goTo(2)" class="w-1/3 border py-3 rounded-xl font-bold text-xs text-slate-600">सुधारें (Edit)</button>
+          <button type="button" id="agree-proceed-btn" onclick="goTo(4)" disabled class="w-2/3 bg-slate-300 text-slate-500 font-bold py-3 rounded-xl text-xs shadow transition cursor-not-allowed">
             पेमेंट के लिए आगे बढ़ें <i class="fa-solid fa-arrow-right ml-1"></i>
           </button>
         </div>
@@ -312,7 +312,7 @@
           कुल देय राशि: <span id="final-price" class="text-indigo-600 text-xl font-black">₹10</span>
         </div>
 
-        <!-- UPI QR Code (आपकी दी गई ID के साथ) -->
+        <!-- UPI QR Code -->
         <div id="qr-box" class="p-2 border rounded-xl inline-block bg-white shadow-inner mb-2">
           <img id="qr-code-img" src="" alt="Payment QR" class="w-36 h-36 mx-auto">
           <p class="text-[10px] text-slate-400 mt-1">GPay, PhonePe, Paytm द्वारा स्कैन करें</p>
@@ -325,7 +325,7 @@
           
           <div class="flex gap-2">
             <input type="number" id="utr-input" placeholder="12 अंकों का UTR No." class="flex-1 border border-indigo-300 px-2 py-1.5 text-xs rounded-lg outline-none bg-white">
-            <button onclick="confirmPayment()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition">
+            <button type="button" onclick="confirmPayment()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition">
               कन्फर्म करें
             </button>
           </div>
@@ -337,11 +337,11 @@
         </div>
 
         <!-- प्रिंट बटन -->
-        <button id="print-btn" onclick="executeFinalPrint()" disabled class="w-full bg-slate-300 text-slate-500 font-black py-3.5 rounded-xl shadow cursor-not-allowed flex items-center justify-center gap-2 text-xs transition">
+        <button type="button" id="print-btn" onclick="executeFinalPrint()" disabled class="w-full bg-slate-300 text-slate-500 font-black py-3.5 rounded-xl shadow cursor-not-allowed flex items-center justify-center gap-2 text-xs transition">
           <i class="fa-solid fa-print"></i> अभी प्रिंट निकालें (Print Now)
         </button>
 
-        <button onclick="goTo(3)" class="w-full mt-2 text-xs text-slate-400 underline">वापस A4 प्रीव्यू देखें</button>
+        <button type="button" onclick="goTo(3)" class="w-full mt-2 text-xs text-slate-400 underline">वापस A4 प्रीव्यू देखें</button>
       </section>
 
     </div>
@@ -357,7 +357,7 @@
   </div>
 
   <script>
-    // आपकी UPI ID
+    // आपकी UPI ID और दुकान का नाम
     const MY_UPI_ID = "8677942814-1@okbizaxis";
     const SHOP_NAME = "NEELSHANK TELECOM";
 
@@ -372,6 +372,11 @@
     let currentAmount = 10;
     let isPaymentDone = false;
     let pdfDoc = null;
+
+    // PDF.js वर्कर सेटअप सुरक्षित रूप से
+    if (window.pdfjsLib) {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+    }
 
     function switchMode(mode) {
       currentMode = mode;
@@ -388,46 +393,276 @@
       }
     }
 
-    // फोटो अपलोड फंक्शन - यहाँ Error Handling जोड़ी गई है
+    // इमेज अपलोड हैंडलर (सुधरा हुआ)
     function handleImageUpload(e, side) {
-      const file = e.target.files[0];
+      const file = e.target.files && e.target.files[0];
       if (!file) return;
 
-      // अगर फाइल इमेज नहीं है
-      if (!file.type.startsWith('image/')) {
-        alert("कृपया सिर्फ फोटो (Image) चुनें!");
-        return;
-      }
-
       const reader = new FileReader();
-      
-      reader.onerror = function() {
-        alert("फोटो अपलोड करने में तकनीकी समस्या आई। कृपया दोबारा प्रयास करें।");
-      };
-
       reader.onload = function(evt) {
         if (side === 'front') {
           rawFrontImg = evt.target.result;
-          croppedFrontImg = rawFrontImg; // बाय डिफॉल्ट बिना क्रॉप की गई फोटो सेट होगी
+          croppedFrontImg = rawFrontImg;
           const thumb = document.getElementById('front-thumb');
           thumb.src = rawFrontImg;
           thumb.classList.remove('hidden');
-          document.getElementById('front-status').innerText = "फ़ोटो अपलोड हो गई ✓";
+          document.getElementById('front-status').innerText = "फ़ोटो सेलेक्ट हो गई: " + file.name;
         } else {
           rawBackImg = evt.target.result;
           croppedBackImg = rawBackImg;
           const thumb = document.getElementById('back-thumb');
           thumb.src = rawBackImg;
           thumb.classList.remove('hidden');
-          document.getElementById('back-status').innerText = "फ़ोटो अपलोड हो गई ✓";
+          document.getElementById('back-status').innerText = "फ़ोटो सेलेक्ट हो गई: " + file.name;
         }
         syncPreviews();
       };
-      
       reader.readAsDataURL(file);
     }
 
+    // PDF अपलोड हैंडलर
     function handlePdfUpload(e) {
-      const file = e.target.files[0];
+      const file = e.target.files && e.target.files[0];
       if (!file) return;
-      document.getElementById('pdf-name')
+
+      document.getElementById('pdf-status').innerText = "फ़ाइल लोड हो रही है...";
+      document.getElementById('pdf-name').innerText = file.name;
+
+      const fileReader = new FileReader();
+      fileReader.onload = function() {
+        const typedarray = new Uint8Array(this.result);
+        pdfjsLib.getDocument(typedarray).promise.then(function(pdf) {
+          pdfDoc = pdf;
+          document.getElementById('pdf-status').innerText = "PDF तैयार है (" + pdf.numPages + " पेज)";
+          renderPdfPages();
+        }).catch(function(err) {
+          alert("PDF लोड करने में समस्या: " + err.message);
+        });
+      };
+      fileReader.readAsArrayBuffer(file);
+    }
+
+    async function renderPdfPages() {
+      const container = document.getElementById('print-pdf-container');
+      container.innerHTML = '';
+      for (let num = 1; num <= pdfDoc.numPages; num++) {
+        const page = await pdfDoc.getPage(num);
+        const viewport = page.getViewport({ scale: 2 });
+        const canvas = document.createElement('canvas');
+        canvas.className = 'pdf-print-page';
+        const ctx = canvas.getContext('2d');
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+
+        await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+        container.appendChild(canvas);
+      }
+    }
+
+    function goToStep2() {
+      if (currentMode === 'id' && !rawFrontImg && !rawBackImg) {
+        alert("कृपया कम से कम एक साइड की फोटो ज़रूर सेलेक्ट करें!");
+        return;
+      }
+      if (currentMode === 'pdf' && !pdfDoc) {
+        alert("कृपया पहले अपनी PDF फ़ाइल सेलेक्ट करें!");
+        return;
+      }
+
+      goTo(2);
+      if (currentMode === 'id') {
+        document.getElementById('id-editing-tools').classList.remove('hidden');
+        initCropper(activeCropSide);
+        syncPreviews();
+      } else {
+        document.getElementById('id-editing-tools').classList.add('hidden');
+      }
+      applyFilters();
+    }
+
+    function goTo(step) {
+      document.getElementById('step-1').classList.add('hidden');
+      document.getElementById('step-2').classList.add('hidden');
+      document.getElementById('step-3').classList.add('hidden');
+      document.getElementById('step-4').classList.add('hidden');
+
+      for (let i = 1; i <= 4; i++) {
+        document.getElementById(`step-btn-${i}`).className = "flex-1 text-center py-2.5 text-slate-400";
+      }
+
+      document.getElementById(`step-${step}`).classList.remove('hidden');
+      document.getElementById(`step-btn-${step}`).className = "flex-1 text-center py-2.5 text-indigo-600 border-b-2 border-indigo-600";
+
+      if (step === 3) {
+        syncPreviews();
+        applyFilters();
+      }
+      if (step === 4) {
+        generateQR();
+      }
+    }
+
+    function initCropper(side) {
+      const imageElement = document.getElementById('cropper-image');
+      let imgSrc = (side === 'front') ? (rawFrontImg || rawBackImg) : (rawBackImg || rawFrontImg);
+      
+      if (!imgSrc) return;
+
+      if (cropper) {
+        cropper.destroy();
+        cropper = null;
+      }
+      imageElement.src = imgSrc;
+
+      cropper = new Cropper(imageElement, {
+        aspectRatio: 85.6 / 54,
+        viewMode: 1,
+        autoCropArea: 0.95,
+      });
+    }
+
+    function switchCropSide(side) {
+      activeCropSide = side;
+      if (side === 'front') {
+        document.getElementById('edit-front-tab').className = "px-3 py-1 bg-indigo-600 text-white rounded text-xs font-bold";
+        document.getElementById('edit-back-tab').className = "px-3 py-1 bg-slate-200 text-slate-700 rounded text-xs font-bold";
+      } else {
+        document.getElementById('edit-back-tab').className = "px-3 py-1 bg-indigo-600 text-white rounded text-xs font-bold";
+        document.getElementById('edit-front-tab').className = "px-3 py-1 bg-slate-200 text-slate-700 rounded text-xs font-bold";
+      }
+      initCropper(side);
+    }
+
+    function cropperRotate(deg) {
+      if (cropper) cropper.rotate(deg);
+    }
+
+    function cropperFlip() {
+      if (cropper) {
+        flipX = flipX === 1 ? -1 : 1;
+        cropper.scaleX(flipX);
+      }
+    }
+
+    function saveCurrentCrop() {
+      if (!cropper) return;
+      const canvas = cropper.getCroppedCanvas({ width: 1011, height: 638 });
+      const croppedDataUrl = canvas.toDataURL('image/jpeg', 0.9);
+      
+      if (activeCropSide === 'front') {
+        croppedFrontImg = croppedDataUrl;
+      } else {
+        croppedBackImg = croppedDataUrl;
+      }
+      
+      syncPreviews();
+      applyFilters();
+      alert(activeCropSide.toUpperCase() + " साइड का क्रॉप सेव हो गया ✓");
+    }
+
+    function syncPreviews() {
+      const f = croppedFrontImg || rawFrontImg || '';
+      const b = croppedBackImg || rawBackImg || '';
+
+      document.getElementById('edit-preview-front').src = f;
+      document.getElementById('edit-preview-back').src = b;
+
+      document.getElementById('a4-view-front').src = f;
+      document.getElementById('a4-view-back').src = b;
+    }
+
+    function applyFilters() {
+      const b = document.getElementById('b-slider').value;
+      const c = document.getElementById('c-slider').value;
+      const e = document.getElementById('e-slider').value;
+      const bw = document.getElementById('bw-mode').checked;
+
+      document.getElementById('b-val').innerText = b + "%";
+      document.getElementById('c-val').innerText = c + "%";
+      document.getElementById('e-val').innerText = e + "%";
+
+      const totalBrightness = (b * (e / 100)).toFixed(0);
+      let filter = `brightness(${totalBrightness}%) contrast(${c}%)`;
+      if (bw) filter += " grayscale(100%)";
+
+      document.getElementById('edit-preview-front').style.filter = filter;
+      document.getElementById('edit-preview-back').style.filter = filter;
+      document.getElementById('a4-view-front').style.filter = filter;
+      document.getElementById('a4-view-back').style.filter = filter;
+
+      document.getElementById('print-img-1').style.filter = filter;
+      document.getElementById('print-img-2').style.filter = filter;
+      document.getElementById('print-pdf-container').style.filter = filter;
+    }
+
+    function resetFilters() {
+      document.getElementById('b-slider').value = 100;
+      document.getElementById('c-slider').value = 100;
+      document.getElementById('e-slider').value = 100;
+      document.getElementById('bw-mode').checked = false;
+      applyFilters();
+    }
+
+    function togglePaymentReady() {
+      const isChecked = document.getElementById('customer-agree').checked;
+      const btn = document.getElementById('agree-proceed-btn');
+      if (isChecked) {
+        btn.disabled = false;
+        btn.className = "w-2/3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl text-xs shadow-md transition cursor-pointer";
+      } else {
+        btn.disabled = true;
+        btn.className = "w-2/3 bg-slate-300 text-slate-500 font-bold py-3 rounded-xl text-xs shadow transition cursor-not-allowed";
+      }
+    }
+
+    function changePrice(amt) {
+      currentAmount = amt;
+      document.getElementById('final-price').innerText = `₹${amt}`;
+      generateQR();
+    }
+
+    function generateQR() {
+      const upiUrl = `upi://pay?pa=${encodeURIComponent(MY_UPI_ID)}&pn=${encodeURIComponent(SHOP_NAME)}&am=${currentAmount}&cu=INR`;
+      const qrApi = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(upiUrl)}`;
+      document.getElementById('qr-code-img').src = qrApi;
+    }
+
+    function confirmPayment() {
+      const utr = document.getElementById('utr-input').value.trim();
+      if (utr.length < 4) {
+        alert("कृपया सही UTR / Ref No दर्ज करें!");
+        return;
+      }
+
+      isPaymentDone = true;
+      document.getElementById('payment-verify-box').classList.add('hidden');
+      document.getElementById('payment-success-msg').classList.remove('hidden');
+
+      const printBtn = document.getElementById('print-btn');
+      printBtn.disabled = false;
+      printBtn.className = "w-full bg-green-600 hover:bg-green-700 text-white font-black py-3.5 rounded-xl shadow-lg flex items-center justify-center gap-2 text-xs transition cursor-pointer";
+    }
+
+    function executeFinalPrint() {
+      if (!isPaymentDone) {
+        alert("कृपया पहले पेमेंट कन्फर्म करें!");
+        return;
+      }
+
+      if (currentMode === 'id') {
+        document.getElementById('print-id-container').style.display = 'block';
+        document.getElementById('print-pdf-container').style.display = 'none';
+
+        document.getElementById('print-img-1').src = croppedFrontImg || rawFrontImg;
+        document.getElementById('print-img-2').src = croppedBackImg || rawBackImg;
+      } else {
+        document.getElementById('print-id-container').style.display = 'none';
+        document.getElementById('print-pdf-container').style.display = 'block';
+      }
+
+      applyFilters();
+      window.print();
+    }
+  </script>
+</body>
+</html>
