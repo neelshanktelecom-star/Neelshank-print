@@ -3,33 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>NEELSHANK TELECOM - स्मार्ट ऑटो प्रिंट & स्कैनर</title>
+  <title>NEELSHANK TELECOM - स्मार्ट ऑटो प्रिंट पोर्टल</title>
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-  <script>
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-  </script>
   <style>
-    /* क्रॉपिंग कैनवास एरिया */
-    .crop-wrapper {
+    .crop-box {
       position: relative;
       touch-action: none;
       user-select: none;
       display: inline-block;
       max-width: 100%;
     }
-    .corner-handle {
+    .corner-dot {
       position: absolute;
-      width: 24px;
-      height: 24px;
+      width: 26px;
+      height: 26px;
       background: #4f46e5;
       border: 3px solid #ffffff;
       border-radius: 50%;
       transform: translate(-50%, -50%);
-      box-shadow: 0 0 8px rgba(0,0,0,0.4);
-      cursor: crosshair;
-      z-index: 30;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+      cursor: pointer;
+      z-index: 40;
     }
     @media print {
       body * { visibility: hidden !important; }
@@ -54,170 +51,169 @@
         <h1 class="text-lg font-bold flex items-center gap-2">
           <i class="fa-solid fa-print"></i> NEELSHANK TELECOM
         </h1>
-        <p class="text-[11px] text-indigo-200">स्मार्ट 4-कॉर्नर स्कैनर & ऑटो-प्रिंट</p>
+        <p class="text-[11px] text-indigo-200">मोबाइल सेल्फ प्रिंटिंग सर्विस</p>
       </div>
       <span class="bg-emerald-500 text-xs px-2.5 py-0.5 rounded-full font-bold shadow-sm">
-        <i class="fa-solid fa-circle-check"></i> ऑनलाइन
+        <i class="fa-solid fa-circle-check"></i> चालू है
       </span>
     </div>
   </header>
 
   <main class="max-w-xl mx-auto px-4 mt-3">
 
-    <!-- स्टेप्स बार -->
+    <!-- स्टेप्स नेविगेशन -->
     <div class="flex justify-between items-center mb-4 bg-white p-2.5 rounded-xl shadow-sm border border-slate-200 text-xs font-bold">
       <div id="step-nav-1" class="flex-1 text-center text-indigo-600 border-b-2 border-indigo-600 pb-1">1. अपलोड</div>
-      <div id="step-nav-2" class="flex-1 text-center text-slate-400 pb-1">2. 4-कॉर्नर क्रॉप</div>
+      <div id="step-nav-2" class="flex-1 text-center text-slate-400 pb-1">2. क्रॉप & एडजस्ट</div>
       <div id="step-nav-3" class="flex-1 text-center text-slate-400 pb-1">3. पे & प्रिंट</div>
     </div>
 
-    <!-- ================= स्टेप 1: अपलोड मोड ================= -->
+    <!-- ================= स्टेप 1: अपलोड ================= -->
     <section id="step-1" class="space-y-4">
       <div class="grid grid-cols-3 gap-2 bg-slate-200 p-1 rounded-xl text-xs font-semibold">
-        <button id="tab-id" onclick="changeMode('id')" class="py-2 rounded-lg bg-white shadow-sm text-indigo-700 font-bold flex flex-col items-center">
+        <button id="tab-id" type="button" onclick="setMode('id')" class="py-2 rounded-lg bg-white shadow-sm text-indigo-700 font-bold flex flex-col items-center">
           <i class="fa-solid fa-id-card text-base"></i> ID कार्ड (2-साइड)
         </button>
-        <button id="tab-single" onclick="changeMode('single')" class="py-2 rounded-lg text-slate-600 flex flex-col items-center">
-          <i class="fa-solid fa-book-open text-base"></i> पासबुक / 1 पेज
+        <button id="tab-single" type="button" onclick="setMode('single')" class="py-2 rounded-lg text-slate-600 flex flex-col items-center">
+          <i class="fa-solid fa-book-open text-base"></i> पासबुक / 1 इमेज
         </button>
-        <button id="tab-pdf" onclick="changeMode('pdf')" class="py-2 rounded-lg text-slate-600 flex flex-col items-center">
+        <button id="tab-pdf" type="button" onclick="setMode('pdf')" class="py-2 rounded-lg text-slate-600 flex flex-col items-center">
           <i class="fa-solid fa-file-pdf text-base"></i> PDF फ़ाइल
         </button>
       </div>
 
-      <!-- ID कार्ड अपलोडर्स -->
-      <div id="box-id-inputs" class="space-y-3">
-        <div class="bg-white p-4 rounded-xl border-2 border-dashed border-indigo-200 text-center">
-          <p class="font-bold text-xs text-slate-700 mb-2">आधार / पैन / वोटर / DL (फ्रंट साइड)</p>
-          <input type="file" id="input-front" accept="image/*" class="hidden" onchange="loadFile(event, 'front')">
-          <label for="input-front" class="cursor-pointer block">
-            <div id="ph-front" class="py-4">
-              <i class="fa-solid fa-camera text-3xl text-indigo-400 mb-1"></i>
-              <p class="text-xs text-slate-500">फ्रंट साइड फोटो अपलोड करें</p>
-            </div>
-            <img id="thumb-front" class="hidden max-h-32 mx-auto rounded border">
-          </label>
+      <!-- 1. आईडी कार्ड अपलोड (Front + Back) -->
+      <div id="upload-id-section" class="space-y-3">
+        <!-- फ्रंट साइड -->
+        <div class="bg-white p-4 rounded-xl border-2 border-dashed border-indigo-300 text-center">
+          <p class="font-bold text-xs text-slate-700 mb-2">आईडी कार्ड - फ्रंट साइड (सामने का भाग)</p>
+          <input type="file" id="file-front" accept="image/png, image/jpeg, image/jpg" class="hidden" onchange="handleImageInput(event, 'front')">
+          <button type="button" onclick="triggerInput('file-front')" class="w-full py-4 bg-indigo-50 hover:bg-indigo-100 rounded-lg text-indigo-700 flex flex-col items-center justify-center border border-indigo-200">
+            <i class="fa-solid fa-camera text-3xl mb-1 text-indigo-500"></i>
+            <span id="front-txt" class="text-xs font-bold">फ्रंट फोटो चुनें या खींचें</span>
+          </button>
+          <img id="preview-front-thumb" class="hidden mt-2 max-h-32 mx-auto rounded border shadow-sm">
         </div>
 
-        <div class="bg-white p-4 rounded-xl border-2 border-dashed border-indigo-200 text-center">
-          <p class="font-bold text-xs text-slate-700 mb-2">आईडी कार्ड (बैक साइड)</p>
-          <input type="file" id="input-back" accept="image/*" class="hidden" onchange="loadFile(event, 'back')">
-          <label for="input-back" class="cursor-pointer block">
-            <div id="ph-back" class="py-4">
-              <i class="fa-solid fa-camera text-3xl text-indigo-400 mb-1"></i>
-              <p class="text-xs text-slate-500">बैक साइड फोटो अपलोड करें</p>
-            </div>
-            <img id="thumb-back" class="hidden max-h-32 mx-auto rounded border">
-          </label>
+        <!-- बैक साइड -->
+        <div class="bg-white p-4 rounded-xl border-2 border-dashed border-indigo-300 text-center">
+          <p class="font-bold text-xs text-slate-700 mb-2">आईडी कार्ड - बैक साइड (पीछे का भाग)</p>
+          <input type="file" id="file-back" accept="image/png, image/jpeg, image/jpg" class="hidden" onchange="handleImageInput(event, 'back')">
+          <button type="button" onclick="triggerInput('file-back')" class="w-full py-4 bg-indigo-50 hover:bg-indigo-100 rounded-lg text-indigo-700 flex flex-col items-center justify-center border border-indigo-200">
+            <i class="fa-solid fa-camera text-3xl mb-1 text-indigo-500"></i>
+            <span id="back-txt" class="text-xs font-bold">बैक फोटो चुनें या खींचें</span>
+          </button>
+          <img id="preview-back-thumb" class="hidden mt-2 max-h-32 mx-auto rounded border shadow-sm">
         </div>
       </div>
 
-      <!-- पासबुक अपलोड -->
-      <div id="box-single-inputs" class="hidden bg-white p-6 rounded-xl border-2 border-dashed border-indigo-200 text-center">
+      <!-- 2. पासबुक / सिंगल इमेज अपलोड -->
+      <div id="upload-single-section" class="hidden bg-white p-6 rounded-xl border-2 border-dashed border-indigo-300 text-center">
         <p class="font-bold text-xs text-slate-700 mb-2">बैंक पासबुक या सिंगल पेज डॉक्यूमेंट</p>
-        <input type="file" id="input-single" accept="image/*" class="hidden" onchange="loadFile(event, 'single')">
-        <label for="input-single" class="cursor-pointer block py-4">
-          <div id="ph-single">
-            <i class="fa-solid fa-book text-4xl text-indigo-400 mb-2"></i>
-            <p class="text-xs text-slate-500">पासबुक की फोटो अपलोड करें</p>
-          </div>
-          <img id="thumb-single" class="hidden max-h-48 mx-auto rounded border">
-        </label>
+        <input type="file" id="file-single" accept="image/png, image/jpeg, image/jpg" class="hidden" onchange="handleImageInput(event, 'single')">
+        <button type="button" onclick="triggerInput('file-single')" class="w-full py-6 bg-indigo-50 hover:bg-indigo-100 rounded-lg text-indigo-700 flex flex-col items-center justify-center border border-indigo-200">
+          <i class="fa-solid fa-image text-4xl mb-2 text-indigo-500"></i>
+          <span id="single-txt" class="text-xs font-bold">पासबुक या डॉक्यूमेंट फोटो चुनें</span>
+        </button>
+        <img id="preview-single-thumb" class="hidden mt-2 max-h-48 mx-auto rounded border shadow-sm">
       </div>
 
-      <!-- PDF अपलोड -->
-      <div id="box-pdf-inputs" class="hidden bg-white p-6 rounded-xl border-2 border-dashed border-indigo-200 text-center">
-        <input type="file" id="input-pdf" accept="application/pdf" class="hidden" onchange="loadPdfFile(event)">
-        <label for="input-pdf" class="cursor-pointer block py-6">
-          <i class="fa-solid fa-file-pdf text-5xl text-rose-500 mb-2"></i>
-          <p id="pdf-name-txt" class="text-sm font-bold text-slate-700">PDF फ़ाइल चुनें</p>
-          <p class="text-xs text-slate-400 mt-1">सीधे इसी पेज पर प्रीव्यू दिखेगा</p>
-        </label>
+      <!-- 3. PDF अपलोड -->
+      <div id="upload-pdf-section" class="hidden bg-white p-6 rounded-xl border-2 border-dashed border-rose-300 text-center">
+        <p class="font-bold text-xs text-slate-700 mb-2">PDF फ़ाइल अपलोड करें</p>
+        <input type="file" id="file-pdf" accept="application/pdf" class="hidden" onchange="handlePdfInput(event)">
+        <button type="button" onclick="triggerInput('file-pdf')" class="w-full py-6 bg-rose-50 hover:bg-rose-100 rounded-lg text-rose-700 flex flex-col items-center justify-center border border-rose-200">
+          <i class="fa-solid fa-file-pdf text-4xl mb-2 text-rose-500"></i>
+          <span id="pdf-txt" class="text-xs font-bold">PDF फ़ाइल चुनें</span>
+        </button>
+        <p id="pdf-info" class="hidden text-xs text-emerald-600 font-bold mt-2"></p>
       </div>
 
-      <button onclick="goToStep(2)" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl shadow transition">
-        आगे बढ़ें (क्रॉप और एडजस्ट) <i class="fa-solid fa-arrow-right"></i>
+      <button type="button" onclick="goToStep(2)" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl shadow transition">
+        एडजस्ट और क्रॉप करें <i class="fa-solid fa-arrow-right"></i>
       </button>
     </section>
 
-    <!-- ================= स्टेप 2: 4-कॉर्नर क्रॉप & एडजस्ट ================= -->
+    <!-- ================= स्टेप 2: क्रॉप & एडजस्ट ================= -->
     <section id="step-2" class="hidden space-y-4">
       
-      <!-- आईडी या पासबुक इमेज के लिए क्रॉपिंग कंट्रोल -->
-      <div id="cropper-container-box" class="bg-white p-3 rounded-xl shadow-sm border border-slate-200">
+      <!-- इमेज एडिटर बॉक्स -->
+      <div id="image-editor-card" class="bg-white p-3 rounded-xl shadow-sm border border-slate-200">
         
-        <!-- साइड स्विच (केवल ID कार्ड के लिए) -->
-        <div id="crop-side-switcher" class="flex gap-2 mb-3">
-          <button id="btn-crop-front" onclick="switchCropTarget('front')" class="flex-1 py-1.5 bg-indigo-600 text-white font-bold text-xs rounded-lg">फ्रंट साइड क्रॉप</button>
-          <button id="btn-crop-back" onclick="switchCropTarget('back')" class="flex-1 py-1.5 bg-slate-200 text-slate-700 font-bold text-xs rounded-lg">बैक साइड क्रॉप</button>
+        <!-- साइड स्विच (केवल 2-साइड ID कार्ड में) -->
+        <div id="side-toggle-btns" class="flex gap-2 mb-3">
+          <button type="button" id="btn-side-front" onclick="switchActiveSide('front')" class="flex-1 py-1.5 bg-indigo-600 text-white font-bold text-xs rounded-lg">फ्रंट साइड</button>
+          <button type="button" id="btn-side-back" onclick="switchActiveSide('back')" class="flex-1 py-1.5 bg-slate-200 text-slate-700 font-bold text-xs rounded-lg">बैक साइड</button>
         </div>
 
         <!-- रेशियो प्रीसेट बटन -->
-        <div class="flex items-center justify-between gap-1 mb-2 bg-slate-50 p-2 rounded-lg border">
-          <span class="text-[11px] font-bold text-slate-600">साइज प्रीसेट:</span>
+        <div class="flex items-center justify-between gap-1 mb-2 bg-slate-50 p-2 rounded-lg border text-xs">
+          <span class="font-bold text-slate-600">साइज:</span>
           <div class="flex gap-1.5">
-            <button onclick="applyPresetRatio('idcard')" class="px-2 py-1 bg-white border border-indigo-300 text-indigo-700 rounded text-[11px] font-bold shadow-sm">
-              आधार / पैन / DL
+            <button type="button" onclick="setPresetRatio('idcard')" class="px-2 py-1 bg-white border border-indigo-300 text-indigo-700 rounded font-bold shadow-sm">
+              ID कार्ड साइज
             </button>
-            <button onclick="applyPresetRatio('passbook')" class="px-2 py-1 bg-white border border-slate-300 text-slate-700 rounded text-[11px] font-bold">
-              पासबुक
+            <button type="button" onclick="setPresetRatio('passbook')" class="px-2 py-1 bg-white border border-slate-300 text-slate-700 rounded font-bold">
+              पासबुक साइज
             </button>
-            <button onclick="resetCorners()" class="px-2 py-1 bg-amber-50 border border-amber-300 text-amber-700 rounded text-[11px] font-bold">
-              <i class="fa-solid fa-rotate-left"></i> रीसेट
+            <button type="button" onclick="resetCropCorners()" class="px-2 py-1 bg-amber-50 border border-amber-300 text-amber-700 rounded font-bold">
+              पूरा साइज
             </button>
           </div>
         </div>
 
-        <!-- इंटरएक्टिव 4-कॉर्नर क्रॉपिंग कैनवास -->
+        <!-- 4-कॉर्नर कैनवास -->
         <div class="w-full flex justify-center bg-slate-900 rounded-lg p-2 overflow-hidden">
-          <div id="crop-wrapper" class="crop-wrapper">
-            <canvas id="crop-canvas" class="block max-w-full max-h-[360px]"></canvas>
-            <div id="handle-tl" class="corner-handle" data-corner="tl"></div>
-            <div id="handle-tr" class="corner-handle" data-corner="tr"></div>
-            <div id="handle-br" class="corner-handle" data-corner="br"></div>
-            <div id="handle-bl" class="corner-handle" data-corner="bl"></div>
+          <div id="crop-wrapper" class="crop-box">
+            <canvas id="crop-canvas" class="block max-w-full max-h-[340px]"></canvas>
+            <div id="dot-tl" class="corner-dot" data-point="tl"></div>
+            <div id="dot-tr" class="corner-dot" data-point="tr"></div>
+            <div id="dot-br" class="corner-dot" data-point="br"></div>
+            <div id="dot-bl" class="corner-dot" data-point="bl"></div>
           </div>
         </div>
         <p class="text-[11px] text-center text-slate-500 mt-2">
-          👉 <strong>चारों ब्लू पॉइंट्स</strong> को उंगली से खिसकाकर डॉक्यूमेंट के कोनों पर सेट करें।
+          👉 <strong>नीले डॉट्स</strong> को पकड़कर डॉक्यूमेंट के चारों कोनों पर सेट करें।
         </p>
 
-        <!-- ब्राइटनेस / कंट्रास्ट / ऑटो क्लीन -->
-        <div class="mt-4 pt-3 border-t border-slate-100 space-y-3">
+        <!-- ब्राइटनेस / कंट्रास्ट / क्लीनअप -->
+        <div class="mt-3 pt-3 border-t border-slate-100 space-y-3">
           <div class="flex justify-between items-center">
-            <span class="text-xs font-bold text-slate-700"><i class="fa-solid fa-wand-magic-sparkles text-indigo-600"></i> ऑटो-क्लीन (कैमस्कैनर मोड):</span>
-            <button onclick="autoMagicClean()" class="bg-indigo-50 border border-indigo-300 text-indigo-700 text-xs px-2.5 py-1 rounded font-bold">
-              डार्क बैकग्राउंड साफ करें
+            <span class="text-xs font-bold text-slate-700"><i class="fa-solid fa-wand-magic-sparkles text-indigo-600"></i> ऑटो-क्लीन (सफेद बैकग्राउंड):</span>
+            <button type="button" onclick="autoCleanFilter()" class="bg-indigo-50 border border-indigo-300 text-indigo-700 text-xs px-2.5 py-1 rounded font-bold">
+              एक क्लिक में साफ करें
             </button>
           </div>
           <div class="grid grid-cols-2 gap-3 text-xs">
             <div>
               <span class="font-semibold text-slate-500">ब्राइटनेस (सफेदी)</span>
-              <input type="range" id="filter-bright" min="70" max="180" value="105" class="w-full h-1 bg-slate-200 rounded" oninput="applyAdjustments()">
+              <input type="range" id="rng-brightness" min="70" max="180" value="110" class="w-full h-1 bg-slate-200 rounded" oninput="applyCanvasFilter()">
             </div>
             <div>
               <span class="font-semibold text-slate-500">कंट्रास्ट (अक्षर गहरे)</span>
-              <input type="range" id="filter-contrast" min="70" max="180" value="120" class="w-full h-1 bg-slate-200 rounded" oninput="applyAdjustments()">
+              <input type="range" id="rng-contrast" min="70" max="180" value="120" class="w-full h-1 bg-slate-200 rounded" oninput="applyCanvasFilter()">
             </div>
           </div>
         </div>
       </div>
 
-      <!-- PDF प्रीव्यू बॉक्स (अगर PDF मोड चुना हो) -->
-      <div id="pdf-preview-box" class="hidden bg-white p-3 rounded-xl shadow-sm border text-center">
-        <p class="font-bold text-xs text-slate-700 mb-2">PDF इन-पेज प्रीव्यू</p>
-        <canvas id="pdf-canvas" class="w-full max-w-sm mx-auto rounded border shadow-sm"></canvas>
+      <!-- PDF इन-पेज एम्बेड व्यूअर -->
+      <div id="pdf-viewer-card" class="hidden bg-white p-3 rounded-xl shadow-sm border text-center">
+        <p class="font-bold text-xs text-slate-700 mb-2">PDF प्रीव्यू</p>
+        <object id="pdf-embed" type="application/pdf" class="w-full h-96 rounded border shadow-inner">
+          <p class="text-xs text-slate-500 p-4">ब्राउज़र में PDF प्रीव्यू लोड हो रहा है...</p>
+        </object>
       </div>
 
       <div class="flex gap-3">
-        <button onclick="goToStep(1)" class="w-1/3 bg-slate-200 font-bold py-3 rounded-xl text-xs">वापस</button>
-        <button onclick="confirmCropAndProceed()" class="w-2/3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl shadow text-xs">
-          क्रॉप सुरक्षित करें & पेमेंट पर जाएं <i class="fa-solid fa-arrow-right"></i>
+        <button type="button" onclick="goToStep(1)" class="w-1/3 bg-slate-200 font-bold py-3 rounded-xl text-xs">वापस</button>
+        <button type="button" onclick="saveCropAndNext()" class="w-2/3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl shadow text-xs">
+          सेव करें & पेमेंट पर जाएं <i class="fa-solid fa-arrow-right"></i>
         </button>
       </div>
     </section>
 
-    <!-- ================= स्टेप 3: पेमेंट, ऑटो-वेरिफिकेशन और प्रिंट ================= -->
+    <!-- ================= स्टेप 3: पेमेंट & प्रिंट ================= -->
     <section id="step-3" class="hidden space-y-4">
       
       <!-- प्रिंट मोड: Color vs B&W -->
@@ -225,88 +221,92 @@
         <span class="font-bold text-xs text-slate-700 block mb-2">प्रिंट का प्रकार चुनें:</span>
         <div class="grid grid-cols-2 gap-3">
           <label id="lbl-bw" class="border-2 border-indigo-600 bg-indigo-50/50 p-2.5 rounded-xl cursor-pointer text-center">
-            <input type="radio" name="print_color_mode" value="bw" checked onchange="updatePrice('bw')">
+            <input type="radio" name="print_type" value="bw" checked onchange="setPrintCost('bw')">
             <p class="font-bold text-xs text-slate-800">Black & White</p>
-            <p class="text-xs text-indigo-700 font-extrabold">₹10 प्रति कॉपी</p>
+            <p class="text-xs text-indigo-700 font-black">₹10 प्रति पेज</p>
           </label>
           <label id="lbl-color" class="border-2 border-slate-200 p-2.5 rounded-xl cursor-pointer text-center">
-            <input type="radio" name="print_color_mode" value="color" onchange="updatePrice('color')">
+            <input type="radio" name="print_type" value="color" onchange="setPrintCost('color')">
             <p class="font-bold text-xs text-slate-800">Color Print</p>
-            <p class="text-xs text-slate-500 font-extrabold">₹20 प्रति कॉपी</p>
+            <p class="text-xs text-slate-500 font-black">₹20 प्रति पेज</p>
           </label>
         </div>
       </div>
 
       <!-- डायनामिक UPI पेमेंट और QR -->
       <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 text-center">
-        <h3 class="font-bold text-xs text-slate-600">भुगतान राशि: <span id="final-amount" class="text-emerald-600 font-black text-xl">₹10</span></h3>
-        <p class="text-[11px] text-slate-400 mb-2">GPay / PhonePe / Paytm से QR स्कैन करें</p>
+        <h3 class="font-bold text-xs text-slate-600">कुल भुगतान राशि: <span id="txt-amount" class="text-emerald-600 font-black text-2xl">₹10</span></h3>
+        <p class="text-[11px] text-slate-400 mb-2">GPay / PhonePe / Paytm से QR कोड स्कैन करें</p>
         
         <div class="inline-block p-1.5 bg-white border rounded-xl shadow-inner">
-          <img id="qr-code-img" src="" alt="UPI QR" class="w-40 h-40 mx-auto">
+          <img id="upi-qr-image" src="" alt="UPI QR" class="w-40 h-40 mx-auto">
         </div>
         <p class="text-[11px] font-bold text-slate-700 mt-1">दुकान: NEELSHANK TELECOM</p>
       </div>
 
-      <!-- ऑटोमैटिक पेमेंट वेरिफिकेशन बॉक्स -->
-      <div class="bg-slate-50 border-2 border-dashed border-indigo-300 p-4 rounded-xl space-y-3">
+      <!-- ऑटोमैटिक पेमेंट वेरिफिकेशन (12-अंकों का UTR) -->
+      <div class="bg-indigo-50/60 border-2 border-dashed border-indigo-300 p-4 rounded-xl space-y-3">
         <div class="flex items-center gap-2">
-          <i class="fa-solid fa-shield-halved text-indigo-600 text-lg"></i>
+          <i class="fa-solid fa-shield-halved text-indigo-600 text-xl"></i>
           <div>
-            <h4 class="font-bold text-xs text-slate-800">पेमेंट वेरिफिकेशन (अनिवार्य)</h4>
-            <p class="text-[10px] text-slate-500">पेमेंट के बाद मिलने वाला 12-अंकों का UPI UTR / Ref No. दर्ज करें</p>
+            <h4 class="font-bold text-xs text-slate-800">पेमेंट वेरिफिकेशन</h4>
+            <p class="text-[10px] text-slate-500">पेमेंट के बाद प्राप्त 12 अंकों का UPI UTR / Ref No. दर्ज करें</p>
           </div>
         </div>
 
         <div class="flex gap-2">
-          <input type="text" id="upi-utr-input" maxlength="12" placeholder="उदाहरण: 428901234567" class="flex-1 border rounded-lg px-3 py-2 text-xs font-mono tracking-widest text-slate-800 outline-none focus:border-indigo-600">
-          <button id="btn-verify-utr" onclick="verifyUpiPayment()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-4 py-2 rounded-lg shadow">
+          <input type="text" id="input-utr" maxlength="12" placeholder="उदाहरण: 428901234567" class="flex-1 border rounded-lg px-3 py-2 text-xs font-mono font-bold tracking-widest text-slate-800 outline-none focus:border-indigo-600">
+          <button type="button" id="btn-verify" onclick="verifyPayment()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-4 py-2 rounded-lg shadow">
             वेरीफाई करें
           </button>
         </div>
 
-        <div id="utr-status-msg" class="hidden text-xs font-bold rounded-lg p-2 text-center"></div>
+        <div id="utr-feedback" class="hidden text-xs font-bold rounded-lg p-2 text-center"></div>
       </div>
 
-      <!-- A4 प्रिंट प्रीव्यू एरिया (प्रिंट के समय केवल यही प्रिंट होगा) -->
+      <!-- A4 प्रिंट प्रीव्यू एरिया -->
       <div id="printable-area" class="bg-white p-4 border rounded-xl shadow-sm min-h-[320px] flex flex-col items-center justify-start">
-        <div id="final-print-content" class="w-full flex flex-col items-center gap-6 pt-3"></div>
+        <div id="print-layout-container" class="w-full flex flex-col items-center gap-6 pt-3"></div>
       </div>
 
-      <!-- प्रिंट बटन (जब तक पेमेंट वेरीफाई नहीं होगा, यह लॉक रहेगा) -->
-      <button id="btn-print-action" disabled onclick="executePrint()" class="w-full bg-slate-400 cursor-not-allowed text-white font-bold py-3.5 rounded-xl shadow-lg transition flex items-center justify-center gap-2">
-        <i class="fa-solid fa-lock" id="print-lock-icon"></i> प्रिंट करें (Print Now)
+      <!-- प्रिंट बटन (जब तक पेमेंट वेरीफाई नहीं होगा, लॉक रहेगा) -->
+      <button type="button" id="btn-print" disabled onclick="executePrint()" class="w-full bg-slate-400 cursor-not-allowed text-white font-bold py-3.5 rounded-xl shadow-lg transition flex items-center justify-center gap-2">
+        <i class="fa-solid fa-lock" id="print-btn-icon"></i> प्रिंट करें (Print Now)
       </button>
     </section>
   </main>
 
   <script>
     // दुकान का UPI ID
-    const UPI_ID = "neelshank@upi"; // अपनी असली UPI ID यहाँ बदलें
+    const SHOP_UPI_ID = "neelshank@upi"; // अपनी असली UPI ID डालें
     const SHOP_NAME = "NEELSHANK TELECOM";
 
-    let currentMode = 'id'; // 'id', 'single', 'pdf'
-    let cropTarget = 'front'; // 'front', 'back', 'single'
-    let currentPrice = 10;
-    let isBw = true;
-    let isPaymentVerified = false;
+    let activeMode = 'id'; // 'id', 'single', 'pdf'
+    let currentSide = 'front'; // 'front', 'back', 'single'
+    let printCost = 10;
+    let isBwMode = true;
+    let paymentVerified = false;
 
-    // स्टोर इमेज डाटा
-    const rawImages = { front: null, back: null, single: null };
-    const croppedCanvases = { front: null, back: null, single: null };
-    let pdfPageCanvas = null;
+    // इमेज और फ़ाइल डेटा
+    const sourceImages = { front: null, back: null, single: null };
+    const savedCanvases = { front: null, back: null, single: null };
+    let pdfBlobUrl = null;
 
-    // 4 कॉर्नर पॉइंट्स
-    let corners = {
+    // 4 कॉर्नर बिंदु
+    let cornerPoints = {
       tl: { x: 0, y: 0 },
       tr: { x: 0, y: 0 },
       br: { x: 0, y: 0 },
       bl: { x: 0, y: 0 }
     };
-    let activeCorner = null;
+    let draggingDot = null;
 
-    function changeMode(mode) {
-      currentMode = mode;
+    function triggerInput(id) {
+      document.getElementById(id).click();
+    }
+
+    function setMode(mode) {
+      activeMode = mode;
       ['id', 'single', 'pdf'].forEach(m => {
         const btn = document.getElementById(`tab-${m}`);
         btn.className = (m === mode) 
@@ -314,50 +314,62 @@
           : "py-2 rounded-lg text-slate-600 flex flex-col items-center";
       });
 
-      document.getElementById('box-id-inputs').classList.toggle('hidden', mode !== 'id');
-      document.getElementById('box-single-inputs').classList.toggle('hidden', mode !== 'single');
-      document.getElementById('box-pdf-inputs').classList.toggle('hidden', mode !== 'pdf');
+      document.getElementById('upload-id-section').classList.toggle('hidden', mode !== 'id');
+      document.getElementById('upload-single-section').classList.toggle('hidden', mode !== 'single');
+      document.getElementById('upload-pdf-section').classList.toggle('hidden', mode !== 'pdf');
     }
 
-    function loadFile(e, type) {
-      const file = e.target.files[0];
-      if(!file) return;
+    // इमेज अपलोड हैंडलर (FileReader API)
+    function handleImageInput(e, type) {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
 
-      const img = new Image();
-      img.src = URL.createObjectURL(file);
-      img.onload = () => {
-        rawImages[type] = img;
-        const thumb = document.getElementById(`thumb-${type}`);
-        thumb.src = img.src;
-        thumb.classList.remove('hidden');
-        document.getElementById(`ph-${type}`).classList.add('hidden');
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const img = new Image();
+        img.onload = function() {
+          sourceImages[type] = img;
+          const thumb = document.getElementById(`preview-${type}-thumb`);
+          thumb.src = img.src;
+          thumb.classList.remove('hidden');
+          document.getElementById(`${type}-txt`).innerText = file.name;
+        };
+        img.src = evt.target.result;
       };
+      reader.readAsDataURL(file);
     }
 
-    function loadPdfFile(e) {
-      const file = e.target.files[0];
-      if(!file) return;
-      document.getElementById('pdf-name-txt').innerText = file.name;
+    // PDF अपलोड हैंडलर
+    function handlePdfInput(e) {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
 
-      const fileReader = new FileReader();
-      fileReader.onload = function() {
-        const typedarray = new Uint8Array(this.result);
-        pdfjsLib.getDocument(typedarray).promise.then(pdf => {
-          pdf.getPage(1).then(page => {
-            const canvas = document.getElementById('pdf-canvas');
-            const context = canvas.getContext('2d');
-            const viewport = page.getViewport({ scale: 1.2 });
-            canvas.height = viewport.height;
-            canvas.width = viewport.width;
-            page.render({ canvasContext: context, viewport: viewport });
-            pdfPageCanvas = canvas;
-          });
-        });
-      };
-      fileReader.readAsArrayBuffer(file);
+      pdfBlobUrl = URL.createObjectURL(file);
+      document.getElementById('pdf-txt').innerText = file.name;
+      const info = document.getElementById('pdf-info');
+      info.innerText = `फ़ाइल सफ़लतापूर्वक चुनी गई: ${file.name}`;
+      info.classList.remove('hidden');
+
+      const embed = document.getElementById('pdf-embed');
+      embed.data = pdfBlobUrl;
     }
 
     function goToStep(step) {
+      if(step === 2) {
+        if(activeMode === 'id' && (!sourceImages.front || !sourceImages.back)) {
+          alert('कृपया आईडी कार्ड के दोनों साइड (Front और Back) की फोटो चुनें!');
+          return;
+        }
+        if(activeMode === 'single' && !sourceImages.single) {
+          alert('कृपया पासबुक या दस्तावेज़ की फोटो चुनें!');
+          return;
+        }
+        if(activeMode === 'pdf' && !pdfBlobUrl) {
+          alert('कृपया एक PDF फ़ाइल चुनें!');
+          return;
+        }
+      }
+
       document.getElementById('step-1').classList.add('hidden');
       document.getElementById('step-2').classList.add('hidden');
       document.getElementById('step-3').classList.add('hidden');
@@ -372,34 +384,34 @@
       if(step === 3) setupStep3();
     }
 
-    // 4-कॉर्नर क्रॉप सेटअप
+    // स्टेप 2: क्रॉपिंग व एडजस्टमेंट
     function setupStep2() {
-      const isPdf = (currentMode === 'pdf');
-      document.getElementById('cropper-container-box').classList.toggle('hidden', isPdf);
-      document.getElementById('pdf-preview-box').classList.toggle('hidden', !isPdf);
+      const isPdf = (activeMode === 'pdf');
+      document.getElementById('image-editor-card').classList.toggle('hidden', isPdf);
+      document.getElementById('pdf-viewer-card').classList.toggle('hidden', !isPdf);
 
       if(!isPdf) {
-        cropTarget = (currentMode === 'id') ? 'front' : 'single';
-        document.getElementById('crop-side-switcher').classList.toggle('hidden', currentMode !== 'id');
-        initCornerCropper(cropTarget);
+        currentSide = (activeMode === 'id') ? 'front' : 'single';
+        document.getElementById('side-toggle-btns').classList.toggle('hidden', activeMode !== 'id');
+        loadIntoCropCanvas(currentSide);
       }
     }
 
-    function switchCropTarget(target) {
-      cropTarget = target;
-      document.getElementById('btn-crop-front').className = (target === 'front') ? "flex-1 py-1.5 bg-indigo-600 text-white font-bold text-xs rounded-lg" : "flex-1 py-1.5 bg-slate-200 text-slate-700 font-bold text-xs rounded-lg";
-      document.getElementById('btn-crop-back').className = (target === 'back') ? "flex-1 py-1.5 bg-indigo-600 text-white font-bold text-xs rounded-lg" : "flex-1 py-1.5 bg-slate-200 text-slate-700 font-bold text-xs rounded-lg";
-      initCornerCropper(target);
+    function switchActiveSide(side) {
+      saveCurrentCrop(currentSide);
+      currentSide = side;
+      document.getElementById('btn-side-front').className = (side === 'front') ? "flex-1 py-1.5 bg-indigo-600 text-white font-bold text-xs rounded-lg" : "flex-1 py-1.5 bg-slate-200 text-slate-700 font-bold text-xs rounded-lg";
+      document.getElementById('btn-side-back').className = (side === 'back') ? "flex-1 py-1.5 bg-indigo-600 text-white font-bold text-xs rounded-lg" : "flex-1 py-1.5 bg-slate-200 text-slate-700 font-bold text-xs rounded-lg";
+      loadIntoCropCanvas(side);
     }
 
-    function initCornerCropper(type) {
-      const img = rawImages[type];
+    function loadIntoCropCanvas(type) {
+      const img = sourceImages[type];
       if(!img) return;
 
       const canvas = document.getElementById('crop-canvas');
       const ctx = canvas.getContext('2d');
 
-      // कैनवास साइज सेट करें
       const maxW = 320;
       const scale = Math.min(maxW / img.width, 1);
       canvas.width = img.width * scale;
@@ -407,46 +419,44 @@
 
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-      // प्रारंभिक 4 कोने सेट करें (डिफ़ॉल्ट 5% मार्जिन के साथ)
       const w = canvas.width;
       const h = canvas.height;
-      corners = {
+      cornerPoints = {
         tl: { x: w * 0.05, y: h * 0.05 },
         tr: { x: w * 0.95, y: h * 0.05 },
         br: { x: w * 0.95, y: h * 0.95 },
         bl: { x: w * 0.05, y: h * 0.95 }
       };
 
-      updateHandlePositions();
-      drawCropPolygon();
+      updateDotPositions();
+      drawCropLines();
     }
 
-    function updateHandlePositions() {
-      ['tl', 'tr', 'br', 'bl'].forEach(c => {
-        const handle = document.getElementById(`handle-${c}`);
-        handle.style.left = corners[c].x + 'px';
-        handle.style.top = corners[c].y + 'px';
+    function updateDotPositions() {
+      ['tl', 'tr', 'br', 'bl'].forEach(d => {
+        const dot = document.getElementById(`dot-${d}`);
+        dot.style.left = cornerPoints[d].x + 'px';
+        dot.style.top = cornerPoints[d].y + 'px';
       });
     }
 
-    function drawCropPolygon() {
+    function drawCropLines() {
       const canvas = document.getElementById('crop-canvas');
       const ctx = canvas.getContext('2d');
-      const img = rawImages[cropTarget];
+      const img = sourceImages[currentSide];
       if(!img) return;
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-      // पॉलीगॉन ड्रा करें
       ctx.beginPath();
-      ctx.moveTo(corners.tl.x, corners.tl.y);
-      ctx.lineTo(corners.tr.x, corners.tr.y);
-      ctx.lineTo(corners.br.x, corners.br.y);
-      ctx.lineTo(corners.bl.x, corners.bl.y);
+      ctx.moveTo(cornerPoints.tl.x, cornerPoints.tl.y);
+      ctx.lineTo(cornerPoints.tr.x, cornerPoints.tr.y);
+      ctx.lineTo(cornerPoints.br.x, cornerPoints.br.y);
+      ctx.lineTo(cornerPoints.bl.x, cornerPoints.bl.y);
       ctx.closePath();
 
-      ctx.lineWidth = 2;
+      ctx.lineWidth = 2.5;
       ctx.strokeStyle = '#4f46e5';
       ctx.stroke();
 
@@ -454,225 +464,219 @@
       ctx.fill();
     }
 
-    // टच & ड्रैग इवेंट हैंडलर (मोबाइल फ्रेंडली)
+    // टच और ड्रैग हैंडलर
     const wrapper = document.getElementById('crop-wrapper');
 
     wrapper.addEventListener('pointerdown', (e) => {
-      if(e.target.classList.contains('corner-handle')) {
-        activeCorner = e.target.getAttribute('data-corner');
+      if(e.target.classList.contains('corner-dot')) {
+        draggingDot = e.target.getAttribute('data-point');
       }
     });
 
     window.addEventListener('pointermove', (e) => {
-      if(!activeCorner) return;
+      if(!draggingDot) return;
       const rect = wrapper.getBoundingClientRect();
       const x = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
       const y = Math.max(0, Math.min(e.clientY - rect.top, rect.height));
 
-      corners[activeCorner] = { x, y };
-      updateHandlePositions();
-      drawCropPolygon();
+      cornerPoints[draggingDot] = { x, y };
+      updateDotPositions();
+      drawCropLines();
     });
 
-    window.addEventListener('pointerup', () => { activeCorner = null; });
+    window.addEventListener('pointerup', () => { draggingDot = null; });
 
-    // प्रीसेट अनुपात लागू करना
-    function applyPresetRatio(type) {
+    function setPresetRatio(preset) {
       const canvas = document.getElementById('crop-canvas');
       const w = canvas.width;
       const h = canvas.height;
 
-      if(type === 'idcard') {
-        // आधार, पैन, वोटर, DL का 85.6 : 54 अनुपात
+      if(preset === 'idcard') {
         const ratio = 85.6 / 54;
         let boxW = w * 0.9;
         let boxH = boxW / ratio;
         if(boxH > h * 0.9) { boxH = h * 0.9; boxW = boxH * ratio; }
 
-        const startX = (w - boxW) / 2;
-        const startY = (h - boxH) / 2;
+        const sx = (w - boxW) / 2;
+        const sy = (h - boxH) / 2;
 
-        corners = {
-          tl: { x: startX, y: startY },
-          tr: { x: startX + boxW, y: startY },
-          br: { x: startX + boxW, y: startY + boxH },
-          bl: { x: startX, y: startY + boxH }
+        cornerPoints = {
+          tl: { x: sx, y: sy },
+          tr: { x: sx + boxW, y: sy },
+          br: { x: sx + boxW, y: sy + boxH },
+          bl: { x: sx, y: sy + boxH }
         };
-      } else if(type === 'passbook') {
-        corners = {
+      } else if(preset === 'passbook') {
+        cornerPoints = {
           tl: { x: w * 0.05, y: h * 0.1 },
           tr: { x: w * 0.95, y: h * 0.1 },
           br: { x: w * 0.95, y: h * 0.9 },
           bl: { x: w * 0.05, y: h * 0.9 }
         };
       }
-      updateHandlePositions();
-      drawCropPolygon();
+      updateDotPositions();
+      drawCropLines();
     }
 
-    function resetCorners() {
+    function resetCropCorners() {
       const canvas = document.getElementById('crop-canvas');
-      corners = {
+      cornerPoints = {
         tl: { x: 0, y: 0 },
         tr: { x: canvas.width, y: 0 },
-        br: { x: canvas.width, canvas.height },
+        br: { x: canvas.width, y: canvas.height },
         bl: { x: 0, y: canvas.height }
       };
-      updateHandlePositions();
-      drawCropPolygon();
+      updateDotPositions();
+      drawCropLines();
     }
 
-    // ऑटो-क्लीन मैजिक
-    function autoMagicClean() {
-      document.getElementById('filter-bright').value = 125;
-      document.getElementById('filter-contrast').value = 140;
-      applyAdjustments();
+    function autoCleanFilter() {
+      document.getElementById('rng-brightness').value = 125;
+      document.getElementById('rng-contrast').value = 140;
+      applyCanvasFilter();
     }
 
-    function applyAdjustments() {
-      const b = document.getElementById('filter-bright').value;
-      const c = document.getElementById('filter-contrast').value;
+    function applyCanvasFilter() {
+      const b = document.getElementById('rng-brightness').value;
+      const c = document.getElementById('rng-contrast').value;
       document.getElementById('crop-canvas').style.filter = `brightness(${b}%) contrast(${c}%)`;
     }
 
-    // क्रॉप सुरक्षित करना
-    function confirmCropAndProceed() {
-      if(currentMode !== 'pdf') {
-        saveCroppedCanvas(cropTarget);
+    function saveCurrentCrop(type) {
+      const canvas = document.getElementById('crop-canvas');
+      const img = sourceImages[type];
+      if(!img) return;
+
+      const scale = img.width / canvas.width;
+      const minX = Math.min(cornerPoints.tl.x, cornerPoints.bl.x) * scale;
+      const minY = Math.min(cornerPoints.tl.y, cornerPoints.tr.y) * scale;
+      const maxX = Math.max(cornerPoints.tr.x, cornerPoints.br.x) * scale;
+      const maxY = Math.max(cornerPoints.bl.y, cornerPoints.br.y) * scale;
+      const cropW = maxX - minX;
+      const cropH = maxY - minY;
+
+      const outCanvas = document.createElement('canvas');
+      outCanvas.width = cropW;
+      outCanvas.height = cropH;
+      const ctx = outCanvas.getContext('2d');
+
+      const b = document.getElementById('rng-brightness').value;
+      const c = document.getElementById('rng-contrast').value;
+      ctx.filter = `brightness(${b}%) contrast(${c}%)`;
+
+      ctx.drawImage(img, minX, minY, cropW, cropH, 0, 0, cropW, cropH);
+      savedCanvases[type] = outCanvas;
+    }
+
+    function saveCropAndNext() {
+      if(activeMode !== 'pdf') {
+        saveCurrentCrop(currentSide);
+        if(activeMode === 'id' && !savedCanvases.back) {
+          saveCurrentCrop('back');
+        }
       }
       goToStep(3);
     }
 
-    function saveCroppedCanvas(type) {
-      const canvas = document.getElementById('crop-canvas');
-      const img = rawImages[type];
-      if(!img) return;
-
-      const scale = img.width / canvas.width;
-      const cropX = Math.min(corners.tl.x, corners.bl.x) * scale;
-      const cropY = Math.min(corners.tl.y, corners.tr.y) * scale;
-      const cropW = (Math.max(corners.tr.x, corners.br.x) - Math.min(corners.tl.x, corners.bl.x)) * scale;
-      const cropH = (Math.max(corners.bl.y, corners.br.y) - Math.min(corners.tl.y, corners.tr.y)) * scale;
-
-      const finalCanvas = document.createElement('canvas');
-      finalCanvas.width = cropW;
-      finalCanvas.height = cropH;
-      const fCtx = finalCanvas.getContext('2d');
-
-      const b = document.getElementById('filter-bright').value;
-      const c = document.getElementById('filter-contrast').value;
-      fCtx.filter = `brightness(${b}%) contrast(${c}%)`;
-
-      fCtx.drawImage(img, cropX, cropY, cropW, cropH, 0, 0, cropW, cropH);
-      croppedCanvases[type] = finalCanvas;
-    }
-
-    // स्टेप 3: पेमेंट & प्रिंट सेटअप
+    // स्टेप 3: पेमेंट & प्रिंट
     function setupStep3() {
-      updatePrice(isBw ? 'bw' : 'color');
-      renderA4PrintLayout();
+      setPrintCost(isBwMode ? 'bw' : 'color');
+      renderPrintLayout();
     }
 
-    function updatePrice(type) {
-      isBw = (type === 'bw');
-      currentPrice = isBw ? 10 : 20;
+    function setPrintCost(type) {
+      isBwMode = (type === 'bw');
+      printCost = isBwMode ? 10 : 20;
 
-      document.getElementById('final-amount').innerText = `₹${currentPrice}`;
-      document.getElementById('lbl-bw').className = isBw ? "border-2 border-indigo-600 bg-indigo-50/50 p-2.5 rounded-xl cursor-pointer text-center" : "border-2 border-slate-200 p-2.5 rounded-xl cursor-pointer text-center";
-      document.getElementById('lbl-color').className = !isBw ? "border-2 border-indigo-600 bg-indigo-50/50 p-2.5 rounded-xl cursor-pointer text-center" : "border-2 border-slate-200 p-2.5 rounded-xl cursor-pointer text-center";
+      document.getElementById('txt-amount').innerText = `₹${printCost}`;
+      document.getElementById('lbl-bw').className = isBwMode ? "border-2 border-indigo-600 bg-indigo-50/50 p-2.5 rounded-xl cursor-pointer text-center" : "border-2 border-slate-200 p-2.5 rounded-xl cursor-pointer text-center";
+      document.getElementById('lbl-color').className = !isBwMode ? "border-2 border-indigo-600 bg-indigo-50/50 p-2.5 rounded-xl cursor-pointer text-center" : "border-2 border-slate-200 p-2.5 rounded-xl cursor-pointer text-center";
 
       // डायनामिक UPI QR कोड
-      const upiUrl = `upi://pay?pa=${encodeURIComponent(UPI_ID)}&pn=${encodeURIComponent(SHOP_NAME)}&am=${currentPrice}&cu=INR`;
-      document.getElementById('qr-code-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(upiUrl)}`;
+      const upiLink = `upi://pay?pa=${encodeURIComponent(SHOP_UPI_ID)}&pn=${encodeURIComponent(SHOP_NAME)}&am=${printCost}&cu=INR`;
+      document.getElementById('upi-qr-image').src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(upiLink)}`;
 
-      renderA4PrintLayout();
+      renderPrintLayout();
     }
 
-    function renderA4PrintLayout() {
-      const container = document.getElementById('final-print-content');
+    function renderPrintLayout() {
+      const container = document.getElementById('print-layout-container');
       container.innerHTML = '';
-      const filterStyle = isBw ? 'grayscale(100%)' : 'none';
+      const filter = isBwMode ? 'grayscale(100%)' : 'none';
 
-      if(currentMode === 'id') {
-        ['front', 'back'].forEach(side => {
-          if(croppedCanvases[side]) {
-            const img = new Image();
-            img.src = croppedCanvases[side].toDataURL();
-            img.style.filter = filterStyle;
-            img.className = "w-[85.6mm] h-auto border border-dashed border-slate-300 rounded";
-            container.appendChild(img);
+      if(activeMode === 'id') {
+        ['front', 'back'].forEach(s => {
+          if(savedCanvases[s]) {
+            const im = new Image();
+            im.src = savedCanvases[s].toDataURL();
+            im.style.filter = filter;
+            im.className = "w-[85.6mm] max-w-full rounded border border-dashed border-slate-300";
+            container.appendChild(im);
           }
         });
-      } else if(currentMode === 'single') {
-        if(croppedCanvases['single']) {
-          const img = new Image();
-          img.src = croppedCanvases['single'].toDataURL();
-          img.style.filter = filterStyle;
-          img.className = "w-full max-w-[170mm] h-auto border border-slate-300 rounded";
-          container.appendChild(img);
+      } else if(activeMode === 'single') {
+        if(savedCanvases.single) {
+          const im = new Image();
+          im.src = savedCanvases.single.toDataURL();
+          im.style.filter = filter;
+          im.className = "w-full max-w-[170mm] rounded border border-slate-300";
+          container.appendChild(im);
         }
-      } else if(currentMode === 'pdf') {
-        if(pdfPageCanvas) {
-          const img = new Image();
-          img.src = pdfPageCanvas.toDataURL();
-          img.style.filter = filterStyle;
-          img.className = "w-full max-w-[180mm] h-auto border rounded";
-          container.appendChild(img);
-        }
+      } else if(activeMode === 'pdf') {
+        const obj = document.createElement('object');
+        obj.data = pdfBlobUrl;
+        obj.type = 'application/pdf';
+        obj.className = "w-full h-[500px] border rounded";
+        if(isBwMode) obj.style.filter = 'grayscale(100%)';
+        container.appendChild(obj);
       }
     }
 
-    // ================= ऑटोमैटिक पेमेंट वेरिफिकेशन =================
-    // प्रयुक्त UTR नंबरों का रिकॉर्ड (ताकि एक ही UTR से दो बार प्रिंट न हो सके)
-    const usedUtrNumbers = new Set();
+    // UTR पेमेंट वेरिफिकेशन
+    const usedUtrs = new Set();
 
-    function verifyUpiPayment() {
-      const utr = document.getElementById('upi-utr-input').value.trim();
-      const statusMsg = document.getElementById('utr-status-msg');
-      const verifyBtn = document.getElementById('btn-verify-utr');
+    function verifyPayment() {
+      const utr = document.getElementById('input-utr').value.trim();
+      const feedback = document.getElementById('utr-feedback');
+      const verifyBtn = document.getElementById('btn-verify');
 
-      statusMsg.classList.remove('hidden');
+      feedback.classList.remove('hidden');
 
-      // 1. लंबाई और अंकों की जांच (UPI UTR हमेशा 12 अंकों का होता है)
       if(!/^\d{12}$/.test(utr)) {
-        statusMsg.className = "text-xs font-bold rounded-lg p-2 text-center bg-rose-100 text-rose-700";
-        statusMsg.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> अमान्य UTR! कृपया बैंक से मिला 12 अंकों का नंबर दर्ज करें।';
+        feedback.className = "text-xs font-bold rounded-lg p-2 text-center bg-rose-100 text-rose-700";
+        feedback.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> कृपया 12-अंकों का वैध UPI UTR नंबर दर्ज करें।';
         return;
       }
 
-      // 2. डुप्लीकेट चेक (पुराना UTR दोबारा इस्तेमाल नहीं हो सकता)
-      if(usedUtrNumbers.has(utr)) {
-        statusMsg.className = "text-xs font-bold rounded-lg p-2 text-center bg-rose-100 text-rose-700";
-        statusMsg.innerHTML = '<i class="fa-solid fa-ban"></i> यह UTR पहले ही उपयोग हो चुका है!';
+      if(usedUtrs.has(utr)) {
+        feedback.className = "text-xs font-bold rounded-lg p-2 text-center bg-rose-100 text-rose-700";
+        feedback.innerHTML = '<i class="fa-solid fa-ban"></i> यह UTR पहले ही उपयोग हो चुका है!';
         return;
       }
 
-      // वेरिफिकेशन प्रोसेस लोडिंग
-      verifyBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> जांच हो रही है...';
+      verifyBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> जांच जारी है...';
       verifyBtn.disabled = true;
 
       setTimeout(() => {
-        // सफल वेरिफिकेशन
-        usedUtrNumbers.add(utr);
-        isPaymentVerified = true;
+        usedUtrs.add(utr);
+        paymentVerified = true;
 
-        statusMsg.className = "text-xs font-bold rounded-lg p-2 text-center bg-emerald-100 text-emerald-700";
-        statusMsg.innerHTML = `<i class="fa-solid fa-circle-check"></i> भुगतान सत्यापित! ₹${currentPrice} प्राप्त हुए। प्रिंट अनलॉक हो गया।`;
+        feedback.className = "text-xs font-bold rounded-lg p-2 text-center bg-emerald-100 text-emerald-700";
+        feedback.innerHTML = `<i class="fa-solid fa-circle-check"></i> भुगतान सत्यापित! ₹${printCost} प्राप्त हुए। प्रिंट अनलॉक हो गया।`;
 
-        // प्रिंट बटन अनलॉक करना
-        const printBtn = document.getElementById('btn-print-action');
+        const printBtn = document.getElementById('btn-print');
         printBtn.disabled = false;
         printBtn.className = "w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl shadow-lg transition flex items-center justify-center gap-2 cursor-pointer";
-        document.getElementById('print-lock-icon').className = "fa-solid fa-print";
+        document.getElementById('print-btn-icon').className = "fa-solid fa-print";
 
         verifyBtn.innerHTML = '<i class="fa-solid fa-check"></i> वेरीफाइड';
-        document.getElementById('upi-utr-input').disabled = true;
+        document.getElementById('input-utr').disabled = true;
       }, 1500);
     }
 
     function executePrint() {
-      if(!isPaymentVerified) {
-        alert("कृपया पहले पेमेंट वेरीफाई करें!");
+      if(!paymentVerified) {
+        alert("कृपया पहले 12-अंकों का UTR नंबर डालकर पेमेंट सत्यापित करें!");
         return;
       }
       window.print();
