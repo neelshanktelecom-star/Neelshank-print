@@ -3,215 +3,372 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NEELSHANK TELECOM - स्मार्ट प्रिंट सर्विस</title>
+  <title>NEELSHANK TELECOM - स्मार्ट सेल्फ प्रिंट सर्विस</title>
+  
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Cropper.js (फोटो क्रॉपिंग और एडिटिंग के लिए) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
+  <!-- PDF.js (PDF देखने और प्रिंट करने के लिए) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
 
   <style>
-    /* केवल प्रिंट के समय दिखने वाला लेआउट */
+    /* केवल प्रिंटर के लिए लेआउट */
     @media print {
       body * {
-        display: none !important;
+        visibility: hidden !important;
       }
       #printable-area, #printable-area * {
-        display: flex !important;
+        visibility: visible !important;
       }
       #printable-area {
-        position: fixed;
+        position: absolute;
         left: 0;
         top: 0;
-        width: 100vw;
-        height: 100vh;
-        flex-direction: column;
-        align-items: center;
-        justify-content: flex-start;
-        padding-top: 20mm;
-        gap: 15mm;
-        background: #fff;
+        width: 100%;
+        margin: 0;
+        padding: 15mm 20mm;
+        display: block !important;
       }
-      .id-print-box {
+      .a4-id-card {
         width: 85.6mm;
         height: 54mm;
         object-fit: cover;
-        border: 1px solid #999;
+        border: 1px dashed #777;
         border-radius: 4px;
+        margin: 0 auto 20mm auto;
+        display: block;
+      }
+      .pdf-print-page {
+        width: 100%;
+        max-width: 100%;
+        page-break-after: always;
+        display: block;
+        margin: 0 auto;
       }
     }
   </style>
 </head>
-<body class="bg-slate-100 min-h-screen text-slate-800 font-sans p-4 md:p-8">
+<body class="bg-slate-100 min-h-screen text-slate-800 font-sans p-3 md:p-6">
 
-  <div class="max-w-xl mx-auto bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden">
+  <div class="max-w-xl mx-auto bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
     
     <!-- हेडर -->
-    <header class="bg-indigo-600 p-5 text-white text-center">
-      <h1 class="text-xl font-bold tracking-wide">NEELSHANK TELECOM</h1>
-      <p class="text-indigo-100 text-xs mt-1">फास्ट & ऑटोमैटिक सेल्फ प्रिंटिंग पोर्टल</p>
+    <header class="bg-indigo-600 p-5 text-white text-center shadow-md">
+      <h1 class="text-xl md:text-2xl font-bold tracking-wide">NEELSHANK TELECOM</h1>
+      <p class="text-indigo-100 text-xs mt-1">फास्ट & ऑटोमैटिक सेल्फ प्रिंटिंग कियोस्क</p>
     </header>
 
     <!-- स्टेप्स बार -->
     <div class="flex border-b border-slate-200 bg-slate-50 text-xs font-semibold">
-      <div id="step-btn-1" class="flex-1 text-center py-2.5 text-indigo-600 border-b-2 border-indigo-600">1. फोटो अपलोड</div>
-      <div id="step-btn-2" class="flex-1 text-center py-2.5 text-slate-400">2. क्वालिटी सेट करें</div>
-      <div id="step-btn-3" class="flex-1 text-center py-2.5 text-slate-400">3. पेमेंट & प्रिंट</div>
+      <div id="step-btn-1" class="flex-1 text-center py-3 text-indigo-600 border-b-2 border-indigo-600">1. अपलोड</div>
+      <div id="step-btn-2" class="flex-1 text-center py-3 text-slate-400">2. एडिट & क्रॉप</div>
+      <div id="step-btn-3" class="flex-1 text-center py-3 text-slate-400">3. पेमेंट & प्रिंट</div>
     </div>
 
-    <div class="p-5">
+    <div class="p-4 md:p-6">
       
-      <!-- STEP 1: अपलोड -->
+      <!-- ================= STEP 1: अपलोड मोड ================= -->
       <section id="step-1">
-        <p class="text-xs text-slate-500 mb-3 text-center">पहचान पत्र (आधार कार्ड आदि) के दोनों साइड की फोटो चुनें:</p>
-        
-        <div class="space-y-3">
-          <!-- फ्रंट -->
-          <div class="border-2 border-dashed border-indigo-200 rounded-xl p-3 text-center hover:border-indigo-400">
-            <input type="file" id="front-file" accept="image/*" class="hidden" onchange="loadFile(event, 'front')">
+        <!-- मोड टॉगल: ID कार्ड या PDF -->
+        <div class="grid grid-cols-2 gap-2 p-1 bg-slate-100 rounded-xl mb-5">
+          <button id="mode-id-btn" onclick="switchMode('id')" class="py-2.5 rounded-lg text-xs font-bold bg-white shadow-sm text-indigo-700 flex items-center justify-center gap-2">
+            <i class="fa-solid fa-id-card"></i> आईडी कार्ड (2 साइड)
+          </button>
+          <button id="mode-pdf-btn" onclick="switchMode('pdf')" class="py-2.5 rounded-lg text-xs font-bold text-slate-600 flex items-center justify-center gap-2">
+            <i class="fa-solid fa-file-pdf"></i> सिंगल / सामान्य PDF
+          </button>
+        </div>
+
+        <!-- 1. आईडी कार्ड इनपुट -->
+        <div id="id-inputs" class="space-y-4">
+          <!-- फ्रंट साइड -->
+          <div class="border-2 border-dashed border-indigo-200 rounded-xl p-4 text-center hover:border-indigo-400 transition">
+            <input type="file" id="front-file" accept="image/*" class="hidden" onchange="handleImageUpload(event, 'front')">
             <label for="front-file" class="cursor-pointer block">
-              <span class="text-xs font-semibold text-slate-700 block mb-1">
+              <span class="text-xs font-bold text-slate-700 block mb-1">
                 <i class="fa-solid fa-image text-indigo-500 mr-1"></i> फ्रंट साइड (आगे का भाग)
               </span>
-              <p id="front-status" class="text-xs text-slate-400">यहाँ क्लिक करके फोटो चुनें</p>
-              <img id="front-preview" class="hidden max-h-36 mx-auto mt-2 rounded border">
+              <p id="front-status" class="text-xs text-slate-400">फोटो चुनें या यहाँ क्लिक करें</p>
+              <img id="front-thumb" class="hidden max-h-32 mx-auto mt-2 rounded border shadow-sm">
             </label>
           </div>
 
-          <!-- बैक -->
-          <div class="border-2 border-dashed border-indigo-200 rounded-xl p-3 text-center hover:border-indigo-400">
-            <input type="file" id="back-file" accept="image/*" class="hidden" onchange="loadFile(event, 'back')">
+          <!-- बैक साइड -->
+          <div class="border-2 border-dashed border-indigo-200 rounded-xl p-4 text-center hover:border-indigo-400 transition">
+            <input type="file" id="back-file" accept="image/*" class="hidden" onchange="handleImageUpload(event, 'back')">
             <label for="back-file" class="cursor-pointer block">
-              <span class="text-xs font-semibold text-slate-700 block mb-1">
+              <span class="text-xs font-bold text-slate-700 block mb-1">
                 <i class="fa-solid fa-image text-indigo-500 mr-1"></i> बैक साइड (पीछे का भाग)
               </span>
-              <p id="back-status" class="text-xs text-slate-400">यहाँ क्लिक करके फोटो चुनें</p>
-              <img id="back-preview" class="hidden max-h-36 mx-auto mt-2 rounded border">
+              <p id="back-status" class="text-xs text-slate-400">फोटो चुनें या यहाँ क्लिक करें</p>
+              <img id="back-thumb" class="hidden max-h-32 mx-auto mt-2 rounded border shadow-sm">
             </label>
           </div>
         </div>
 
-        <button onclick="checkStep1()" class="w-full mt-5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl transition">
-          आगे बढ़ें (Adjust Quality) <i class="fa-solid fa-arrow-right ml-1"></i>
+        <!-- 2. PDF इनपुट -->
+        <div id="pdf-inputs" class="hidden">
+          <div class="border-2 border-dashed border-slate-300 rounded-xl p-8 text-center bg-slate-50">
+            <input type="file" id="pdf-file" accept="application/pdf" class="hidden" onchange="handlePdfUpload(event)">
+            <label for="pdf-file" class="cursor-pointer block">
+              <i class="fa-solid fa-file-arrow-up text-4xl text-indigo-500 mb-2"></i>
+              <p class="text-sm font-bold text-slate-700">अपनी PDF फ़ाइल चुनें</p>
+              <p class="text-xs text-slate-400 mt-1">एक या कई पेज की PDF</p>
+              <p id="pdf-name" class="mt-3 text-xs font-bold text-indigo-600"></p>
+            </label>
+          </div>
+        </div>
+
+        <button onclick="goToStep2()" class="w-full mt-6 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl shadow-md transition flex items-center justify-center gap-2">
+          एडिटिंग & सेटिंग्स के लिए आगे बढ़ें <i class="fa-solid fa-arrow-right"></i>
         </button>
       </section>
 
-      <!-- STEP 2: एडजस्टमेंट -->
+      <!-- ================= STEP 2: एडिटिंग & क्रॉप ================= -->
       <section id="step-2" class="hidden">
+        
+        <!-- आईडी कार्ड एडिटिंग टूल -->
+        <div id="id-editing-tools">
+          <div class="flex justify-between items-center mb-3">
+            <h3 class="text-xs font-bold text-slate-700">फोटो एडिटिंग & क्रॉपिंग टूल</h3>
+            <div class="space-x-1">
+              <button onclick="switchCropSide('front')" id="edit-front-tab" class="px-3 py-1 bg-indigo-600 text-white rounded text-xs font-bold">फ्रंट एडिट</button>
+              <button onclick="switchCropSide('back')" id="edit-back-tab" class="px-3 py-1 bg-slate-200 text-slate-700 rounded text-xs font-bold">बैक एडिट</button>
+            </div>
+          </div>
+
+          <!-- क्रॉपिंग कंटेनर -->
+          <div class="bg-black rounded-xl overflow-hidden mb-3 max-h-64 flex items-center justify-center">
+            <img id="cropper-image" src="" alt="Edit Stage" class="max-w-full">
+          </div>
+
+          <!-- एडिटिंग कंट्रोल्स (Rotate, Flip, Crop Save) -->
+          <div class="flex flex-wrap gap-2 justify-center mb-4">
+            <button onclick="cropperRotate(-90)" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-xs font-semibold rounded border">
+              <i class="fa-solid fa-rotate-left"></i> घुमाएं
+            </button>
+            <button onclick="cropperRotate(90)" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-xs font-semibold rounded border">
+              <i class="fa-solid fa-rotate-right"></i> घुमाएं
+            </button>
+            <button onclick="cropperFlip()" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-xs font-semibold rounded border">
+              <i class="fa-solid fa-arrows-left-right"></i> फ्लिप
+            </button>
+            <button onclick="saveCurrentCrop()" class="px-3 py-1.5 bg-green-600 text-white text-xs font-bold rounded shadow hover:bg-green-700">
+              <i class="fa-solid fa-check"></i> क्रॉप सेव करें
+            </button>
+          </div>
+        </div>
+
+        <!-- क्वालिटी फिल्टर्स (ब्राइटनेस & कंट्रास्ट) -->
         <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 mb-4 space-y-3">
           <div>
-            <div class="flex justify-between text-xs font-semibold text-slate-600 mb-1">
+            <div class="flex justify-between text-xs font-bold text-slate-600 mb-1">
               <span>ब्राइटनेस (सफेदी)</span>
               <span id="b-val">100%</span>
             </div>
-            <input type="range" id="b-slider" min="60" max="160" value="100" class="w-full" oninput="updateFilters()">
+            <input type="range" id="b-slider" min="60" max="180" value="100" class="w-full h-1.5 bg-slate-200 rounded cursor-pointer" oninput="applyFilters()">
           </div>
 
           <div>
-            <div class="flex justify-between text-xs font-semibold text-slate-600 mb-1">
+            <div class="flex justify-between text-xs font-bold text-slate-600 mb-1">
               <span>कंट्रास्ट (अक्षरों का गहरापन)</span>
               <span id="c-val">100%</span>
             </div>
-            <input type="range" id="c-slider" min="70" max="180" value="100" class="w-full" oninput="updateFilters()">
+            <input type="range" id="c-slider" min="70" max="190" value="100" class="w-full h-1.5 bg-slate-200 rounded cursor-pointer" oninput="applyFilters()">
           </div>
 
-          <label class="flex items-center gap-2 pt-2 border-t text-xs font-medium cursor-pointer">
-            <input type="checkbox" id="bw-mode" onchange="updateFilters()">
-            <span>ब्लैक & व्हाइट (Black & White) प्रिंट</span>
+          <label class="flex items-center gap-2 pt-2 border-t text-xs font-bold text-slate-700 cursor-pointer">
+            <input type="checkbox" id="bw-mode" class="rounded text-indigo-600" onchange="applyFilters()">
+            <span>केवल ब्लैक & व्हाइट (ग्रेस्केल) प्रिंट करें</span>
           </label>
-        </div>
-
-        <p class="text-xs text-slate-400 mb-1">लाइव प्रीव्यू:</p>
-        <div class="grid grid-cols-2 gap-2 bg-slate-100 p-2 rounded-xl mb-4 border text-center">
-          <div>
-            <img id="preview-stage-1" class="h-28 mx-auto object-contain rounded border">
-            <span class="text-[10px] text-slate-500">फ्रंट</span>
-          </div>
-          <div>
-            <img id="preview-stage-2" class="h-28 mx-auto object-contain rounded border">
-            <span class="text-[10px] text-slate-500">बैक</span>
-          </div>
         </div>
 
         <div class="flex gap-2">
-          <button onclick="goTo(1)" class="w-1/3 border py-2.5 rounded-xl font-semibold text-xs text-slate-600">वापस</button>
-          <button onclick="goTo(3)" class="w-2/3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-xl text-xs">पेमेंट और प्रिंट पर जाएं</button>
+          <button onclick="goTo(1)" class="w-1/3 border py-3 rounded-xl font-bold text-xs text-slate-600">वापस</button>
+          <button onclick="goTo(3)" class="w-2/3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl text-xs shadow-md">
+            पेमेंट के लिए आगे बढ़ें <i class="fa-solid fa-arrow-right ml-1"></i>
+          </button>
         </div>
       </section>
 
-      <!-- STEP 3: पेमेंट & प्रिंट -->
+      <!-- ================= STEP 3: पेमेंट & प्रिंट ================= -->
       <section id="step-3" class="hidden text-center">
-        <p class="text-xs font-semibold text-slate-600 mb-2">प्रिंट का प्रकार:</p>
+        
         <div class="flex justify-center gap-3 mb-3">
-          <label class="border px-3 py-2 rounded-lg text-xs font-medium cursor-pointer hover:bg-slate-50">
+          <label class="border px-3 py-2 rounded-xl text-xs font-bold cursor-pointer hover:bg-slate-50">
             <input type="radio" name="p_type" value="10" checked onchange="changePrice(10)"> B&W (₹10)
           </label>
-          <label class="border px-3 py-2 rounded-lg text-xs font-medium cursor-pointer hover:bg-slate-50">
+          <label class="border px-3 py-2 rounded-xl text-xs font-bold cursor-pointer hover:bg-slate-50">
             <input type="radio" name="p_type" value="20" onchange="changePrice(20)"> Color (₹20)
           </label>
         </div>
 
-        <div class="text-base font-bold mb-3">
-          कुल देय राशि: <span id="final-price" class="text-indigo-600 text-xl font-extrabold">₹10</span>
+        <div class="text-sm font-bold text-slate-700 mb-3">
+          कुल भुगतान: <span id="final-price" class="text-indigo-600 text-2xl font-black">₹10</span>
         </div>
 
-        <!-- QR Code Container -->
-        <div class="p-2 border rounded-xl inline-block bg-white shadow-sm">
-          <img id="qr-code-img" src="" alt="Payment QR" class="w-40 h-40 mx-auto">
+        <!-- UPI QR Code -->
+        <div id="qr-box" class="p-3 border rounded-2xl inline-block bg-white shadow-inner mb-3">
+          <img id="qr-code-img" src="" alt="Payment QR" class="w-44 h-44 mx-auto">
+          <p class="text-[11px] text-slate-400 mt-1">UPI ऐप्स द्वारा स्कैन करके पेमेंट करें</p>
         </div>
-        <p class="text-[11px] text-slate-400 mt-1">UPI ऐप (PhonePe, GPay, Paytm) से स्कैन करके भुगतान करें</p>
 
-        <button onclick="doPrint()" class="w-full mt-4 bg-green-600 hover:bg-green-700 text-white font-bold py-3.5 rounded-xl shadow-md flex items-center justify-center gap-2">
-          <i class="fa-solid fa-print"></i> अभी प्रिंट करें (Print Now)
+        <!-- पेमेंट कन्फर्मेशन सेक्शन -->
+        <div id="payment-verify-box" class="bg-indigo-50 border border-indigo-200 p-4 rounded-xl mb-4 text-left">
+          <h4 class="text-xs font-bold text-indigo-900 mb-1">पेमेंट वेरिफिकेशन</h4>
+          <p class="text-[11px] text-indigo-700 mb-2">पेमेंट करने के बाद ऐप से प्राप्त 12 अंकों का UTR / UPI Ref No. दर्ज करें:</p>
+          
+          <div class="flex gap-2">
+            <input type="number" id="utr-input" placeholder="उदा. 4289xxxxxxxx" class="flex-1 border border-indigo-300 px-3 py-2 text-xs rounded-lg outline-none focus:border-indigo-600 bg-white">
+            <button onclick="confirmPayment()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2 rounded-lg transition">
+              कन्फर्म करें
+            </button>
+          </div>
+        </div>
+
+        <!-- पेमेंट सक्सेस बैज (सत्यापन के बाद) -->
+        <div id="payment-success-msg" class="hidden bg-green-50 border border-green-200 p-3 rounded-xl mb-4 text-green-800 text-xs font-bold flex items-center justify-center gap-2">
+          <i class="fa-solid fa-circle-check text-green-600 text-base"></i> पेमेंट सफलता से कन्फर्म हो गया! प्रिंट तैयार है।
+        </div>
+
+        <!-- प्रिंट बटन (पेमेंट के बाद ही एक्टिव होगा) -->
+        <button id="print-btn" onclick="executeFinalPrint()" disabled class="w-full bg-slate-300 text-slate-500 font-black py-4 rounded-xl shadow cursor-not-allowed flex items-center justify-center gap-2 text-sm transition">
+          <i class="fa-solid fa-print"></i> प्रिंट निकालें (Print Now)
         </button>
 
-        <button onclick="goTo(2)" class="w-full mt-2 text-xs text-slate-400 underline">एडजस्टमेंट बदलें</button>
+        <button onclick="goTo(2)" class="w-full mt-3 text-xs text-slate-400 underline">वापस एडिट करें</button>
       </section>
 
     </div>
   </div>
 
-  <!-- प्रिंट एरिया (स्क्रीन पर नहीं दिखेगा, केवल प्रिंटर को जाएगा) -->
+  <!-- प्रिंट एरिया (केवल प्रिंटर को दिखेगा) -->
   <div id="printable-area" style="display: none;">
-    <img id="print-img-1" class="id-print-box" alt="Front">
-    <img id="print-img-2" class="id-print-box" alt="Back">
+    <!-- ID कार्ड प्रिंट लेआउट -->
+    <div id="print-id-container">
+      <img id="print-img-1" class="a4-id-card" alt="ID Front">
+      <img id="print-img-2" class="a4-id-card" alt="ID Back">
+    </div>
+
+    <!-- PDF प्रिंट लेआउट -->
+    <div id="print-pdf-container"></div>
   </div>
 
   <script>
-    // दुकान का UPI ID यहाँ लिखें (जैसे: mobile-number@upi या name@okhdfcbank)
-    const MY_UPI_ID = "8677942814-1@okbizaxis"; 
+    // दुकान का UPI ID यहाँ बदलें
+    const MY_UPI_ID = "8677942814-1@okbizaxis";
     const SHOP_NAME = "NEELSHANK TELECOM";
 
-    let frontSrc = "";
-    let backSrc = "";
+    let currentMode = 'id'; // 'id' या 'pdf'
+    let rawFrontImg = '';
+    let rawBackImg = '';
+    let croppedFrontImg = '';
+    let croppedBackImg = '';
+    let activeCropSide = 'front';
+    let cropper = null;
+    let flipX = 1;
     let currentAmount = 10;
+    let isPaymentDone = false;
+    let pdfDoc = null;
 
-    function loadFile(event, side) {
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          if (side === 'front') {
-            frontSrc = e.target.result;
-            const preview = document.getElementById('front-preview');
-            preview.src = frontSrc;
-            preview.classList.remove('hidden');
-            document.getElementById('front-status').innerText = "फ़ोटो लोड हो गई ✓";
-          } else {
-            backSrc = e.target.result;
-            const preview = document.getElementById('back-preview');
-            preview.src = backSrc;
-            preview.classList.remove('hidden');
-            document.getElementById('back-status').innerText = "फ़ोटो लोड हो गई ✓";
-          }
-        };
-        reader.readAsDataURL(file);
+    // मोड स्विच
+    function switchMode(mode) {
+      currentMode = mode;
+      if (mode === 'id') {
+        document.getElementById('id-inputs').classList.remove('hidden');
+        document.getElementById('pdf-inputs').classList.add('hidden');
+        document.getElementById('mode-id-btn').className = "py-2.5 rounded-lg text-xs font-bold bg-white shadow-sm text-indigo-700 flex items-center justify-center gap-2";
+        document.getElementById('mode-pdf-btn').className = "py-2.5 rounded-lg text-xs font-bold text-slate-600 flex items-center justify-center gap-2";
+      } else {
+        document.getElementById('id-inputs').classList.add('hidden');
+        document.getElementById('pdf-inputs').classList.remove('hidden');
+        document.getElementById('mode-pdf-btn').className = "py-2.5 rounded-lg text-xs font-bold bg-white shadow-sm text-indigo-700 flex items-center justify-center gap-2";
+        document.getElementById('mode-id-btn').className = "py-2.5 rounded-lg text-xs font-bold text-slate-600 flex items-center justify-center gap-2";
       }
     }
 
-    function checkStep1() {
-      if (!frontSrc && !backSrc) {
-        alert("कृपया कम से कम एक तरफ की फोटो ज़रूर चुनें!");
+    // इमेज अपलोड
+    function handleImageUpload(e, side) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        if (side === 'front') {
+          rawFrontImg = evt.target.result;
+          croppedFrontImg = rawFrontImg;
+          document.getElementById('front-thumb').src = rawFrontImg;
+          document.getElementById('front-thumb').classList.remove('hidden');
+          document.getElementById('front-status').innerText = "फ़ोटो अपलोड हो गई ✓";
+        } else {
+          rawBackImg = evt.target.result;
+          croppedBackImg = rawBackImg;
+          document.getElementById('back-thumb').src = rawBackImg;
+          document.getElementById('back-thumb').classList.remove('hidden');
+          document.getElementById('back-status').innerText = "फ़ोटो अपलोड हो गई ✓";
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // PDF अपलोड
+    function handlePdfUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      document.getElementById('pdf-name').innerText = "चयनित फाइल: " + file.name;
+
+      const fileReader = new FileReader();
+      fileReader.onload = function() {
+        const typedarray = new Uint8Array(this.result);
+        pdfjsLib.getDocument(typedarray).promise.then(function(pdf) {
+          pdfDoc = pdf;
+          renderPdfPages();
+        });
+      };
+      fileReader.readAsArrayBuffer(file);
+    }
+
+    // PDF पेजों को प्रिंट कंटेनर में रेंडर करना
+    async function renderPdfPages() {
+      const container = document.getElementById('print-pdf-container');
+      container.innerHTML = '';
+      for (let num = 1; num <= pdfDoc.numPages; num++) {
+        const page = await pdfDoc.getPage(num);
+        const viewport = page.getViewport({ scale: 2 });
+        const canvas = document.createElement('canvas');
+        canvas.className = 'pdf-print-page';
+        const ctx = canvas.getContext('2d');
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+
+        await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+        container.appendChild(canvas);
+      }
+    }
+
+    // स्टेप नेविगेशन
+    function goToStep2() {
+      if (currentMode === 'id' && !rawFrontImg && !rawBackImg) {
+        alert("कृपया कम से कम एक साइड की फोटो ज़रूर अपलोड करें!");
         return;
       }
+      if (currentMode === 'pdf' && !pdfDoc) {
+        alert("कृपया पहले अपनी PDF फाइल चुनें!");
+        return;
+      }
+
       goTo(2);
+      if (currentMode === 'id') {
+        document.getElementById('id-editing-tools').classList.remove('hidden');
+        initCropper(activeCropSide);
+      } else {
+        document.getElementById('id-editing-tools').classList.add('hidden');
+      }
     }
 
     function goTo(step) {
@@ -220,23 +377,71 @@
       document.getElementById('step-3').classList.add('hidden');
 
       for (let i = 1; i <= 3; i++) {
-        document.getElementById(`step-btn-${i}`).className = "flex-1 text-center py-2.5 text-slate-400";
+        document.getElementById(`step-btn-${i}`).className = "flex-1 text-center py-3 text-slate-400";
       }
 
       document.getElementById(`step-${step}`).classList.remove('hidden');
-      document.getElementById(`step-btn-${step}`).className = "flex-1 text-center py-2.5 text-indigo-600 border-b-2 border-indigo-600";
+      document.getElementById(`step-btn-${step}`).className = "flex-1 text-center py-3 text-indigo-600 border-b-2 border-indigo-600";
 
-      if (step === 2) {
-        document.getElementById('preview-stage-1').src = frontSrc;
-        document.getElementById('preview-stage-2').src = backSrc;
-        updateFilters();
-      }
       if (step === 3) {
         generateQR();
       }
     }
 
-    function updateFilters() {
+    // क्रॉपिंग लॉजिक (ID Card 85.6 : 54 Ratio)
+    function initCropper(side) {
+      const imageElement = document.getElementById('cropper-image');
+      const imgSrc = (side === 'front') ? (rawFrontImg || rawBackImg) : (rawBackImg || rawFrontImg);
+      
+      if (!imgSrc) return;
+
+      if (cropper) cropper.destroy();
+      imageElement.src = imgSrc;
+
+      cropper = new Cropper(imageElement, {
+        aspectRatio: 85.6 / 54, // ID कार्ड साइज़ अनुपात
+        viewMode: 1,
+        autoCropArea: 0.9,
+      });
+    }
+
+    function switchCropSide(side) {
+      saveCurrentCrop();
+      activeCropSide = side;
+      if (side === 'front') {
+        document.getElementById('edit-front-tab').className = "px-3 py-1 bg-indigo-600 text-white rounded text-xs font-bold";
+        document.getElementById('edit-back-tab').className = "px-3 py-1 bg-slate-200 text-slate-700 rounded text-xs font-bold";
+      } else {
+        document.getElementById('edit-back-tab').className = "px-3 py-1 bg-indigo-600 text-white rounded text-xs font-bold";
+        document.getElementById('edit-front-tab').className = "px-3 py-1 bg-slate-200 text-slate-700 rounded text-xs font-bold";
+      }
+      initCropper(side);
+    }
+
+    function cropperRotate(deg) {
+      if (cropper) cropper.rotate(deg);
+    }
+
+    function cropperFlip() {
+      if (cropper) {
+        flipX = flipX === 1 ? -1 : 1;
+        cropper.scaleX(flipX);
+      }
+    }
+
+    function saveCurrentCrop() {
+      if (!cropper) return;
+      const canvas = cropper.getCroppedCanvas({ width: 1011, height: 638 });
+      if (activeCropSide === 'front') {
+        croppedFrontImg = canvas.toDataURL('image/jpeg');
+      } else {
+        croppedBackImg = canvas.toDataURL('image/jpeg');
+      }
+      alert(activeCropSide.toUpperCase() + " साइड का क्रॉप सेव हो गया ✓");
+    }
+
+    // फिल्टर्स
+    function applyFilters() {
       const b = document.getElementById('b-slider').value;
       const c = document.getElementById('c-slider').value;
       const bw = document.getElementById('bw-mode').checked;
@@ -247,12 +452,12 @@
       let filter = `brightness(${b}%) contrast(${c}%)`;
       if (bw) filter += " grayscale(100%)";
 
-      document.getElementById('preview-stage-1').style.filter = filter;
-      document.getElementById('preview-stage-2').style.filter = filter;
       document.getElementById('print-img-1').style.filter = filter;
       document.getElementById('print-img-2').style.filter = filter;
+      document.getElementById('print-pdf-container').style.filter = filter;
     }
 
+    // प्राइस और QR कोड
     function changePrice(amt) {
       currentAmount = amt;
       document.getElementById('final-price').innerText = `₹${amt}`;
@@ -261,16 +466,47 @@
 
     function generateQR() {
       const upiUrl = `upi://pay?pa=${encodeURIComponent(MY_UPI_ID)}&pn=${encodeURIComponent(SHOP_NAME)}&am=${currentAmount}&cu=INR`;
-      const qrApi = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(upiUrl)}`;
+      const qrApi = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiUrl)}`;
       document.getElementById('qr-code-img').src = qrApi;
     }
 
-    function doPrint() {
-      // प्रिंट एरिया में सही फोटो सेट करना
-      document.getElementById('print-img-1').src = frontSrc;
-      document.getElementById('print-img-2').src = backSrc;
-      
-      // सिस्टम प्रिंट डायलॉग खोलना
+    // पेमेंट कन्फर्मेशन
+    function confirmPayment() {
+      const utr = document.getElementById('utr-input').value.trim();
+      if (utr.length < 4) {
+        alert("कृपया सही UTR / Transaction ID दर्ज करें!");
+        return;
+      }
+
+      isPaymentDone = true;
+      document.getElementById('payment-verify-box').classList.add('hidden');
+      document.getElementById('payment-success-msg').classList.remove('hidden');
+
+      // प्रिंट बटन सक्रिय करना
+      const printBtn = document.getElementById('print-btn');
+      printBtn.disabled = false;
+      printBtn.className = "w-full bg-green-600 hover:bg-green-700 text-white font-black py-4 rounded-xl shadow-lg flex items-center justify-center gap-2 text-sm transition cursor-pointer";
+    }
+
+    // डायरेक्ट प्रिंट एग्जीक्यूशन
+    function executeFinalPrint() {
+      if (!isPaymentDone) {
+        alert("कृपया पहले पेमेंट कन्फर्म करें!");
+        return;
+      }
+
+      if (currentMode === 'id') {
+        document.getElementById('print-id-container').style.display = 'block';
+        document.getElementById('print-pdf-container').style.display = 'none';
+
+        document.getElementById('print-img-1').src = croppedFrontImg || rawFrontImg;
+        document.getElementById('print-img-2').src = croppedBackImg || rawBackImg;
+      } else {
+        document.getElementById('print-id-container').style.display = 'none';
+        document.getElementById('print-pdf-container').style.display = 'block';
+      }
+
+      applyFilters();
       window.print();
     }
   </script>
