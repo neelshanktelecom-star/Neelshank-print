@@ -3,48 +3,39 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>NEELSHANK TELECOM - स्मार्ट प्रिंट पोर्टल</title>
-  <!-- Tailwind CSS -->
+  <title>NEELSHANK TELECOM - स्मार्ट ऑटो प्रिंट पोर्टल</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- PDF.js CDN (सुरक्षित लोडिंग) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-  <script>
-    if (window.pdfjsLib) {
-      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-    }
-  </script>
   <style>
-    /* बड़ा क्रॉपिंग एरिया */
-    .crop-wrapper-box {
-      position: relative;
-      touch-action: none;
-      user-select: none;
-      width: 100%;
-      background: #0f172a;
-      border-radius: 12px;
-      padding: 10px;
+    /* टच स्क्रॉलिंग को कैनवास एरिया पर रोकना ताकि पेज अटके नहीं */
+    .crop-touch-box {
+      touch-action: none !important;
+      user-select: none !important;
+      -webkit-user-select: none !important;
       display: flex;
       justify-content: center;
       align-items: center;
+      background: #0f172a;
+      border-radius: 12px;
+      padding: 8px;
+      width: 100%;
     }
     canvas#canvas-crop {
-      touch-action: none;
+      touch-action: none !important;
       max-width: 100%;
       height: auto;
       border-radius: 6px;
       box-shadow: 0 4px 14px rgba(0,0,0,0.6);
+      display: block;
     }
-
-    /* A4 शीट प्रीव्यू (अनुपात 1 : 1.414) */
-    .a4-preview-box {
+    /* A4 शीट प्रिंट प्रीव्यू */
+    .a4-print-box {
       width: 100%;
-      max-width: 360px;
-      min-height: 480px;
+      max-width: 380px;
+      min-height: 460px;
       background: #ffffff;
       border: 1px solid #cbd5e1;
-      border-radius: 6px;
+      border-radius: 8px;
       box-shadow: 0 4px 15px rgba(0,0,0,0.1);
       padding: 20px 10px;
       margin: 0 auto;
@@ -53,15 +44,12 @@
       align-items: center;
       justify-content: center;
     }
-
-    /* आईडी कार्ड का मानक साइज (8.5 cm x 5.5 cm) */
+    /* 8.5 cm x 5.5 cm आईडी कार्ड साइज */
     .id-card-print-target {
       width: 85mm !important;
       height: 55mm !important;
       object-fit: fill !important;
     }
-
-    /* प्रिंट मीडिया नियम: केवल A4 शीट ही बीचो-बीच प्रिंट होगी */
     @page {
       size: A4 portrait;
       margin: 0;
@@ -94,7 +82,7 @@
 <body class="bg-slate-100 text-slate-800 font-sans pb-16">
 
   <!-- हेडर -->
-  <header class="bg-indigo-700 text-white py-3 px-4 shadow-md sticky top-0 z-50">
+  <header class="bg-indigo-700 text-white py-3.5 px-4 shadow-md sticky top-0 z-50">
     <div class="max-w-xl mx-auto flex items-center justify-between">
       <div>
         <h1 class="text-lg font-bold flex items-center gap-2">
@@ -108,7 +96,7 @@
     </div>
   </header>
 
-  <main class="max-w-xl mx-auto px-4 mt-3">
+  <main class="max-w-xl mx-auto px-3.5 mt-3">
 
     <!-- वेलकम नोट और संपर्क नंबर -->
     <div class="bg-indigo-50 border border-indigo-200 p-3.5 rounded-xl mb-4 text-xs text-indigo-950 shadow-sm">
@@ -130,7 +118,7 @@
     </div>
 
     <!-- स्टेप्स नेविगेशन बार -->
-    <div class="flex justify-between items-center mb-4 bg-white p-2 rounded-xl shadow-sm border border-slate-200 text-xs font-bold">
+    <div class="flex justify-between items-center mb-4 bg-white p-2.5 rounded-xl shadow-sm border border-slate-200 text-xs font-bold">
       <div id="step-nav-1" class="flex-1 text-center text-indigo-600 border-b-2 border-indigo-600 pb-1">1. अपलोड</div>
       <div id="step-nav-2" class="flex-1 text-center text-slate-400 pb-1">2. 4-कॉर्नर एडजस्ट</div>
       <div id="step-nav-3" class="flex-1 text-center text-slate-400 pb-1">3. पे & प्रिंट</div>
@@ -138,8 +126,6 @@
 
     <!-- ================= स्टेप 1: अपलोड ================= -->
     <section id="step-1" class="space-y-4">
-      
-      <!-- मोड चयन -->
       <div class="grid grid-cols-3 gap-2 bg-slate-200 p-1 rounded-xl text-xs font-semibold">
         <button id="tab-id" type="button" onclick="selectMode('id')" class="py-2.5 rounded-lg bg-white shadow text-indigo-700 font-bold flex flex-col items-center">
           <i class="fa-solid fa-id-card text-base mb-0.5"></i> ID कार्ड (2-साइड)
@@ -148,13 +134,12 @@
           <i class="fa-solid fa-book-open text-base mb-0.5"></i> पासबुक / 1 फोटो
         </button>
         <button id="tab-pdf" type="button" onclick="selectMode('pdf')" class="py-2.5 rounded-lg text-slate-600 flex flex-col items-center">
-          <i class="fa-solid fa-file-pdf text-base mb-0.5"></i> PDF (मल्टीपल)
+          <i class="fa-solid fa-file-pdf text-base mb-0.5"></i> PDF दस्तावेज़
         </button>
       </div>
 
-      <!-- 1. आईडी कार्ड अपलोड (Front + Back) -->
+      <!-- 1. आईडी कार्ड अपलोड -->
       <div id="section-id-upload" class="space-y-3">
-        <!-- फ्रंट -->
         <div class="bg-white p-4 rounded-xl border-2 border-dashed border-indigo-300 text-center">
           <p class="font-bold text-xs text-slate-700 mb-2">आईडी कार्ड - सामने का भाग (Front Side)</p>
           <input type="file" id="file-front" accept="image/*" class="hidden" onchange="onImageSelected(event, 'front')">
@@ -165,7 +150,6 @@
           <img id="thumb-front" class="hidden mt-2 max-h-24 mx-auto rounded border shadow-sm">
         </div>
 
-        <!-- बैक -->
         <div class="bg-white p-4 rounded-xl border-2 border-dashed border-indigo-300 text-center">
           <p class="font-bold text-xs text-slate-700 mb-2">आईडी कार्ड - पीछे का भाग (Back Side)</p>
           <input type="file" id="file-back" accept="image/*" class="hidden" onchange="onImageSelected(event, 'back')">
@@ -188,27 +172,16 @@
         <img id="thumb-single" class="hidden mt-3 max-h-40 mx-auto rounded border shadow-sm">
       </div>
 
-      <!-- 3. मल्टीपल PDF अपलोड -->
+      <!-- 3. PDF अपलोड -->
       <div id="section-pdf-upload" class="hidden bg-white p-5 rounded-xl border-2 border-dashed border-rose-300 text-center space-y-3">
-        <p class="font-bold text-xs text-slate-700">एक या अधिक PDF फ़ाइलें चुनें (1 से 100 तक)</p>
-        <input type="file" id="file-pdf" accept="application/pdf" multiple class="hidden" onchange="onMultiplePdfSelected(event)">
+        <p class="font-bold text-xs text-slate-700">PDF फ़ाइल चुनें</p>
+        <input type="file" id="file-pdf" accept="application/pdf" class="hidden" onchange="onPdfSelected(event)">
         <label for="file-pdf" class="w-full py-5 bg-rose-50 hover:bg-rose-100 rounded-lg text-rose-700 flex flex-col items-center border border-rose-200 cursor-pointer block">
-          <i class="fa-solid fa-folder-open text-4xl mb-1 text-rose-500"></i>
-          <span id="label-pdf" class="text-xs font-bold">यहाँ क्लिक करके PDF फ़ाइलें चुनें</span>
+          <i class="fa-solid fa-file-pdf text-4xl mb-1 text-rose-500"></i>
+          <span id="label-pdf" class="text-xs font-bold">यहाँ क्लिक करके PDF फ़ाइल चुनें</span>
         </label>
-
-        <div id="pdf-list-box" class="hidden text-left bg-slate-50 p-2.5 rounded-lg border">
-          <p class="text-[11px] font-bold text-slate-700 mb-1.5 flex items-center gap-1">
-            <i class="fa-solid fa-list-check text-indigo-600"></i> अपलोड की गई PDF सूची:
-          </p>
-          <div id="pdf-list-items" class="space-y-1.5 max-h-32 overflow-y-auto text-xs"></div>
-        </div>
-
-        <div id="pdf-live-preview" class="hidden mt-2 bg-slate-50 p-2 rounded-lg border text-left">
-          <p class="text-[11px] font-bold text-slate-600 mb-1.5 flex items-center gap-1">
-            <i class="fa-solid fa-circle-check text-emerald-600"></i> सक्रिय PDF प्रीव्यू (पेज 1):
-          </p>
-          <canvas id="canvas-pdf-preview" class="max-w-full max-h-56 mx-auto rounded border shadow-sm bg-white block"></canvas>
+        <div id="pdf-preview-indicator" class="hidden text-xs font-bold text-emerald-600 bg-emerald-50 py-2 rounded border border-emerald-200">
+          <i class="fa-solid fa-circle-check"></i> PDF फ़ाइल लोड हो चुकी है
         </div>
       </div>
 
@@ -219,16 +192,13 @@
 
     <!-- ================= स्टेप 2: बड़ा 4-कॉर्नर क्रॉप & एडजस्ट ================= -->
     <section id="step-2" class="hidden space-y-4">
-      
       <div id="editor-box" class="bg-white p-3 rounded-xl shadow-sm border border-slate-200">
         
-        <!-- साइड स्विच (केवल ID कार्ड के लिए) -->
         <div id="crop-toggle-group" class="flex gap-2 mb-3">
           <button type="button" id="btn-side-front" onclick="switchSide('front')" class="flex-1 py-2 bg-indigo-600 text-white font-bold text-xs rounded-lg">फ्रंट साइड</button>
           <button type="button" id="btn-side-back" onclick="switchSide('back')" class="flex-1 py-2 bg-slate-200 text-slate-700 font-bold text-xs rounded-lg">बैक साइड</button>
         </div>
 
-        <!-- अनुपात प्रीसेट बटन -->
         <div class="flex items-center justify-between gap-1 mb-2.5 bg-slate-50 p-2 rounded-lg border text-xs">
           <span class="font-bold text-slate-600">साइज:</span>
           <div class="flex gap-1.5">
@@ -238,19 +208,19 @@
             <button type="button" onclick="setCropRatio('passbook')" class="px-2.5 py-1.5 bg-white border border-slate-300 text-slate-700 rounded font-bold">
               पासबुक
             </button>
-            <button type="button" onclick="resetCrop()" class="px-2.5 py-1.5 bg-amber-50 border border-amber-300 text-amber-700 rounded font-bold">
+            <button type="button" onclick="resetCrop()" class="px-2.5 py-1.5 bg-emerald-50 border border-emerald-300 text-emerald-700 rounded font-bold">
               पूरा साइज
             </button>
           </div>
         </div>
 
-        <!-- बड़ा 4-कॉर्नर टच कैनवास -->
-        <div class="crop-wrapper-box">
+        <!-- कैनवास कंटेनर (स्क्रॉल-प्रूफ) -->
+        <div class="crop-touch-box">
           <canvas id="canvas-crop"></canvas>
         </div>
 
-        <p class="text-[11px] text-center text-indigo-700 font-bold mt-2.5">
-          👉 चारों नीले बिंदुओं को उंगली से दस्तावेज़ के कोनों पर सेट करें।
+        <p class="text-[11px] text-center text-indigo-700 font-bold mt-2">
+          👉 नीले बिंदुओं को उंगली से दस्तावेज़ के कोनों पर सेट करें।
         </p>
 
         <!-- ब्राइटनेस / कंट्रास्ट -->
@@ -272,12 +242,6 @@
             </div>
           </div>
         </div>
-      </div>
-
-      <!-- PDF प्रीव्यू स्टेप 2 -->
-      <div id="pdf-step2-box" class="hidden bg-white p-3 rounded-xl shadow-sm border text-center">
-        <p class="font-bold text-xs text-slate-700 mb-2">चयनित PDF दस्तावेज़ प्रीव्यू</p>
-        <canvas id="canvas-pdf-step2" class="max-w-full max-h-80 mx-auto rounded border shadow-sm bg-white block"></canvas>
       </div>
 
       <div class="flex gap-3">
@@ -329,7 +293,7 @@
         </div>
       </div>
 
-      <!-- Razorpay पेमेंट बॉक्स (QR कोड + डायरेक्ट लिंक) -->
+      <!-- Razorpay पेमेंट बॉक्स -->
       <div class="bg-gradient-to-br from-indigo-900 to-indigo-700 text-white p-5 rounded-2xl shadow-md text-center space-y-3">
         <div class="flex items-center justify-center gap-2">
           <i class="fa-solid fa-shield-halved text-emerald-400 text-xl"></i>
@@ -341,13 +305,11 @@
           <p id="txt-total-amt" class="text-3xl font-black text-emerald-300 mt-0.5">₹10</p>
         </div>
 
-        <!-- UPI / Razorpay डायनामिक QR कोड -->
-        <div class="bg-white p-2.5 rounded-xl inline-block shadow-inner">
-          <img id="img-razorpay-qr" src="" alt="Payment QR" class="w-44 h-44 mx-auto">
+        <div class="bg-white p-2 rounded-xl inline-block shadow-inner">
+          <img id="img-razorpay-qr" src="" alt="Payment QR" class="w-40 h-40 mx-auto">
         </div>
-        <p class="text-[11px] text-indigo-200">PhonePe / GPay / Paytm से QR कोड स्कैन करें या नीचे दिए बटन से भुगतान करें:</p>
+        <p class="text-[11px] text-indigo-200">PhonePe / GPay / Paytm से QR स्कैन करें या नीचे दिए बटन से भुगतान करें:</p>
 
-        <!-- Razorpay पेज लिंक -->
         <a id="btn-razorpay-link" href="https://razorpay.me/@neelshanktelecom" target="_blank" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-900 font-black py-3 rounded-xl shadow-lg transition flex items-center justify-center gap-2 text-xs block">
           <i class="fa-solid fa-arrow-up-right-from-square"></i> Razorpay पेज पर ऑनलाइन भुगतान करें
         </a>
@@ -360,11 +322,10 @@
             <i class="fa-solid fa-circle-check text-indigo-600 text-lg"></i>
             <div>
               <h4 class="font-bold text-xs text-slate-800">पेमेंट वेरिफिकेशन</h4>
-              <p class="text-[10px] text-slate-500">12-अंकों का UPI UTR या Razorpay Payment ID दर्ज करें</p>
+              <p class="text-[10px] text-slate-500">12-अंकों का UPI UTR या Razorpay ID दर्ज करें</p>
             </div>
           </div>
-          <!-- दुकानदार बाईपास बटन -->
-          <button type="button" onclick="shopkeeperBypass()" class="text-[10px] bg-slate-200 hover:bg-slate-300 text-slate-700 px-2 py-1 rounded font-bold">
+          <button type="button" onclick="shopkeeperBypass()" class="text-[10px] bg-slate-200 hover:bg-slate-300 text-slate-700 px-2.5 py-1 rounded font-bold">
             दुकानदार पिन
           </button>
         </div>
@@ -379,16 +340,16 @@
         <div id="payment-status-badge" class="hidden text-xs font-bold py-2 px-3 rounded-lg text-center"></div>
       </div>
 
-      <!-- A4 प्रिंट शीट लाइव प्रीव्यू (8.5cm x 5.5cm, सेंटर साइड-बाय-साइड) -->
+      <!-- A4 प्रिंट शीट लाइव प्रीव्यू -->
       <div class="bg-white p-3.5 rounded-xl border border-slate-200">
         <div class="flex items-center justify-between mb-2">
           <p class="font-bold text-xs text-slate-700 flex items-center gap-1.5">
-            <i class="fa-solid fa-file-lines text-indigo-600"></i> A4 शीट वास्तविक प्रिंट प्रीव्यू (Center Side-by-Side):
+            <i class="fa-solid fa-file-lines text-indigo-600"></i> A4 शीट प्रिंट प्रीव्यू (Center Side-by-Side):
           </p>
           <span class="text-[10px] bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded font-bold border border-indigo-200">8.5 × 5.5 CM</span>
         </div>
         
-        <div class="a4-preview-box">
+        <div class="a4-print-box">
           <div id="printable-sheet" class="w-full flex flex-row items-center justify-center gap-4 flex-wrap"></div>
         </div>
       </div>
@@ -402,8 +363,8 @@
 
   <script>
     const RAZORPAY_ME_LINK = "https://razorpay.me/@neelshanktelecom";
-    const SHOP_UPI_ID = "neelshanktelecom@icici"; // दुकान की UPI ID
-    const MASTER_SHOP_PIN = "8677"; // दुकानदार त्वरित अनलॉक पिन
+    const SHOP_UPI_ID = "neelshanktelecom@icici";
+    const MASTER_SHOP_PIN = "8677";
 
     let activeTab = 'id';
     let currentTargetSide = 'front';
@@ -415,20 +376,18 @@
 
     const loadedImages = { front: null, back: null, single: null };
     const finalizedCanvases = { front: null, back: null, single: null };
-    
-    let uploadedPdfList = [];
-    let activePdfIndex = 0;
-    let activePdfCanvas = null;
+    let pdfImageBlob = null;
 
-    // 4 कॉर्नर बिंदु
     let corners = {
-      tl: { x: 25, y: 25 },
-      tr: { x: 300, y: 25 },
+      tl: { x: 0, y: 0 },
+      tr: { x: 300, y: 0 },
       br: { x: 300, y: 200 },
-      bl: { x: 25, y: 200 }
+      bl: { x: 0, y: 200 }
     };
     let activeCornerKey = null;
-    const HANDLE_RADIUS = 18;
+
+    const HANDLE_RADIUS = 11;
+    const TOUCH_DETECT_RADIUS = 30;
 
     function selectMode(mode) {
       activeTab = mode;
@@ -444,6 +403,7 @@
       document.getElementById('section-pdf-upload').classList.toggle('hidden', mode !== 'pdf');
     }
 
+    // सुरक्षित इमेज स्केलिंग ताकि मोबाइल हैंग न हो
     function onImageSelected(e, type) {
       const file = e.target.files && e.target.files[0];
       if (!file) return;
@@ -452,78 +412,64 @@
       reader.onload = function(evt) {
         const img = new Image();
         img.onload = function() {
-          loadedImages[type] = img;
-          const thumb = document.getElementById(`thumb-${type}`);
-          thumb.src = img.src;
-          thumb.classList.remove('hidden');
-          document.getElementById(`label-${type}`).innerText = file.name;
+          const maxDim = 1200;
+          let w = img.width;
+          let h = img.height;
+          if (w > maxDim || h > maxDim) {
+            if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; }
+            else { w = Math.round((w * maxDim) / h); h = maxDim; }
+          }
+          const scaleCanvas = document.createElement('canvas');
+          scaleCanvas.width = w;
+          scaleCanvas.height = h;
+          const ctx = scaleCanvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+
+          const optimizedImg = new Image();
+          optimizedImg.onload = function() {
+            loadedImages[type] = optimizedImg;
+            const thumb = document.getElementById(`thumb-${type}`);
+            thumb.src = optimizedImg.src;
+            thumb.classList.remove('hidden');
+            document.getElementById(`label-${type}`).innerText = file.name;
+          };
+          optimizedImg.src = scaleCanvas.toDataURL('image/jpeg', 0.85);
         };
         img.src = evt.target.result;
       };
       reader.readAsDataURL(file);
     }
 
-    function onMultiplePdfSelected(e) {
-      const files = Array.from(e.target.files);
-      if (files.length === 0) return;
+    function onPdfSelected(e) {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
 
-      uploadedPdfList = files;
-      activePdfIndex = 0;
-      document.getElementById('label-pdf').innerText = `${files.length} PDF फ़ाइलें चुनी गईं`;
-
-      const listContainer = document.getElementById('pdf-list-items');
-      listContainer.innerHTML = '';
-      files.forEach((f, idx) => {
-        const row = document.createElement('div');
-        row.className = `p-1.5 rounded flex items-center justify-between border cursor-pointer ${idx === 0 ? 'bg-indigo-100 border-indigo-400 font-bold' : 'bg-white'}`;
-        row.id = `pdf-item-${idx}`;
-        row.onclick = () => selectActivePdf(idx);
-        row.innerHTML = `
-          <span class="truncate max-w-[200px]"><i class="fa-solid fa-file-pdf text-rose-500 mr-1"></i> ${f.name}</span>
-          <span class="text-[10px] text-slate-500">क्लिक कर चुनें</span>
-        `;
-        listContainer.appendChild(row);
-      });
-      document.getElementById('pdf-list-box').classList.remove('hidden');
-      loadAndRenderPdf(uploadedPdfList[0]);
-    }
-
-    function selectActivePdf(index) {
-      activePdfIndex = index;
-      uploadedPdfList.forEach((_, i) => {
-        const el = document.getElementById(`pdf-item-${i}`);
-        if(el) el.className = (i === index) ? 'p-1.5 rounded flex items-center justify-between border cursor-pointer bg-indigo-100 border-indigo-400 font-bold' : 'p-1.5 rounded flex items-center justify-between border cursor-pointer bg-white';
-      });
-      loadAndRenderPdf(uploadedPdfList[index]);
-    }
-
-    function loadAndRenderPdf(file) {
+      document.getElementById('label-pdf').innerText = file.name;
       const reader = new FileReader();
       reader.onload = function() {
         const typedArray = new Uint8Array(this.result);
-        if (!window.pdfjsLib) {
-          alert('PDF रेंडरर लोड हो रहा है, कृपया 2 सेकंड बाद पुनः चुनें।');
-          return;
-        }
-        pdfjsLib.getDocument(typedArray).promise.then(pdf => {
-          pdf.getPage(1).then(page => {
-            const previewCanvas = document.getElementById('canvas-pdf-preview');
-            const step2Canvas = document.getElementById('canvas-pdf-step2');
-            const viewport = page.getViewport({ scale: 0.8 });
-
-            [previewCanvas, step2Canvas].forEach(c => {
-              c.height = viewport.height;
-              c.width = viewport.width;
-              page.render({ canvasContext: c.getContext('2d'), viewport: viewport });
+        if (window.pdfjsLib) {
+          pdfjsLib.getDocument(typedArray).promise.then(pdf => {
+            pdf.getPage(1).then(page => {
+              const viewport = page.getViewport({ scale: 1.5 });
+              const canvas = document.createElement('canvas');
+              canvas.width = viewport.width;
+              canvas.height = viewport.height;
+              const ctx = canvas.getContext('2d');
+              page.render({ canvasContext: ctx, viewport: viewport }).promise.then(() => {
+                const pdfImg = new Image();
+                pdfImg.onload = () => {
+                  pdfImageBlob = pdfImg;
+                  document.getElementById('pdf-preview-indicator').classList.remove('hidden');
+                };
+                pdfImg.src = canvas.toDataURL('image/jpeg', 0.9);
+              });
             });
-
-            activePdfCanvas = previewCanvas;
-            document.getElementById('pdf-live-preview').classList.remove('hidden');
+          }).catch(err => {
+            console.error(err);
+            alert('PDF रेंडर करने में त्रुटि!');
           });
-        }).catch(err => {
-          console.error(err);
-          alert('PDF पढ़ने में त्रुटि: कृपया फ़ाइल दोबारा चुनें।');
-        });
+        }
       };
       reader.readAsArrayBuffer(file);
     }
@@ -538,7 +484,7 @@
           alert('कृपया पासबुक या दस्तावेज़ की फोटो चुनें!');
           return;
         }
-        if(activeTab === 'pdf' && !activePdfCanvas) {
+        if(activeTab === 'pdf' && !pdfImageBlob) {
           alert('कृपया पहले एक वैध PDF दस्तावेज़ चुनें!');
           return;
         }
@@ -562,20 +508,18 @@
     }
 
     function setupStep2() {
-      const isPdf = (activeTab === 'pdf');
-      document.getElementById('editor-box').classList.toggle('hidden', isPdf);
-      document.getElementById('pdf-step2-box').classList.toggle('hidden', !isPdf);
-
-      if(!isPdf) {
-        if(activeTab === 'id') {
-          currentTargetSide = 'front';
-          document.getElementById('crop-toggle-group').classList.remove('hidden');
-        } else {
-          currentTargetSide = 'single';
-          document.getElementById('crop-toggle-group').classList.add('hidden');
-        }
-        initCropCanvas(currentTargetSide);
+      if (activeTab === 'pdf') {
+        goToStep(3);
+        return;
       }
+      if(activeTab === 'id') {
+        currentTargetSide = 'front';
+        document.getElementById('crop-toggle-group').classList.remove('hidden');
+      } else {
+        currentTargetSide = 'single';
+        document.getElementById('crop-toggle-group').classList.add('hidden');
+      }
+      initCropCanvas(currentTargetSide);
     }
 
     function switchSide(side) {
@@ -586,25 +530,24 @@
       initCropCanvas(side);
     }
 
-    // ================= टच-फ्रेंडली 4-कॉर्नर कैनवास =================
     function initCropCanvas(type) {
       const img = loadedImages[type];
       if(!img) return;
 
       const canvas = document.getElementById('canvas-crop');
-      const maxW = Math.min(window.innerWidth - 48, 380);
+      const maxW = Math.min(window.innerWidth - 32, 460);
       const scale = maxW / img.width;
       canvas.width = maxW;
-      canvas.height = img.height * scale;
+      canvas.height = Math.round(img.height * scale);
 
       const w = canvas.width;
       const h = canvas.height;
 
       corners = {
-        tl: { x: w * 0.06, y: h * 0.08 },
-        tr: { x: w * 0.94, y: h * 0.08 },
-        br: { x: w * 0.94, y: h * 0.92 },
-        bl: { x: w * 0.06, y: h * 0.92 }
+        tl: { x: 0, y: 0 },
+        tr: { x: w, y: 0 },
+        br: { x: w, y: h },
+        bl: { x: 0, y: h }
       };
 
       drawCropCanvas();
@@ -622,7 +565,7 @@
       ctx.clearRect(0, 0, w, h);
       ctx.drawImage(img, 0, 0, w, h);
 
-      // पॉलीगॉन पाथ
+      // पॉलीगॉन
       ctx.beginPath();
       ctx.moveTo(corners.tl.x, corners.tl.y);
       ctx.lineTo(corners.tr.x, corners.tr.y);
@@ -630,28 +573,32 @@
       ctx.lineTo(corners.bl.x, corners.bl.y);
       ctx.closePath();
 
-      ctx.fillStyle = 'rgba(79, 70, 229, 0.22)';
+      ctx.fillStyle = 'rgba(79, 70, 229, 0.20)';
       ctx.fill();
-      ctx.lineWidth = 3.5;
+      ctx.lineWidth = 2.5;
       ctx.strokeStyle = '#4f46e5';
       ctx.stroke();
 
-      // 4 बड़े नीले डॉट्स
+      // 4 छोटे साफ़ नीले बिंदु
       ['tl', 'tr', 'br', 'bl'].forEach(key => {
         const pt = corners[key];
         ctx.beginPath();
         ctx.arc(pt.x, pt.y, HANDLE_RADIUS, 0, Math.PI * 2);
         ctx.fillStyle = '#4f46e5';
         ctx.fill();
-        ctx.lineWidth = 3.5;
+        ctx.lineWidth = 2.5;
         ctx.strokeStyle = '#ffffff';
         ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, 2.5, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffffff';
+        ctx.fill();
       });
     }
 
     const cropCanvas = document.getElementById('canvas-crop');
 
-    // सटीक स्केल फॉर्मूला (Touch Scale Formula)
     function getCanvasCoordinates(e) {
       const rect = cropCanvas.getBoundingClientRect();
       const clientX = e.touches ? e.touches[0].clientX : e.clientX;
@@ -671,7 +618,7 @@
       for(let key of ['tl', 'tr', 'br', 'bl']) {
         const pt = corners[key];
         const dist = Math.hypot(pt.x - pos.x, pt.y - pos.y);
-        if(dist < HANDLE_RADIUS * 2.5) {
+        if(dist < TOUCH_DETECT_RADIUS) {
           activeCornerKey = key;
           break;
         }
@@ -684,8 +631,8 @@
       e.preventDefault();
       const pos = getCanvasCoordinates(e);
 
-      corners[activeCornerKey].x = Math.max(10, Math.min(cropCanvas.width - 10, pos.x));
-      corners[activeCornerKey].y = Math.max(10, Math.min(cropCanvas.height - 10, pos.y));
+      corners[activeCornerKey].x = Math.max(0, Math.min(cropCanvas.width, pos.x));
+      corners[activeCornerKey].y = Math.max(0, Math.min(cropCanvas.height, pos.y));
       drawCropCanvas();
     }
 
@@ -704,9 +651,9 @@
       const h = cropCanvas.height;
       if(mode === 'id') {
         const ratio = 8.5 / 5.5;
-        let boxW = w * 0.9;
+        let boxW = w * 0.95;
         let boxH = boxW / ratio;
-        if(boxH > h * 0.9) { boxH = h * 0.9; boxW = boxH * ratio; }
+        if(boxH > h * 0.95) { boxH = h * 0.95; boxW = boxH * ratio; }
 
         const sx = (w - boxW) / 2;
         const sy = (h - boxH) / 2;
@@ -718,10 +665,10 @@
         };
       } else if(mode === 'passbook') {
         corners = {
-          tl: { x: w * 0.05, y: h * 0.08 },
-          tr: { x: w * 0.95, y: h * 0.08 },
-          br: { x: w * 0.95, y: h * 0.92 },
-          bl: { x: w * 0.05, y: h * 0.92 }
+          tl: { x: 0, y: h * 0.05 },
+          tr: { x: w, y: h * 0.05 },
+          br: { x: w, y: h * 0.95 },
+          bl: { x: 0, y: h * 0.95 }
         };
       }
       drawCropCanvas();
@@ -731,10 +678,10 @@
       const w = cropCanvas.width;
       const h = cropCanvas.height;
       corners = {
-        tl: { x: 15, y: 15 },
-        tr: { x: w - 15, y: 15 },
-        br: { x: w - 15, y: h - 15 },
-        bl: { x: 15, y: h - 15 }
+        tl: { x: 0, y: 0 },
+        tr: { x: w, y: 0 },
+        br: { x: w, y: h },
+        bl: { x: 0, y: h }
       };
       drawCropCanvas();
     }
@@ -786,7 +733,7 @@
       goToStep(3);
     }
 
-    // ================= स्टेप 3: कॉपी, पेमेंट & अगल-बगल प्रिंट लेआउट =================
+    // ================= स्टेप 3: कॉपी, पेमेंट & प्रिंट =================
     function setupStep3() {
       recalculateBilling();
       renderA4SheetLayout();
@@ -824,7 +771,6 @@
     function recalculateBilling() {
       totalCalculatedAmount = copiesCount * unitRate;
 
-      // राशि बदलने पर वेरिफिकेशन रिसेट
       isVerified = false;
       document.getElementById('btn-execute-print').disabled = true;
       document.getElementById('btn-execute-print').className = "w-full bg-slate-400 cursor-not-allowed text-white font-bold py-3.5 rounded-xl shadow-lg transition flex items-center justify-center gap-2";
@@ -835,7 +781,6 @@
       document.getElementById('calc-breakdown').innerText = `${copiesCount} कॉपी × ₹${unitRate}`;
       document.getElementById('txt-total-amt').innerText = `₹${totalCalculatedAmount}`;
 
-      // Razorpay URL और डायनामिक UPI QR कोड
       const targetPayUrl = `${RAZORPAY_ME_LINK}?amount=${totalCalculatedAmount}`;
       document.getElementById('btn-razorpay-link').href = targetPayUrl;
 
@@ -845,7 +790,6 @@
       renderA4SheetLayout();
     }
 
-    // A4 शीट पर ठीक बीचो-बीच अगल-बगल (Center Side-by-Side) 8.5cm x 5.5cm लेआउट
     function renderA4SheetLayout() {
       const container = document.getElementById('printable-sheet');
       container.innerHTML = '';
@@ -870,9 +814,9 @@
           container.appendChild(im);
         }
       } else if(activeTab === 'pdf') {
-        if(activePdfCanvas) {
+        if(pdfImageBlob) {
           const im = new Image();
-          im.src = activePdfCanvas.toDataURL();
+          im.src = pdfImageBlob.src;
           if(isBwSelected) im.style.filter = 'grayscale(100%)';
           im.className = "w-full max-w-[180mm] rounded border shadow-sm";
           container.appendChild(im);
@@ -880,7 +824,7 @@
       }
     }
 
-    // ================= सुरक्षित वेरिफिकेशन सिस्टम =================
+    // ================= UTR और वेरिफिकेशन =================
     function getStoredVault() {
       try {
         return JSON.parse(localStorage.getItem('neelshank_pay_vault') || '{}');
@@ -900,28 +844,24 @@
       const badge = document.getElementById('payment-status-badge');
       badge.classList.remove('hidden');
 
-      // 1. लंबाई की जांच
       if(refVal.length < 10) {
         badge.className = "text-xs font-bold py-2 px-3 rounded-lg bg-rose-100 text-rose-700 text-center";
-        badge.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> अमान्य ID! 12 अंकों का UTR या Razorpay Payment ID दर्ज करें।';
+        badge.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> अमान्य ID! 12 अंकों का UTR या Razorpay ID दर्ज करें।';
         return;
       }
 
       const vault = getStoredVault();
 
-      // 2. डुप्लीकेट रोकथाम
       if(vault[refVal]) {
         badge.className = "text-xs font-bold py-2 px-3 rounded-lg bg-rose-100 text-rose-700 text-center";
         badge.innerHTML = '<i class="fa-solid fa-ban"></i> यह पेमेंट संदर्भ संख्या पहले ही उपयोग की जा चुकी है!';
         return;
       }
 
-      // सफल वेरिफिकेशन
       saveToVault(refVal, totalCalculatedAmount);
       unlockPrintNow(`भुगतान सत्यापित! ₹${totalCalculatedAmount} (${copiesCount} कॉपियां)`);
     }
 
-    // दुकानदार बाईपास पिन
     function shopkeeperBypass() {
       const pin = prompt("दुकानदार मास्टर पिन दर्ज करें (नकद भुगतान के लिए):");
       if(pin === MASTER_SHOP_PIN) {
