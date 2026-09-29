@@ -1,2 +1,325 @@
 # Neelshank-print
 Smart self print service website for Neelshank Telecom
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEELSHANK TELECOM - स्मार्ट सेल्फ प्रिंट सर्विस</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    @media print {
+      body * {
+        visibility: hidden !important;
+      }
+      #printable-area, #printable-area * {
+        visibility: visible !important;
+      }
+      #printable-area {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+        padding: 20mm;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-100 min-h-screen text-slate-800 font-sans p-4 md:p-8">
+
+  <div class="max-w-2xl mx-auto bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden">
+    
+    <!-- हेडर -->
+    <header class="bg-indigo-600 p-6 text-white text-center">
+      <h1 class="text-2xl font-bold tracking-wide">NEELSHANK TELECOM</h1>
+      <p class="text-indigo-100 text-sm mt-1">फास्ट & ऑटोमैटिक सेल्फ प्रिंटिंग पोर्टल</p>
+      <span class="inline-block mt-3 px-3 py-1 bg-green-500 text-xs font-semibold rounded-full shadow-sm">
+        ● सर्विस एक्टिव
+      </span>
+    </header>
+
+    <!-- स्टेप्स नेविगेशन -->
+    <div class="flex border-b border-slate-200 bg-slate-50 pt-3">
+      <button id="step-btn-1" class="flex-1 text-center font-semibold text-xs text-indigo-600 border-b-2 border-indigo-600 pb-2">1. अपलोड</button>
+      <button id="step-btn-2" class="flex-1 text-center font-semibold text-xs text-slate-400 pb-2">2. एडजस्ट & क्रॉप</button>
+      <button id="step-btn-3" class="flex-1 text-center font-semibold text-xs text-slate-400 pb-2">3. पेमेंट & प्रिंट</button>
+    </div>
+
+    <div class="p-6">
+      
+      <!-- ================= STEP 1: अपलोड ================= -->
+      <section id="step-1">
+        <!-- मोड टॉगल -->
+        <div class="grid grid-cols-2 gap-2 p-1 bg-slate-100 rounded-xl mb-6">
+          <button id="mode-id-btn" onclick="switchMode('id')" class="py-2.5 rounded-lg text-sm font-semibold bg-white shadow-sm text-indigo-700 flex items-center justify-center gap-2">
+            <i class="fa-solid fa-id-card"></i> आईडी कार्ड (2 साइड)
+          </button>
+          <button id="mode-doc-btn" onclick="switchMode('doc')" class="py-2.5 rounded-lg text-sm font-semibold text-slate-600 flex items-center justify-center gap-2">
+            <i class="fa-solid fa-file-lines"></i> जनरल डॉक्यूमेंट
+          </button>
+        </div>
+
+        <!-- आईडी कार्ड इनपुट -->
+        <div id="id-card-inputs" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- फ्रंट साइड -->
+          <div class="bg-white p-4 rounded-xl border-2 border-dashed border-indigo-200 text-center hover:border-indigo-400 transition">
+            <p class="font-medium text-sm text-slate-700 mb-2 flex items-center justify-center gap-2">
+              <i class="fa-solid fa-image text-indigo-500"></i> फ्रंट साइड (आगे का भाग)
+            </p>
+            <input type="file" id="front-file" accept="image/*" class="hidden" onchange="previewUpload(event, 'front-preview', 'front-placeholder')">
+            <label for="front-file" class="cursor-pointer block">
+              <div id="front-placeholder" class="py-6">
+                <i class="fa-solid fa-cloud-arrow-up text-3xl text-indigo-400 mb-2"></i>
+                <p class="text-xs text-slate-500">फोटो चुनें या यहाँ ड्रैग करें</p>
+              </div>
+              <img id="front-preview" class="hidden max-h-48 mx-auto rounded shadow-sm object-contain">
+            </label>
+          </div>
+
+          <!-- बैक साइड -->
+          <div class="bg-white p-4 rounded-xl border-2 border-dashed border-indigo-200 text-center hover:border-indigo-400 transition">
+            <p class="font-medium text-sm text-slate-700 mb-2 flex items-center justify-center gap-2">
+              <i class="fa-solid fa-image text-indigo-500"></i> बैक साइड (पीछे का भाग)
+            </p>
+            <input type="file" id="back-file" accept="image/*" class="hidden" onchange="previewUpload(event, 'back-preview', 'back-placeholder')">
+            <label for="back-file" class="cursor-pointer block">
+              <div id="back-placeholder" class="py-6">
+                <i class="fa-solid fa-cloud-arrow-up text-3xl text-indigo-400 mb-2"></i>
+                <p class="text-xs text-slate-500">फोटो चुनें या यहाँ ड्रैग करें</p>
+              </div>
+              <img id="back-preview" class="hidden max-h-48 mx-auto rounded shadow-sm object-contain">
+            </label>
+          </div>
+        </div>
+
+        <!-- जनरल डॉक्यूमेंट इनपुट -->
+        <div id="doc-inputs" class="hidden">
+          <div class="border-2 border-dashed border-slate-300 rounded-xl p-8 text-center bg-slate-50">
+            <input type="file" id="doc-file" class="hidden" onchange="previewDoc(event)">
+            <label for="doc-file" class="cursor-pointer">
+              <i class="fa-solid fa-file-arrow-up text-4xl text-slate-400 mb-2"></i>
+              <p class="text-sm font-medium text-slate-700">फाइल चुनें (PDF, Image, Word, Excel)</p>
+              <p class="text-xs text-slate-400 mt-1">अधिकतम 25 MB तक</p>
+              <p id="doc-name" class="mt-3 text-xs font-semibold text-indigo-600"></p>
+            </label>
+          </div>
+        </div>
+
+        <button onclick="goToStep(2)" class="w-full mt-6 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl shadow-md transition">
+          एडजस्टमेंट के लिए आगे बढ़ें <i class="fa-solid fa-arrow-right ml-1"></i>
+        </button>
+      </section>
+
+      <!-- ================= STEP 2: एडजस्ट ================= -->
+      <section id="step-2" class="hidden">
+        <h3 class="font-semibold text-slate-700 mb-4">ब्राइटनेस और क्वालिटी एडजस्ट करें</h3>
+
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 mb-6">
+          <!-- ब्राइटनेस -->
+          <div class="mb-4">
+            <label class="text-xs font-semibold text-slate-600 flex justify-between mb-1">
+              <span>ब्राइटनेस (सफेदी)</span>
+              <span id="brightness-val">100%</span>
+            </label>
+            <input type="range" id="brightness" min="50" max="180" value="100" class="w-full h-1.5 bg-slate-200 rounded-lg cursor-pointer" oninput="applyFilters()">
+          </div>
+
+          <!-- कंट्रास्ट -->
+          <div class="mb-4">
+            <label class="text-xs font-semibold text-slate-600 flex justify-between mb-1">
+              <span>कंट्रास्ट (अक्षरों को गहरा करें)</span>
+              <span id="contrast-val">100%</span>
+            </label>
+            <input type="range" id="contrast" min="50" max="200" value="100" class="w-full h-1.5 bg-slate-200 rounded-lg cursor-pointer" oninput="applyFilters()">
+          </div>
+
+          <!-- ब्लैक एंड व्हाइट -->
+          <div class="flex items-center justify-between pt-2 border-t border-slate-200">
+            <span class="text-xs font-medium text-slate-700">केवल ब्लैक & व्हाइट (ग्रेस्केल)</span>
+            <input type="checkbox" id="bw-toggle" class="w-4 h-4 text-indigo-600 rounded cursor-pointer" onchange="applyFilters()">
+          </div>
+        </div>
+
+        <!-- लाइव प्रीव्यू -->
+        <h4 class="text-xs font-semibold text-slate-500 mb-2">लाइव प्रीव्यू</h4>
+        <div class="grid grid-cols-2 gap-4 mb-6 bg-slate-100 p-4 rounded-xl border">
+          <img id="preview-stage-front" class="max-h-36 mx-auto object-contain rounded" alt="Front Preview">
+          <img id="preview-stage-back" class="max-h-36 mx-auto object-contain rounded" alt="Back Preview">
+        </div>
+
+        <div class="flex gap-3">
+          <button onclick="goToStep(1)" class="w-1/3 border border-slate-300 py-3 rounded-xl font-semibold text-slate-600 hover:bg-slate-50 transition">
+            वापस
+          </button>
+          <button onclick="goToStep(3)" class="w-2/3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl shadow-md transition">
+            फाइनल प्रिंट & पे <i class="fa-solid fa-arrow-right ml-1"></i>
+          </button>
+        </div>
+      </section>
+
+      <!-- ================= STEP 3: पेमेंट और प्रिंट ================= -->
+      <section id="step-3" class="hidden text-center">
+        <h3 class="font-semibold text-slate-700 mb-2">प्रिंट प्रकार चुनें:</h3>
+
+        <div class="flex justify-center gap-4 mb-4">
+          <label class="flex items-center gap-2 p-3 border rounded-xl cursor-pointer hover:bg-slate-50">
+            <input type="radio" name="print_type" value="bw" checked onchange="calculatePrice()">
+            <span class="text-sm font-medium">Black & White (₹10 / पेज)</span>
+          </label>
+          <label class="flex items-center gap-2 p-3 border rounded-xl cursor-pointer hover:bg-slate-50">
+            <input type="radio" name="print_type" value="color" onchange="calculatePrice()">
+            <span class="text-sm font-medium">Color Print (₹20 / पेज)</span>
+          </label>
+        </div>
+
+        <div class="text-lg font-bold text-slate-800 mb-4">
+          कुल भुगतान: <span id="total-amount" class="text-indigo-600 font-extrabold text-2xl">₹10</span>
+        </div>
+
+        <p class="text-xs text-slate-500 mb-3">नीचे दिए गए QR कोड को किसी भी UPI ऐप (GPay, PhonePe, Paytm) से स्कैन करके पेमेंट करें:</p>
+
+        <!-- UPI QR Code -->
+        <div class="inline-block p-3 bg-white border border-slate-200 rounded-xl shadow-inner">
+          <img id="upi-qr" src="" alt="UPI QR Code" class="w-48 h-48 mx-auto">
+        </div>
+        <p class="text-xs text-slate-400 mt-2">दुकान: <strong>NEELSHANK TELECOM</strong></p>
+
+        <button onclick="window.print()" class="w-full mt-6 bg-green-600 hover:bg-green-700 text-white font-bold py-3.5 rounded-xl shadow-lg transition flex items-center justify-center gap-2 text-base">
+          <i class="fa-solid fa-print"></i> अभी प्रिंट करें (Print Now)
+        </button>
+
+        <button onclick="goToStep(2)" class="w-full mt-2 text-xs text-slate-500 hover:underline">
+          वापस बदलाव करें
+        </button>
+      </section>
+
+    </div>
+
+    <!-- उपयोग निर्देश -->
+    <footer class="bg-slate-50 p-5 border-t border-slate-200 text-xs text-slate-500">
+      <h4 class="font-bold text-slate-700 mb-2">उपयोग करने का तरीका:</h4>
+      <ol class="list-decimal pl-4 space-y-1">
+        <li><strong>अपलोड करें:</strong> अपने पहचान पत्र के दोनों साइड (फ्रंट और बैक) की फोटो अपलोड करें।</li>
+        <li><strong>एडजस्ट करें:</strong> यदि फोटो डार्क या धुंधली है, तो ब्राइटनेस और कंट्रास्ट स्लाइडर से साफ करें।</li>
+        <li><strong>पेमेंट और प्रिंट:</strong> प्रिंट प्रकार चुनें, QR से भुगतान करें और 'Print Now' दबाएं।</li>
+      </ol>
+    </footer>
+
+  </div>
+
+  <!-- प्रिंट एरिया (केवल प्रिंटिंग के समय दिखेगा) -->
+  <div id="printable-area" class="hidden">
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 30px; width: 100%;">
+      <img id="print-front" style="max-width: 85mm; max-height: 54mm; border: 1px solid #ccc; border-radius: 4px;" alt="Front">
+      <img id="print-back" style="max-width: 85mm; max-height: 54mm; border: 1px solid #ccc; border-radius: 4px;" alt="Back">
+    </div>
+  </div>
+
+  <script>
+    // दुकान का UPI विवरण (यहाँ अपनी असली UPI ID डालें)
+    const UPI_ID = "neelshank@upi";
+    const SHOP_NAME = "NEELSHANK TELECOM";
+
+    let currentMode = 'id';
+    let frontImgData = '';
+    let backImgData = '';
+
+    function switchMode(mode) {
+      currentMode = mode;
+      if (mode === 'id') {
+        document.getElementById('id-card-inputs').classList.remove('hidden');
+        document.getElementById('doc-inputs').classList.add('hidden');
+        document.getElementById('mode-id-btn').className = "py-2.5 rounded-lg text-sm font-semibold bg-white shadow-sm text-indigo-700 flex items-center justify-center gap-2";
+        document.getElementById('mode-doc-btn').className = "py-2.5 rounded-lg text-sm font-semibold text-slate-600 flex items-center justify-center gap-2";
+      } else {
+        document.getElementById('id-card-inputs').classList.add('hidden');
+        document.getElementById('doc-inputs').classList.remove('hidden');
+        document.getElementById('mode-doc-btn').className = "py-2.5 rounded-lg text-sm font-semibold bg-white shadow-sm text-indigo-700 flex items-center justify-center gap-2";
+        document.getElementById('mode-id-btn').className = "py-2.5 rounded-lg text-sm font-semibold text-slate-600 flex items-center justify-center gap-2";
+      }
+    }
+
+    function previewUpload(event, previewId, placeholderId) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = document.getElementById(previewId);
+          img.src = e.target.result;
+          img.classList.remove('hidden');
+          document.getElementById(placeholderId).classList.add('hidden');
+
+          if(previewId === 'front-preview') frontImgData = e.target.result;
+          if(previewId === 'back-preview') backImgData = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function previewDoc(event) {
+      const file = event.target.files[0];
+      if (file) {
+        document.getElementById('doc-name').innerText = "चयनित फाइल: " + file.name;
+      }
+    }
+
+    function goToStep(step) {
+      document.getElementById('step-1').classList.add('hidden');
+      document.getElementById('step-2').classList.add('hidden');
+      document.getElementById('step-3').classList.add('hidden');
+
+      for (let i = 1; i <= 3; i++) {
+        document.getElementById(`step-btn-${i}`).className = "flex-1 text-center font-semibold text-xs text-slate-400 pb-2";
+      }
+
+      document.getElementById(`step-${step}`).classList.remove('hidden');
+      document.getElementById(`step-btn-${step}`).className = "flex-1 text-center font-semibold text-xs text-indigo-600 border-b-2 border-indigo-600 pb-2";
+
+      if(step === 2) {
+        document.getElementById('preview-stage-front').src = frontImgData;
+        document.getElementById('preview-stage-back').src = backImgData;
+      }
+      if(step === 3) {
+        calculatePrice();
+      }
+    }
+
+    function applyFilters() {
+      const b = document.getElementById('brightness').value;
+      const c = document.getElementById('contrast').value;
+      const isBw = document.getElementById('bw-toggle').checked;
+
+      document.getElementById('brightness-val').innerText = b + '%';
+      document.getElementById('contrast-val').innerText = c + '%';
+
+      let filterString = `brightness(${b}%) contrast(${c}%)`;
+      if(isBw) filterString += ' grayscale(100%)';
+
+      document.getElementById('preview-stage-front').style.filter = filterString;
+      document.getElementById('preview-stage-back').style.filter = filterString;
+      document.getElementById('print-front').style.filter = filterString;
+      document.getElementById('print-back').style.filter = filterString;
+    }
+
+    function calculatePrice() {
+      const type = document.querySelector('input[name="print_type"]:checked').value;
+      const amount = (type === 'color') ? 20 : 10;
+      document.getElementById('total-amount').innerText = `₹${amount}`;
+
+      document.getElementById('print-front').src = frontImgData;
+      document.getElementById('print-back').src = backImgData;
+
+      const upiUrl = `upi://pay?pa=${encodeURIComponent(UPI_ID)}&pn=${encodeURIComponent(SHOP_NAME)}&am=${amount}&cu=INR`;
+      const qrApi = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiUrl)}`;
+      document.getElementById('upi-qr').src = qrApi;
+    }
+  </script>
+</body>
+</html>
