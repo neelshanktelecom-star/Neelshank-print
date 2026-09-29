@@ -106,7 +106,7 @@
       <div id="step-btn-1" class="flex-1 text-center py-2.5 text-indigo-600 border-b-2 border-indigo-600">1. अपलोड</div>
       <div id="step-btn-2" class="flex-1 text-center py-2.5 text-slate-400">2. एडिट & क्रॉप</div>
       <div id="step-btn-3" class="flex-1 text-center py-2.5 text-slate-400">3. A4 प्रीव्यू</div>
-      <div id="step-btn-4" class="flex-1 text-center py-2.5 text-slate-400">4. पेमेंट & प्रिंट</div>
+      <div id="step-btn-4" class="flex-1 text-center py-2.5 text-slate-400">4. पेमेंट</div>
     </div>
 
     <div class="p-4 md:p-5">
@@ -126,25 +126,26 @@
         <div id="id-inputs" class="space-y-3">
           <!-- फ्रंट साइड -->
           <div class="border-2 border-dashed border-indigo-200 rounded-xl p-3 text-center hover:border-indigo-400 bg-indigo-50/30">
-            <input type="file" id="front-file" accept="image/*" class="hidden" onchange="handleImageUpload(event, 'front')">
-            <label for="front-file" class="cursor-pointer block">
+            <input type="file" id="front-file" accept="image/jpeg, image/png, image/webp" class="hidden" onchange="handleImageUpload(event, 'front')">
+            <!-- Label को साफ़ तरीके से क्लिकेबल बनाया गया है -->
+            <label for="front-file" class="cursor-pointer block w-full h-full">
               <span class="text-xs font-bold text-slate-700 block mb-1">
                 <i class="fa-solid fa-image text-indigo-500 mr-1"></i> फ्रंट साइड (आगे का भाग)
               </span>
               <p id="front-status" class="text-xs text-slate-400">फोटो चुनें या यहाँ क्लिक करें</p>
-              <img id="front-thumb" class="hidden max-h-24 mx-auto mt-2 rounded border shadow-sm">
+              <img id="front-thumb" class="hidden max-h-24 mx-auto mt-2 rounded border shadow-sm object-contain" alt="Front Preview">
             </label>
           </div>
 
           <!-- बैक साइड -->
           <div class="border-2 border-dashed border-indigo-200 rounded-xl p-3 text-center hover:border-indigo-400 bg-indigo-50/30">
-            <input type="file" id="back-file" accept="image/*" class="hidden" onchange="handleImageUpload(event, 'back')">
-            <label for="back-file" class="cursor-pointer block">
+            <input type="file" id="back-file" accept="image/jpeg, image/png, image/webp" class="hidden" onchange="handleImageUpload(event, 'back')">
+            <label for="back-file" class="cursor-pointer block w-full h-full">
               <span class="text-xs font-bold text-slate-700 block mb-1">
                 <i class="fa-solid fa-image text-indigo-500 mr-1"></i> बैक साइड (पीछे का भाग)
               </span>
               <p id="back-status" class="text-xs text-slate-400">फोटो चुनें या यहाँ क्लिक करें</p>
-              <img id="back-thumb" class="hidden max-h-24 mx-auto mt-2 rounded border shadow-sm">
+              <img id="back-thumb" class="hidden max-h-24 mx-auto mt-2 rounded border shadow-sm object-contain" alt="Back Preview">
             </label>
           </div>
         </div>
@@ -153,7 +154,7 @@
         <div id="pdf-inputs" class="hidden">
           <div class="border-2 border-dashed border-slate-300 rounded-xl p-6 text-center bg-slate-50">
             <input type="file" id="pdf-file" accept="application/pdf" class="hidden" onchange="handlePdfUpload(event)">
-            <label for="pdf-file" class="cursor-pointer block">
+            <label for="pdf-file" class="cursor-pointer block w-full h-full">
               <i class="fa-solid fa-file-arrow-up text-3xl text-indigo-500 mb-1"></i>
               <p class="text-xs font-bold text-slate-700">अपनी PDF फ़ाइल चुनें</p>
               <p id="pdf-name" class="mt-2 text-xs font-bold text-indigo-600"></p>
@@ -279,7 +280,7 @@
 
         <!-- कस्टमर सहमति चेकबॉक्स -->
         <div class="bg-amber-50 border border-amber-200 p-3 rounded-xl mb-3">
-          <label class="flex items-start gap-2.5 cursor-pointer">
+          <label class="flex items-start gap-2.5 cursor-pointer w-full">
             <input type="checkbox" id="customer-agree" class="mt-0.5 w-4 h-4 text-indigo-600 rounded" onchange="togglePaymentReady()">
             <span class="text-xs font-bold text-amber-900 leading-tight">
               हाँ, यह डॉक्यूमेंट और A4 प्रिंट प्रीव्यू बिल्कुल सही है। मैं प्रिंट और भुगतान के लिए सहमत हूँ।
@@ -356,7 +357,7 @@
   </div>
 
   <script>
-    // आपकी UPI ID और दुकान का नाम
+    // आपकी UPI ID
     const MY_UPI_ID = "8677942814-1@okbizaxis";
     const SHOP_NAME = "NEELSHANK TELECOM";
 
@@ -387,47 +388,46 @@
       }
     }
 
+    // फोटो अपलोड फंक्शन - यहाँ Error Handling जोड़ी गई है
     function handleImageUpload(e, side) {
       const file = e.target.files[0];
       if (!file) return;
+
+      // अगर फाइल इमेज नहीं है
+      if (!file.type.startsWith('image/')) {
+        alert("कृपया सिर्फ फोटो (Image) चुनें!");
+        return;
+      }
+
       const reader = new FileReader();
+      
+      reader.onerror = function() {
+        alert("फोटो अपलोड करने में तकनीकी समस्या आई। कृपया दोबारा प्रयास करें।");
+      };
+
       reader.onload = function(evt) {
         if (side === 'front') {
           rawFrontImg = evt.target.result;
-          croppedFrontImg = rawFrontImg;
-          document.getElementById('front-thumb').src = rawFrontImg;
-          document.getElementById('front-thumb').classList.remove('hidden');
+          croppedFrontImg = rawFrontImg; // बाय डिफॉल्ट बिना क्रॉप की गई फोटो सेट होगी
+          const thumb = document.getElementById('front-thumb');
+          thumb.src = rawFrontImg;
+          thumb.classList.remove('hidden');
           document.getElementById('front-status').innerText = "फ़ोटो अपलोड हो गई ✓";
         } else {
           rawBackImg = evt.target.result;
           croppedBackImg = rawBackImg;
-          document.getElementById('back-thumb').src = rawBackImg;
-          document.getElementById('back-thumb').classList.remove('hidden');
+          const thumb = document.getElementById('back-thumb');
+          thumb.src = rawBackImg;
+          thumb.classList.remove('hidden');
           document.getElementById('back-status').innerText = "फ़ोटो अपलोड हो गई ✓";
         }
         syncPreviews();
       };
+      
       reader.readAsDataURL(file);
     }
 
     function handlePdfUpload(e) {
       const file = e.target.files[0];
       if (!file) return;
-      document.getElementById('pdf-name').innerText = "चयनित फाइल: " + file.name;
-
-      const fileReader = new FileReader();
-      fileReader.onload = function() {
-        const typedarray = new Uint8Array(this.result);
-        pdfjsLib.getDocument(typedarray).promise.then(function(pdf) {
-          pdfDoc = pdf;
-          renderPdfPages();
-        });
-      };
-      fileReader.readAsArrayBuffer(file);
-    }
-
-    async function renderPdfPages() {
-      const container = document.getElementById('print-pdf-container');
-      container.innerHTML = '';
-      for (let num = 1; num <= pdfDoc.numPages; num++) {
-        const page = await pdfDoc.ge
+      document.getElementById('pdf-name')
