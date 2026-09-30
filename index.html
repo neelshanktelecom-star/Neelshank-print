@@ -9,17 +9,17 @@
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    /* बड़ा और खुला एडिटिंग एरिया */
+    /* बड़ा और टच-फ्रेंडली क्रॉपिंग एरिया */
     .crop-wrapper-box {
       position: relative;
-      touch-action: none;
-      user-select: none;
-      -webkit-user-select: none;
+      touch-action: none !important;
+      user-select: none !important;
+      -webkit-user-select: none !important;
       width: 100%;
       min-height: 380px;
       background: #0b0f19;
       border-radius: 12px;
-      padding: 6px;
+      padding: 8px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -27,8 +27,7 @@
       border: 1px solid #1e293b;
     }
     canvas#canvas-crop {
-      touch-action: none;
-      width: 100%;
+      touch-action: none !important;
       max-width: 100%;
       height: auto;
       border-radius: 6px;
@@ -36,7 +35,7 @@
       display: block;
     }
 
-    /* A4 शीट प्रीव्यू (ऊपर से शुरू - Top Aligned) */
+    /* A4 शीट वास्तविक प्रीव्यू (Top-Aligned) */
     .a4-preview-box {
       width: 100%;
       max-width: 380px;
@@ -50,7 +49,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start; /* ऊपर से शुरू */
+      justify-content: flex-start;
       gap: 12px;
     }
 
@@ -64,37 +63,6 @@
     @page {
       size: A4 portrait;
       margin: 0;
-    }
-    /* प्रिंट मीडिया नियम: अब बिल्कुल बीच में नहीं, बल्कि ऊपर से 20mm मार्जिन पर प्रिंट होगा */
-    @media print {
-      body * { visibility: hidden !important; }
-      #printable-sheet, #printable-sheet * { visibility: visible !important; }
-      #printable-sheet {
-        position: fixed !important;
-        left: 0 !important;
-        top: 0 !important;
-        width: 210mm !important;
-        height: 297mm !important;
-        display: flex !important;
-        flex-direction: column !important;
-        justify-content: flex-start !important; /* ऊपर अलाइन */
-        align-items: center !important;
-        padding-top: 20mm !important; /* ऊपर से 20mm की उचित जगह */
-        margin: 0 !important;
-        background: white !important;
-      }
-      .print-copy-container {
-        display: flex !important;
-        flex-direction: row !important;
-        justify-content: center !important;
-        align-items: center !important;
-        gap: 8mm !important;
-        margin-bottom: 12mm !important;
-      }
-      .id-card-print-target {
-        width: 85mm !important;
-        height: 55mm !important;
-      }
     }
   </style>
 </head>
@@ -124,7 +92,7 @@
         <h2 class="font-bold text-sm">NEELSHANK TELECOM में आपका स्वागत है!</h2>
       </div>
       <p class="text-slate-700 leading-relaxed">
-        पहचान पत्र, पासबुक या PDF अपलोड करें। पहचान पत्र 
+        पहचान पत्र, पासबुक या PDF अपलोड करें। पहचान पत्र <strong>8.5 cm × 5.5 cm</strong> के सही आकार में A4 शीट के <strong>ऊपरी हिस्से में अगल-बगल</strong> प्रिंट होगा।
       </p>
       <div class="mt-2.5 pt-2 border-t border-indigo-200 flex items-center justify-between font-bold">
         <span class="text-emerald-700 flex items-center gap-1.5">
@@ -159,6 +127,7 @@
 
       <!-- 1. आईडी कार्ड अपलोड एरिया -->
       <div id="section-id-upload" class="space-y-3">
+        <!-- फ्रंट साइड -->
         <div class="bg-white p-4 rounded-xl border-2 border-dashed border-indigo-300 text-center">
           <p class="font-bold text-xs text-slate-700 mb-2">आईडी कार्ड - सामने का भाग (Front Side)</p>
           <input type="file" id="file-front" accept="image/*" class="hidden" onchange="onImageSelected(event, 'front')">
@@ -169,6 +138,7 @@
           <img id="thumb-front" class="hidden mt-2 max-h-24 mx-auto rounded border shadow-sm">
         </div>
 
+        <!-- बैक साइड -->
         <div class="bg-white p-4 rounded-xl border-2 border-dashed border-indigo-300 text-center">
           <p class="font-bold text-xs text-slate-700 mb-2">आईडी कार्ड - पीछे का भाग (Back Side)</p>
           <input type="file" id="file-back" accept="image/*" class="hidden" onchange="onImageSelected(event, 'back')">
@@ -200,7 +170,7 @@
           <span id="label-pdf" class="text-xs font-bold">यहाँ क्लिक करके PDF फ़ाइल चुनें</span>
         </button>
         <div id="pdf-preview-indicator" class="hidden text-xs font-bold text-emerald-600 bg-emerald-50 py-2 rounded border border-emerald-200">
-          <i class="fa-solid fa-circle-check"></i> PDF फ़ाइल लोड हो चुकी है
+          <i class="fa-solid fa-circle-check"></i> PDF फ़ाइल सफ़लतापूर्वक लोड हो चुकी है
         </div>
       </div>
 
@@ -233,7 +203,6 @@
           </div>
         </div>
 
-        <!-- कैनवास कंटेनर -->
         <div class="crop-wrapper-box">
           <canvas id="canvas-crop"></canvas>
         </div>
@@ -359,11 +328,11 @@
         <div id="payment-status-badge" class="hidden text-xs font-bold py-2 px-3 rounded-lg text-center"></div>
       </div>
 
-      <!-- A4 प्रिंट शीट लाइव प्रीव्यू (अब बिल्कुल ऊपर से अलाइन है) -->
+      <!-- A4 प्रिंट शीट लाइव प्रीव्यू (Top-Aligned) -->
       <div class="bg-white p-3.5 rounded-xl border border-slate-200">
         <div class="flex items-center justify-between mb-2">
           <p class="font-bold text-xs text-slate-700 flex items-center gap-1.5">
-            <i class="fa-solid fa-file-lines text-indigo-600"></i> A4 शीट वास्तविक प्रिंट प्रीव्यू (Top-Aligned Side-by-Side):
+            <i class="fa-solid fa-file-lines text-indigo-600"></i> A4 शीट प्रिंट प्रीव्यू (Top-Aligned Side-by-Side):
           </p>
           <span class="text-[10px] bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded font-bold border border-indigo-200">8.5 × 5.5 CM</span>
         </div>
@@ -373,14 +342,15 @@
         </div>
       </div>
 
-      <!-- फाइनल प्रिंट बटन -->
+      <!-- फाइनल प्रिंट बटन (लैपटॉप पर ऑर्डर भेजने के लिए) -->
       <button type="button" id="btn-execute-print" disabled onclick="executePrintSheet()" class="w-full bg-slate-400 cursor-not-allowed text-white font-bold py-3.5 rounded-xl shadow-lg transition flex items-center justify-center gap-2">
-        <i class="fa-solid fa-lock" id="icon-lock"></i> प्रिंट करें (Print Now)
+        <i class="fa-solid fa-lock" id="icon-lock"></i> प्रिंट अनुरोध भेजें (Send to Counter)
       </button>
     </section>
   </main>
 
   <script>
+    // आपका सही Firebase और Razorpay लिंक
     const FIREBASE_ORDER_URL = "https://neelshank-print-default-rtdb.firebaseio.com/orders.json";
     const RAZORPAY_ME_LINK = "https://razorpay.me/@neelshanktelecom";
     const SHOP_UPI_ID = "neelshanktelecom@icici";
@@ -428,6 +398,7 @@
       document.getElementById('section-pdf-upload').classList.toggle('hidden', mode !== 'pdf');
     }
 
+    // सुरक्षित इमेज लोडिंग और रीसाइज़िंग
     function onImageSelected(e, type) {
       const file = e.target.files && e.target.files[0];
       if (!file) return;
@@ -464,6 +435,7 @@
       reader.readAsDataURL(file);
     }
 
+    // PDF चयन
     function onPdfSelected(e) {
       const file = e.target.files && e.target.files[0];
       if (!file) return;
@@ -572,6 +544,7 @@
       ctx.clearRect(0, 0, w, h);
       ctx.drawImage(img, 0, 0, w, h);
 
+      // पॉलीगॉन
       ctx.beginPath();
       ctx.moveTo(corners.tl.x, corners.tl.y);
       ctx.lineTo(corners.tr.x, corners.tr.y);
@@ -585,6 +558,7 @@
       ctx.strokeStyle = '#4f46e5';
       ctx.stroke();
 
+      // 4 नीले बिंदु
       ['tl', 'tr', 'br', 'bl'].forEach(key => {
         const pt = corners[key];
         ctx.beginPath();
@@ -795,15 +769,14 @@
       renderA4SheetLayout();
     }
 
-    // A4 शीट पर बिल्कुल ऊपर (Top-Aligned) अगल-बगल 1 ही कॉपी रेंडर करना
+    // A4 शीट पर ऊपर (Top-Aligned) अगल-बगल 1 ही सेट रेंडर करना
     function renderA4SheetLayout() {
       const container = document.getElementById('printable-sheet');
       container.innerHTML = '';
       const filterCss = isBwSelected ? 'grayscale(100%)' : 'none';
 
-      // एक कॉपी के लिए कंटेनर
       const copyDiv = document.createElement('div');
-      copyDiv.className = 'print-copy-container flex flex-row items-center justify-center gap-3 w-full';
+      copyDiv.className = 'flex flex-row items-center justify-center gap-3 w-full';
 
       if(activeTab === 'id') {
         ['front', 'back'].forEach(s => {
@@ -892,10 +865,11 @@
       const printBtn = document.getElementById('btn-execute-print');
       printBtn.disabled = false;
       printBtn.className = "w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl shadow-lg transition flex items-center justify-center gap-2 cursor-pointer";
-      document.getElementById('icon-lock').className = "fa-solid fa-print";
+      document.getElementById('icon-lock').className = "fa-solid fa-paper-plane";
       document.getElementById('input-payment-ref').disabled = true;
     }
 
+    // प्रिंट और Firebase पर ऑर्डर भेजना (मोबाइल का प्रिंट डायलॉग खुले बिना)
     function executePrintSheet() {
       if(!isVerified) {
         alert("कृपया पहले भुगतान सत्यापित करें!");
@@ -903,7 +877,7 @@
       }
 
       const printBtn = document.getElementById('btn-execute-print');
-      printBtn.innerText = "दुकानदार को भेजा जा रहा है...";
+      printBtn.innerText = "दुकानदार (लैपटॉप) को भेजा जा रहा है...";
       printBtn.disabled = true;
 
       const orderData = {
@@ -913,7 +887,7 @@
         amount: totalCalculatedAmount,
         ref_id: document.getElementById('input-payment-ref').value.trim() || 'CASH_VERIFIED',
         status: "PENDING",
-        time: new Date().toLocaleTimeString()
+        time: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })
       };
 
       fetch(FIREBASE_ORDER_URL, {
@@ -921,17 +895,19 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(orderData)
       })
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error("Firebase Request Failed");
+        return res.json();
+      })
       .then(data => {
-        alert("ऑर्डर सफलतापूर्वक भेजा गया! NEELSHANK TELECOM काउंटर से अपना प्रिंट प्राप्त करें।");
-        printBtn.innerText = "अनुरोध भेजा गया ✔";
-        window.print();
+        alert("✔ आपका प्रिंट ऑर्डर NEELSHANK TELECOM काउंटर पर भेज दिया गया है!\n\nकृपया काउंटर से अपना प्रिंटआउट प्राप्त करें।");
+        printBtn.innerText = "अनुरोध भेजा गया ✔ (काउंटर से लें)";
       })
       .catch(err => {
         console.error("Firebase Error:", err);
-        window.print();
+        alert("ऑर्डर भेजने में समस्या हुई। कृपया इंटरनेट जांचें या काउंटर पर संपर्क करें।");
         printBtn.disabled = false;
-        printBtn.innerText = "प्रिंट करें (Print Now)";
+        printBtn.innerText = "पुनः प्रयास करें";
       });
     }
   </script>
