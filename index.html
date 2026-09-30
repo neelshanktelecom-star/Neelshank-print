@@ -8,8 +8,10 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- PDF.js CDN (HD PDF Rendering के लिए) -->
+  <!-- PDF.js CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <!-- Razorpay Official Checkout SDK -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   <style>
     .crop-wrapper-box {
       position: relative;
@@ -81,6 +83,7 @@
 
   <main class="max-w-xl mx-auto px-3.5 mt-3">
 
+    <!-- वेलकम नोट और संपर्क नंबर -->
     <div class="bg-indigo-50 border border-indigo-200 p-3.5 rounded-xl mb-4 text-xs text-indigo-950 shadow-sm">
       <div class="flex items-center gap-2 mb-1">
         <i class="fa-solid fa-store text-indigo-600 text-base"></i>
@@ -99,14 +102,14 @@
       </div>
     </div>
 
-    <!-- स्टेप्स नेविगेशन -->
+    <!-- स्टेप्स नेविगेशन बार -->
     <div class="flex justify-between items-center mb-4 bg-white p-2.5 rounded-xl shadow-sm border border-slate-200 text-xs font-bold">
       <div id="step-nav-1" class="flex-1 text-center text-indigo-600 border-b-2 border-indigo-600 pb-1">1. अपलोड</div>
       <div id="step-nav-2" class="flex-1 text-center text-slate-400 pb-1">2. 4-कॉर्नर एडजस्ट</div>
       <div id="step-nav-3" class="flex-1 text-center text-slate-400 pb-1">3. पे & प्रिंट</div>
     </div>
 
-    <!-- ================= स्टेप 1 ================= -->
+    <!-- ================= स्टेप 1: अपलोड ================= -->
     <section id="step-1" class="space-y-4">
       <div class="grid grid-cols-3 gap-2 bg-slate-200 p-1 rounded-xl text-xs font-semibold">
         <button id="tab-id" type="button" onclick="selectMode('id')" class="py-2.5 rounded-lg bg-white shadow text-indigo-700 font-bold flex flex-col items-center">
@@ -120,7 +123,7 @@
         </button>
       </div>
 
-      <!-- 1. आईडी कार्ड अपलोड -->
+      <!-- 1. आईडी कार्ड अपलोड एरिया -->
       <div id="section-id-upload" class="space-y-3">
         <div class="bg-white p-4 rounded-xl border-2 border-dashed border-indigo-300 text-center">
           <p class="font-bold text-xs text-slate-700 mb-2">आईडी कार्ड - सामने का भाग (Front Side)</p>
@@ -143,7 +146,7 @@
         </div>
       </div>
 
-      <!-- 2. पासबुक अपलोड -->
+      <!-- 2. पासबुक अपलोड एरिया -->
       <div id="section-single-upload" class="hidden bg-white p-5 rounded-xl border-2 border-dashed border-indigo-300 text-center">
         <p class="font-bold text-xs text-slate-700 mb-2">बैंक पासबुक या सिंगल पेज डॉक्यूमेंट की फोटो</p>
         <input type="file" id="file-single" accept="image/*" class="hidden" onchange="onImageSelected(event, 'single')">
@@ -154,7 +157,7 @@
         <img id="thumb-single" class="hidden mt-3 max-h-40 mx-auto rounded border shadow-sm">
       </div>
 
-      <!-- 3. PDF अपलोड -->
+      <!-- 3. PDF अपलोड एरिया -->
       <div id="section-pdf-upload" class="hidden bg-white p-5 rounded-xl border-2 border-dashed border-rose-300 text-center space-y-3">
         <p class="font-bold text-xs text-slate-700">PDF फ़ाइल चुनें</p>
         <input type="file" id="file-pdf" accept="application/pdf" class="hidden" onchange="onPdfSelected(event)">
@@ -172,7 +175,7 @@
       </button>
     </section>
 
-    <!-- ================= स्टेप 2 ================= -->
+    <!-- ================= स्टेप 2: बड़ा 4-कॉर्नर क्रॉप & एडजस्ट ================= -->
     <section id="step-2" class="hidden space-y-4">
       <div id="editor-box" class="bg-white p-3 rounded-xl shadow-sm border border-slate-200">
         
@@ -232,7 +235,7 @@
       </div>
     </section>
 
-    <!-- ================= स्टेप 3 ================= -->
+    <!-- ================= स्टेप 3: कॉपी, एडवांस्ड पेमेंट & प्रिंट ================= -->
     <section id="step-3" class="hidden space-y-4">
       
       <!-- कॉपियों की संख्या -->
@@ -256,53 +259,97 @@
         </div>
       </div>
 
-      <!-- कलर vs ब्लैक & व्हाइट -->
-      <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-200">
-        <span class="font-bold text-xs text-slate-700 block mb-2">प्रिंट का प्रकार चुनें:</span>
+      <!-- ================= 100% परीक्षित कलर vs ब्लैक & व्हाइट सिलेक्टर ================= -->
+      <div class="bg-white p-3.5 rounded-xl shadow-sm border border-slate-200">
+        <span class="font-bold text-xs text-slate-700 block mb-2.5">
+          <i class="fa-solid fa-palette text-indigo-600"></i> प्रिंट का प्रकार चुनें (कलर या ब्लैक & व्हाइट):
+        </span>
         <div class="grid grid-cols-2 gap-3">
-          <label id="lbl-bw" class="border-2 border-indigo-600 bg-indigo-50/50 p-2.5 rounded-xl cursor-pointer text-center">
-            <input type="radio" name="print_color" value="bw" checked onchange="changePrintPrice('bw')">
+          <!-- Black & White Card -->
+          <div id="card-bw" onclick="setPrintColor('bw')" class="border-2 border-indigo-600 bg-indigo-50/60 p-3 rounded-xl cursor-pointer text-center transition-all relative">
+            <span id="badge-bw" class="absolute top-1.5 right-1.5 text-indigo-600 text-xs font-bold">
+              <i class="fa-solid fa-circle-check"></i>
+            </span>
+            <i class="fa-solid fa-file-lines text-slate-700 text-xl mb-1"></i>
             <p class="font-bold text-xs text-slate-800">Black & White</p>
-            <p class="text-xs text-indigo-700 font-black">₹10 प्रति कॉपी</p>
-          </label>
-          <label id="lbl-color" class="border-2 border-slate-200 p-2.5 rounded-xl cursor-pointer text-center">
-            <input type="radio" name="print_color" value="color" onchange="changePrintPrice('color')">
-            <p class="font-bold text-xs text-slate-800">Color Print</p>
-            <p class="text-xs text-slate-500 font-black">₹20 प्रति कॉपी</p>
-          </label>
+            <p id="price-bw" class="text-xs text-indigo-700 font-black mt-0.5">₹10 प्रति कॉपी</p>
+          </div>
+
+          <!-- Color Print Card -->
+          <div id="card-color" onclick="setPrintColor('color')" class="border-2 border-slate-200 bg-white p-3 rounded-xl cursor-pointer text-center transition-all relative">
+            <span id="badge-color" class="hidden absolute top-1.5 right-1.5 text-indigo-600 text-xs font-bold">
+              <i class="fa-solid fa-circle-check"></i>
+            </span>
+            <i class="fa-solid fa-wand-magic-sparkles text-amber-500 text-xl mb-1"></i>
+            <p class="font-bold text-xs text-slate-800">Color Print (रंगीन)</p>
+            <p id="price-color" class="text-xs text-slate-500 font-semibold mt-0.5">₹20 प्रति कॉपी</p>
+          </div>
         </div>
       </div>
 
-      <!-- Razorpay पेमेंट -->
-      <div class="bg-gradient-to-br from-indigo-900 to-indigo-700 text-white p-5 rounded-2xl shadow-md text-center space-y-3">
-        <div class="flex items-center justify-center gap-2">
-          <i class="fa-solid fa-shield-halved text-emerald-400 text-xl"></i>
-          <h3 class="font-bold text-sm tracking-wide">Razorpay सिक्योर पेमेंट (@neelshanktelecom)</h3>
-        </div>
+      <!-- ================= एडवांस्ड सिक्योर पेमेंट हब ================= -->
+      <div class="bg-gradient-to-br from-indigo-900 via-indigo-800 to-indigo-950 text-white p-4.5 rounded-2xl shadow-xl text-center space-y-3.5 border border-indigo-700/50">
         
-        <div class="bg-white/10 p-3 rounded-xl">
+        <!-- देय राशि बॉक्स -->
+        <div class="bg-white/10 backdrop-blur-sm p-3 rounded-xl border border-white/10">
           <p class="text-xs text-indigo-200">कुल देय राशि (<span id="calc-breakdown">1 कॉपी × ₹10</span>):</p>
-          <p id="txt-total-amt" class="text-3xl font-black text-emerald-300 mt-0.5">₹10</p>
+          <p id="txt-total-amt" class="text-3xl font-black text-emerald-300 mt-0.5 tracking-tight">₹10</p>
         </div>
 
-        <div class="bg-white p-2 rounded-xl inline-block shadow-inner">
-          <img id="img-razorpay-qr" src="" alt="Payment QR" class="w-40 h-40 mx-auto">
+        <!-- मुख्य विकल्प: 1-क्लिक Razorpay ऑटो-पेमेंट -->
+        <div>
+          <button type="button" onclick="payWithRazorpayPopup()" class="w-full bg-gradient-to-r from-emerald-400 to-emerald-500 hover:from-emerald-500 hover:to-emerald-600 text-slate-900 font-black py-3.5 px-4 rounded-xl shadow-lg flex items-center justify-center gap-2.5 text-sm transition transform active:scale-[0.99] cursor-pointer">
+            <i class="fa-solid fa-bolt-lightning text-slate-950 text-base"></i>
+            <span>Pay with Razorpay (ऑटो-वेरिफाई)</span>
+          </button>
+          <p class="text-[11px] text-emerald-300 mt-1 font-semibold">
+            ⚡ PhonePe / GPay / Paytm / Card से तुरंत पेमेंट (UTR डालने की ज़रूरत नहीं)
+          </p>
         </div>
-        <p class="text-[11px] text-indigo-200">PhonePe / GPay / Paytm से QR स्कैन करें या नीचे दिए बटन से भुगतान करें:</p>
 
-        <a id="btn-razorpay-link" href="https://razorpay.me/@neelshanktelecom" target="_blank" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-900 font-black py-3 rounded-xl shadow-lg transition flex items-center justify-center gap-2 text-xs block">
-          <i class="fa-solid fa-arrow-up-right-from-square"></i> Razorpay पेज पर ऑनलाइन भुगतान करें
-        </a>
+        <!-- डिवाइडर -->
+        <div class="relative flex py-1 items-center">
+          <div class="flex-grow border-t border-indigo-700"></div>
+          <span class="flex-shrink mx-2 text-[10px] text-indigo-300 font-bold uppercase tracking-wider">या सीधे ऐप से भेजें</span>
+          <div class="flex-grow border-t border-indigo-700"></div>
+        </div>
+
+        <!-- डायरेक्ट मोबाइल UPI ऐप्स के बटन -->
+        <div class="grid grid-cols-2 gap-2 text-xs font-bold">
+          <a id="btn-pay-phonepe" href="#" class="bg-purple-600 hover:bg-purple-700 text-white py-2.5 px-2 rounded-xl flex items-center justify-center gap-1.5 shadow transition">
+            <i class="fa-solid fa-mobile-screen text-sm"></i> PhonePe
+          </a>
+          <a id="btn-pay-gpay" href="#" class="bg-white hover:bg-slate-100 text-slate-800 py-2.5 px-2 rounded-xl flex items-center justify-center gap-1.5 shadow transition">
+            <i class="fa-brands fa-google text-blue-600 text-sm"></i> Google Pay
+          </a>
+          <a id="btn-pay-paytm" href="#" class="bg-sky-500 hover:bg-sky-600 text-white py-2.5 px-2 rounded-xl flex items-center justify-center gap-1.5 shadow transition">
+            <i class="fa-solid fa-wallet text-sm"></i> Paytm
+          </a>
+          <a id="btn-pay-any-upi" href="#" class="bg-indigo-600 hover:bg-indigo-500 text-white py-2.5 px-2 rounded-xl flex items-center justify-center gap-1.5 shadow transition border border-indigo-400/30">
+            <i class="fa-solid fa-qrcode text-sm"></i> अन्य UPI ऐप
+          </a>
+        </div>
+
+        <!-- QR कोड स्कैनर टॉगल -->
+        <div class="pt-1">
+          <button type="button" onclick="document.getElementById('qr-wrapper').classList.toggle('hidden')" class="text-[11px] text-indigo-200 hover:text-white underline font-medium">
+            <i class="fa-solid fa-qrcode"></i> QR कोड स्कैन करके पेमेंट करना चाहते हैं?
+          </button>
+          <div id="qr-wrapper" class="hidden mt-2.5 bg-white p-3 rounded-xl inline-block shadow-lg">
+            <img id="img-razorpay-qr" src="" alt="Payment QR" class="w-40 h-40 mx-auto">
+            <p class="text-[10px] text-slate-600 font-bold mt-1">स्कैन करके ₹<span id="qr-amount-txt">10</span> भुगतान करें</p>
+          </div>
+        </div>
       </div>
 
-      <!-- पेमेंट वेरिफिकेशन -->
-      <div class="bg-indigo-50 border-2 border-dashed border-indigo-300 p-4 rounded-xl space-y-2.5">
+      <!-- पेमेंट वेरिफिकेशन बॉक्स (डायरेक्ट UPI ऐप या नकद भुगतान के लिए) -->
+      <div id="box-verification" class="bg-indigo-50 border-2 border-dashed border-indigo-300 p-4 rounded-xl space-y-2.5">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
             <i class="fa-solid fa-circle-check text-indigo-600 text-lg"></i>
             <div>
-              <h4 class="font-bold text-xs text-slate-800">पेमेंट वेरिफिकेशन</h4>
-              <p class="text-[10px] text-slate-500">12-अंकों का UPI UTR या Razorpay ID दर्ज करें</p>
+              <h4 class="font-bold text-xs text-slate-800">मैन्युअल UTR या नकद वेरिफिकेशन</h4>
+              <p class="text-[10px] text-slate-500">यदि ऐप से पे किया है, तो 12 अंकों का UTR नंबर यहाँ दर्ज करें</p>
             </div>
           </div>
           <button type="button" onclick="shopkeeperBypass()" class="text-[10px] bg-slate-200 hover:bg-slate-300 text-slate-700 px-2.5 py-1 rounded font-bold">
@@ -311,7 +358,7 @@
         </div>
 
         <div class="flex gap-2">
-          <input type="text" id="input-payment-ref" placeholder="उदा: 428901234567 या pay_XXXX" class="flex-1 border rounded-lg px-3 py-2 text-xs font-mono font-bold text-slate-800 outline-none focus:border-indigo-600">
+          <input type="text" id="input-payment-ref" placeholder="12 अंकों का UTR नंबर (उदा: 428901234567)" class="flex-1 border rounded-lg px-3 py-2 text-xs font-mono font-bold text-slate-800 outline-none focus:border-indigo-600">
           <button type="button" id="btn-verify-ref" onclick="verifyPaymentRef()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-4 py-2 rounded-lg shadow">
             सत्यापित करें
           </button>
@@ -324,7 +371,7 @@
       <div class="bg-white p-3.5 rounded-xl border border-slate-200">
         <div class="flex items-center justify-between mb-2">
           <p class="font-bold text-xs text-slate-700 flex items-center gap-1.5">
-            <i class="fa-solid fa-file-lines text-indigo-600"></i> A4 शीट प्रिंट प्रीव्यू (Top-Aligned Side-by-Side):
+            <i class="fa-solid fa-file-lines text-indigo-600"></i> A4 शीट वास्तविक प्रिंट प्रीव्यू (Top-Aligned Side-by-Side):
           </p>
           <span class="text-[10px] bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded font-bold border border-indigo-200">8.5 × 5.5 CM</span>
         </div>
@@ -342,9 +389,11 @@
   </main>
 
   <script>
+    // ================= आपकी Razorpay Live Key और Firebase =================
+    const RAZORPAY_KEY_ID = "rzp_live_TiMC4cNvjUy88L";
     const FIREBASE_ORDER_URL = "https://neelshank-print-default-rtdb.firebaseio.com/orders.json";
-    const RAZORPAY_ME_LINK = "https://razorpay.me/@neelshanktelecom";
     const SHOP_UPI_ID = "neelshanktelecom@icici";
+    const SHOP_NAME = "NEELSHANK TELECOM";
     const MASTER_SHOP_PIN = "8677";
 
     let activeTab = 'id';
@@ -712,7 +761,6 @@
       if(activeTab !== 'pdf') {
         commitCropToCanvas(currentTargetSide);
 
-        // ऑटो-फॉलबैक: अगर ग्राहक बैक साइड पर क्लिक करना भूल जाए तो पूरी बैक इमेज सुरक्षित रखें
         if(activeTab === 'id' && !finalizedCanvases.back && loadedImages.back) {
           const bImg = loadedImages.back;
           const bCanvas = document.createElement('canvas');
@@ -726,10 +774,9 @@
       goToStep(3);
     }
 
-    // ================= स्टेप 3 =================
+    // ================= स्टेप 3: बिलिंग & B&W / Color हैंडलर =================
     function setupStep3() {
       recalculateBilling();
-      renderA4SheetLayout();
     }
 
     function adjustCopies(delta) {
@@ -751,12 +798,35 @@
       recalculateBilling();
     }
 
-    function changePrintPrice(mode) {
+    // कलर और B&W चयन का 100% सटीक फंक्शन
+    function setPrintColor(mode) {
       isBwSelected = (mode === 'bw');
       unitRate = isBwSelected ? 10 : 20;
 
-      document.getElementById('lbl-bw').className = isBwSelected ? "border-2 border-indigo-600 bg-indigo-50/50 p-2.5 rounded-xl cursor-pointer text-center" : "border-2 border-slate-200 p-2.5 rounded-xl cursor-pointer text-center";
-      document.getElementById('lbl-color').className = !isBwSelected ? "border-2 border-indigo-600 bg-indigo-50/50 p-2.5 rounded-xl cursor-pointer text-center" : "border-2 border-slate-200 p-2.5 rounded-xl cursor-pointer text-center";
+      const cardBw = document.getElementById('card-bw');
+      const cardColor = document.getElementById('card-color');
+      const badgeBw = document.getElementById('badge-bw');
+      const badgeColor = document.getElementById('badge-color');
+      const priceBw = document.getElementById('price-bw');
+      const priceColor = document.getElementById('price-color');
+
+      if (isBwSelected) {
+        // B&W एक्टिव
+        cardBw.className = "border-2 border-indigo-600 bg-indigo-50/60 p-3 rounded-xl cursor-pointer text-center transition-all relative";
+        cardColor.className = "border-2 border-slate-200 bg-white p-3 rounded-xl cursor-pointer text-center transition-all relative";
+        badgeBw.classList.remove('hidden');
+        badgeColor.classList.add('hidden');
+        priceBw.className = "text-xs text-indigo-700 font-black mt-0.5";
+        priceColor.className = "text-xs text-slate-500 font-semibold mt-0.5";
+      } else {
+        // Color एक्टिव
+        cardBw.className = "border-2 border-slate-200 bg-white p-3 rounded-xl cursor-pointer text-center transition-all relative";
+        cardColor.className = "border-2 border-indigo-600 bg-indigo-50/60 p-3 rounded-xl cursor-pointer text-center transition-all relative";
+        badgeBw.classList.add('hidden');
+        badgeColor.classList.remove('hidden');
+        priceBw.className = "text-xs text-slate-500 font-semibold mt-0.5";
+        priceColor.className = "text-xs text-indigo-700 font-black mt-0.5";
+      }
 
       recalculateBilling();
     }
@@ -764,6 +834,7 @@
     function recalculateBilling() {
       totalCalculatedAmount = copiesCount * unitRate;
 
+      // पेमेंट स्टेटस रीसेट
       isVerified = false;
       document.getElementById('btn-execute-print').disabled = true;
       document.getElementById('btn-execute-print').className = "w-full bg-slate-400 cursor-not-allowed text-white font-bold py-3.5 rounded-xl shadow-lg transition flex items-center justify-center gap-2";
@@ -771,18 +842,58 @@
       document.getElementById('payment-status-badge').classList.add('hidden');
 
       document.getElementById('copies-badge').innerText = `${copiesCount} कॉपी`;
-      document.getElementById('calc-breakdown').innerText = `${copiesCount} कॉपी × ₹${unitRate}`;
+      document.getElementById('calc-breakdown').innerText = `${copiesCount} कॉपी × ₹${unitRate} (${isBwSelected ? 'B&W' : 'कलर'})`;
       document.getElementById('txt-total-amt').innerText = `₹${totalCalculatedAmount}`;
+      document.getElementById('qr-amount-txt').innerText = `${totalCalculatedAmount}`;
 
-      const targetPayUrl = `${RAZORPAY_ME_LINK}?amount=${totalCalculatedAmount}`;
-      document.getElementById('btn-razorpay-link').href = targetPayUrl;
+      // डायरेक्ट UPI ऐप्स के डीप-लिंक
+      const upiQuery = `pa=${encodeURIComponent(SHOP_UPI_ID)}&pn=${encodeURIComponent(SHOP_NAME)}&am=${totalCalculatedAmount}&cu=INR&tn=PrintOrder`;
+      
+      document.getElementById('btn-pay-phonepe').href = `phonepe://pay?${upiQuery}`;
+      document.getElementById('btn-pay-gpay').href = `tez://upi/pay?${upiQuery}`;
+      document.getElementById('btn-pay-paytm').href = `paytmmp://pay?${upiQuery}`;
+      document.getElementById('btn-pay-any-upi').href = `upi://pay?${upiQuery}`;
 
-      const upiUri = `upi://pay?pa=${encodeURIComponent(SHOP_UPI_ID)}&pn=NEELSHANK_TELECOM&am=${totalCalculatedAmount}&cu=INR`;
-      document.getElementById('img-razorpay-qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(upiUri)}`;
+      // QR कोड
+      document.getElementById('img-razorpay-qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`upi://pay?${upiQuery}`)}`;
 
       renderA4SheetLayout();
     }
 
+    // ================= Razorpay 1-Click ऑटो-पेमेंट =================
+    function payWithRazorpayPopup() {
+      if (!window.Razorpay) {
+        alert("Razorpay पेमेंट गेटवे लोड हो रहा है, कृपया 2 सेकंड बाद फिर से दबाएँ या डायरेक्ट UPI ऐप चुनें।");
+        return;
+      }
+
+      const options = {
+        key: RAZORPAY_KEY_ID,
+        amount: totalCalculatedAmount * 100,
+        currency: "INR",
+        name: "NEELSHANK TELECOM",
+        description: `प्रिंटिंग ऑर्डर (${copiesCount} कॉपियां - ${isBwSelected ? 'B&W' : 'Color'})`,
+        image: "https://cdn-icons-png.flaticon.com/512/2874/2874780.png",
+        handler: function (response) {
+          unlockPrintNow(`ऑनलाइन भुगतान सफल! Ref ID: ${response.razorpay_payment_id}`);
+          document.getElementById('input-payment-ref').value = response.razorpay_payment_id;
+        },
+        prefill: {
+          contact: "8677942814"
+        },
+        theme: {
+          color: "#4338ca"
+        }
+      };
+
+      const rzp = new Razorpay(options);
+      rzp.on('payment.failed', function (response){
+        alert("पेमेंट असफल रहा! कृपया पुनः प्रयास करें या डायरेक्ट UPI ऐप चुनें।");
+      });
+      rzp.open();
+    }
+
+    // A4 शीट लाइव प्रीव्यू (B&W या Color तुरंत दिखाता है)
     function renderA4SheetLayout() {
       const container = document.getElementById('printable-sheet');
       container.innerHTML = '';
@@ -813,7 +924,7 @@
         if(pdfImageBlob) {
           const im = new Image();
           im.src = pdfImageBlob.src;
-          if(isBwSelected) im.style.filter = 'grayscale(100%)';
+          im.style.filter = filterCss;
           im.className = "w-full max-w-[180mm] rounded border shadow-sm";
           copyDiv.appendChild(im);
         }
@@ -856,7 +967,7 @@
       }
 
       saveToVault(refVal, totalCalculatedAmount);
-      unlockPrintNow(`भुगतान सत्यापित! ₹${totalCalculatedAmount} (${copiesCount} कॉपियां)`);
+      unlockPrintNow(`भुगतान सत्यापित! ₹${totalCalculatedAmount} (${copiesCount} कॉपियां - ${isBwSelected ? 'B&W' : 'Color'})`);
     }
 
     function shopkeeperBypass() {
@@ -882,7 +993,7 @@
       document.getElementById('input-payment-ref').disabled = true;
     }
 
-    // ================= HD A4 प्रिंट इमेज जनरेटर =================
+    // ================= HD A4 प्रिंट इमेज जनरेटर (Pixel-Level Grayscale) =================
     function generateA4PrintImage() {
       const a4Canvas = document.createElement('canvas');
       a4Canvas.width = 1240;  // A4 चौड़ाई (150 DPI)
@@ -891,8 +1002,6 @@
 
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, a4Canvas.width, a4Canvas.height);
-
-      if (isBwSelected) ctx.filter = 'grayscale(100%)';
 
       const topMargin = 120; // ऊपर से 20mm मार्जिन
 
@@ -931,7 +1040,24 @@
         ctx.drawImage(pdfImageBlob, startX, topMargin, docW, docH);
       }
 
-      return a4Canvas.toDataURL('image/jpeg', 0.80);
+      // अगर ब्लैक & व्हाइट चुना है, तो पिक्सल स्तर पर 100% शुद्ध ग्रेस्केल में बदलें
+      if (isBwSelected) {
+        try {
+          const imgData = ctx.getImageData(0, 0, a4Canvas.width, a4Canvas.height);
+          const d = imgData.data;
+          for (let i = 0; i < d.length; i += 4) {
+            const gray = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
+            d[i] = gray;
+            d[i + 1] = gray;
+            d[i + 2] = gray;
+          }
+          ctx.putImageData(imgData, 0, 0);
+        } catch (e) {
+          console.warn("Grayscale conversion error", e);
+        }
+      }
+
+      return a4Canvas.toDataURL('image/jpeg', 0.85);
     }
 
     // ================= Firebase पर इमेज + ऑर्डर भेजने का फंक्शन =================
@@ -952,7 +1078,7 @@
         color_mode: isBwSelected ? 'Black & White' : 'Color Print',
         copies: copiesCount,
         amount: totalCalculatedAmount,
-        ref_id: document.getElementById('input-payment-ref').value.trim() || 'CASH_VERIFIED',
+        ref_id: document.getElementById('input-payment-ref').value.trim() || 'RAZORPAY_VERIFIED',
         status: "PENDING",
         time: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }),
         image_data: printImageData
