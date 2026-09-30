@@ -8,8 +8,9 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- PDF.js CDN (HD PDF Rendering के लिए) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <style>
-    /* बड़ा और टच-फ्रेंडली क्रॉपिंग एरिया */
     .crop-wrapper-box {
       position: relative;
       touch-action: none !important;
@@ -34,8 +35,6 @@
       box-shadow: 0 4px 20px rgba(0,0,0,0.7);
       display: block;
     }
-
-    /* A4 शीट वास्तविक प्रीव्यू (Top-Aligned) */
     .a4-preview-box {
       width: 100%;
       max-width: 380px;
@@ -52,14 +51,11 @@
       justify-content: flex-start;
       gap: 12px;
     }
-
-    /* 8.5 cm x 5.5 cm आईडी कार्ड मानक साइज */
     .id-card-print-target {
       width: 85mm !important;
       height: 55mm !important;
       object-fit: fill !important;
     }
-
     @page {
       size: A4 portrait;
       margin: 0;
@@ -85,7 +81,6 @@
 
   <main class="max-w-xl mx-auto px-3.5 mt-3">
 
-    <!-- वेलकम नोट और संपर्क नंबर -->
     <div class="bg-indigo-50 border border-indigo-200 p-3.5 rounded-xl mb-4 text-xs text-indigo-950 shadow-sm">
       <div class="flex items-center gap-2 mb-1">
         <i class="fa-solid fa-store text-indigo-600 text-base"></i>
@@ -104,14 +99,14 @@
       </div>
     </div>
 
-    <!-- स्टेप्स नेविगेशन बार -->
+    <!-- स्टेप्स नेविगेशन -->
     <div class="flex justify-between items-center mb-4 bg-white p-2.5 rounded-xl shadow-sm border border-slate-200 text-xs font-bold">
       <div id="step-nav-1" class="flex-1 text-center text-indigo-600 border-b-2 border-indigo-600 pb-1">1. अपलोड</div>
       <div id="step-nav-2" class="flex-1 text-center text-slate-400 pb-1">2. 4-कॉर्नर एडजस्ट</div>
       <div id="step-nav-3" class="flex-1 text-center text-slate-400 pb-1">3. पे & प्रिंट</div>
     </div>
 
-    <!-- ================= स्टेप 1: अपलोड ================= -->
+    <!-- ================= स्टेप 1 ================= -->
     <section id="step-1" class="space-y-4">
       <div class="grid grid-cols-3 gap-2 bg-slate-200 p-1 rounded-xl text-xs font-semibold">
         <button id="tab-id" type="button" onclick="selectMode('id')" class="py-2.5 rounded-lg bg-white shadow text-indigo-700 font-bold flex flex-col items-center">
@@ -125,9 +120,8 @@
         </button>
       </div>
 
-      <!-- 1. आईडी कार्ड अपलोड एरिया -->
+      <!-- 1. आईडी कार्ड अपलोड -->
       <div id="section-id-upload" class="space-y-3">
-        <!-- फ्रंट साइड -->
         <div class="bg-white p-4 rounded-xl border-2 border-dashed border-indigo-300 text-center">
           <p class="font-bold text-xs text-slate-700 mb-2">आईडी कार्ड - सामने का भाग (Front Side)</p>
           <input type="file" id="file-front" accept="image/*" class="hidden" onchange="onImageSelected(event, 'front')">
@@ -138,7 +132,6 @@
           <img id="thumb-front" class="hidden mt-2 max-h-24 mx-auto rounded border shadow-sm">
         </div>
 
-        <!-- बैक साइड -->
         <div class="bg-white p-4 rounded-xl border-2 border-dashed border-indigo-300 text-center">
           <p class="font-bold text-xs text-slate-700 mb-2">आईडी कार्ड - पीछे का भाग (Back Side)</p>
           <input type="file" id="file-back" accept="image/*" class="hidden" onchange="onImageSelected(event, 'back')">
@@ -150,7 +143,7 @@
         </div>
       </div>
 
-      <!-- 2. पासबुक / सिंगल फोटो अपलोड एरिया -->
+      <!-- 2. पासबुक अपलोड -->
       <div id="section-single-upload" class="hidden bg-white p-5 rounded-xl border-2 border-dashed border-indigo-300 text-center">
         <p class="font-bold text-xs text-slate-700 mb-2">बैंक पासबुक या सिंगल पेज डॉक्यूमेंट की फोटो</p>
         <input type="file" id="file-single" accept="image/*" class="hidden" onchange="onImageSelected(event, 'single')">
@@ -161,7 +154,7 @@
         <img id="thumb-single" class="hidden mt-3 max-h-40 mx-auto rounded border shadow-sm">
       </div>
 
-      <!-- 3. PDF अपलोड एरिया -->
+      <!-- 3. PDF अपलोड -->
       <div id="section-pdf-upload" class="hidden bg-white p-5 rounded-xl border-2 border-dashed border-rose-300 text-center space-y-3">
         <p class="font-bold text-xs text-slate-700">PDF फ़ाइल चुनें</p>
         <input type="file" id="file-pdf" accept="application/pdf" class="hidden" onchange="onPdfSelected(event)">
@@ -170,7 +163,7 @@
           <span id="label-pdf" class="text-xs font-bold">यहाँ क्लिक करके PDF फ़ाइल चुनें</span>
         </button>
         <div id="pdf-preview-indicator" class="hidden text-xs font-bold text-emerald-600 bg-emerald-50 py-2 rounded border border-emerald-200">
-          <i class="fa-solid fa-circle-check"></i> PDF फ़ाइल सफ़लतापूर्वक लोड हो चुकी है
+          <i class="fa-solid fa-circle-check"></i> PDF फ़ाइल लोड हो चुकी है
         </div>
       </div>
 
@@ -179,7 +172,7 @@
       </button>
     </section>
 
-    <!-- ================= स्टेप 2: बड़ा 4-कॉर्नर क्रॉप & एडजस्ट ================= -->
+    <!-- ================= स्टेप 2 ================= -->
     <section id="step-2" class="hidden space-y-4">
       <div id="editor-box" class="bg-white p-3 rounded-xl shadow-sm border border-slate-200">
         
@@ -211,7 +204,6 @@
           👉 नीले बिंदुओं को उंगली से दस्तावेज़ के कोनों पर सेट करें।
         </p>
 
-        <!-- ब्राइटनेस / कंट्रास्ट -->
         <div class="mt-3 pt-3 border-t border-slate-100 space-y-3">
           <div class="flex justify-between items-center">
             <span class="text-xs font-bold text-slate-700"><i class="fa-solid fa-wand-magic-sparkles text-indigo-600"></i> ऑटो-क्लीन:</span>
@@ -240,7 +232,7 @@
       </div>
     </section>
 
-    <!-- ================= स्टेप 3: कॉपी, पेमेंट & प्रिंट ================= -->
+    <!-- ================= स्टेप 3 ================= -->
     <section id="step-3" class="hidden space-y-4">
       
       <!-- कॉपियों की संख्या -->
@@ -281,7 +273,7 @@
         </div>
       </div>
 
-      <!-- Razorpay पेमेंट बॉक्स -->
+      <!-- Razorpay पेमेंट -->
       <div class="bg-gradient-to-br from-indigo-900 to-indigo-700 text-white p-5 rounded-2xl shadow-md text-center space-y-3">
         <div class="flex items-center justify-center gap-2">
           <i class="fa-solid fa-shield-halved text-emerald-400 text-xl"></i>
@@ -303,7 +295,7 @@
         </a>
       </div>
 
-      <!-- पेमेंट वेरिफिकेशन बॉक्स -->
+      <!-- पेमेंट वेरिफिकेशन -->
       <div class="bg-indigo-50 border-2 border-dashed border-indigo-300 p-4 rounded-xl space-y-2.5">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
@@ -328,7 +320,7 @@
         <div id="payment-status-badge" class="hidden text-xs font-bold py-2 px-3 rounded-lg text-center"></div>
       </div>
 
-      <!-- A4 प्रिंट शीट लाइव प्रीव्यू (Top-Aligned) -->
+      <!-- A4 प्रिंट शीट लाइव प्रीव्यू -->
       <div class="bg-white p-3.5 rounded-xl border border-slate-200">
         <div class="flex items-center justify-between mb-2">
           <p class="font-bold text-xs text-slate-700 flex items-center gap-1.5">
@@ -342,7 +334,7 @@
         </div>
       </div>
 
-      <!-- फाइनल प्रिंट बटन (लैपटॉप पर ऑर्डर भेजने के लिए) -->
+      <!-- फाइनल प्रिंट बटन -->
       <button type="button" id="btn-execute-print" disabled onclick="executePrintSheet()" class="w-full bg-slate-400 cursor-not-allowed text-white font-bold py-3.5 rounded-xl shadow-lg transition flex items-center justify-center gap-2">
         <i class="fa-solid fa-lock" id="icon-lock"></i> प्रिंट अनुरोध भेजें (Send to Counter)
       </button>
@@ -350,7 +342,6 @@
   </main>
 
   <script>
-    // आपका सही Firebase और Razorpay लिंक
     const FIREBASE_ORDER_URL = "https://neelshank-print-default-rtdb.firebaseio.com/orders.json";
     const RAZORPAY_ME_LINK = "https://razorpay.me/@neelshanktelecom";
     const SHOP_UPI_ID = "neelshanktelecom@icici";
@@ -398,7 +389,6 @@
       document.getElementById('section-pdf-upload').classList.toggle('hidden', mode !== 'pdf');
     }
 
-    // सुरक्षित इमेज लोडिंग और रीसाइज़िंग
     function onImageSelected(e, type) {
       const file = e.target.files && e.target.files[0];
       if (!file) return;
@@ -435,22 +425,40 @@
       reader.readAsDataURL(file);
     }
 
-    // PDF चयन
+    // HD PDF रेंडरिंग
     function onPdfSelected(e) {
       const file = e.target.files && e.target.files[0];
       if (!file) return;
 
       document.getElementById('label-pdf').innerText = file.name;
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        const pdfImg = new Image();
-        pdfImg.onload = () => {
-          pdfImageBlob = pdfImg;
-          document.getElementById('pdf-preview-indicator').classList.remove('hidden');
-        };
-        pdfImg.src = evt.target.result;
+      const fileReader = new FileReader();
+      fileReader.onload = function() {
+        const typedarray = new Uint8Array(this.result);
+        if (window.pdfjsLib) {
+          pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+          pdfjsLib.getDocument(typedarray).promise.then(function(pdf) {
+            pdf.getPage(1).then(function(page) {
+              const viewport = page.getViewport({ scale: 1.5 });
+              const tempCanvas = document.createElement('canvas');
+              tempCanvas.width = viewport.width;
+              tempCanvas.height = viewport.height;
+              const ctx = tempCanvas.getContext('2d');
+              page.render({ canvasContext: ctx, viewport: viewport }).promise.then(function() {
+                const img = new Image();
+                img.onload = function() {
+                  pdfImageBlob = img;
+                  document.getElementById('pdf-preview-indicator').classList.remove('hidden');
+                };
+                img.src = tempCanvas.toDataURL('image/jpeg', 0.85);
+              });
+            });
+          }).catch(function(err) {
+            console.error(err);
+            alert("PDF लोड करने में समस्या हुई। कृपया वैध PDF चुनें।");
+          });
+        }
       };
-      reader.readAsDataURL(file);
+      fileReader.readAsArrayBuffer(file);
     }
 
     function validateAndGoToStep(step) {
@@ -544,7 +552,6 @@
       ctx.clearRect(0, 0, w, h);
       ctx.drawImage(img, 0, 0, w, h);
 
-      // पॉलीगॉन
       ctx.beginPath();
       ctx.moveTo(corners.tl.x, corners.tl.y);
       ctx.lineTo(corners.tr.x, corners.tr.y);
@@ -558,7 +565,6 @@
       ctx.strokeStyle = '#4f46e5';
       ctx.stroke();
 
-      // 4 नीले बिंदु
       ['tl', 'tr', 'br', 'bl'].forEach(key => {
         const pt = corners[key];
         ctx.beginPath();
@@ -705,14 +711,22 @@
     function saveCropAndProceed() {
       if(activeTab !== 'pdf') {
         commitCropToCanvas(currentTargetSide);
-        if(activeTab === 'id' && !finalizedCanvases.back) {
-          commitCropToCanvas('back');
+
+        // ऑटो-फॉलबैक: अगर ग्राहक बैक साइड पर क्लिक करना भूल जाए तो पूरी बैक इमेज सुरक्षित रखें
+        if(activeTab === 'id' && !finalizedCanvases.back && loadedImages.back) {
+          const bImg = loadedImages.back;
+          const bCanvas = document.createElement('canvas');
+          bCanvas.width = bImg.width;
+          bCanvas.height = bImg.height;
+          const bCtx = bCanvas.getContext('2d');
+          bCtx.drawImage(bImg, 0, 0);
+          finalizedCanvases.back = bCanvas;
         }
       }
       goToStep(3);
     }
 
-    // ================= स्टेप 3: बिलिंग & A4 प्रिंट लेआउट =================
+    // ================= स्टेप 3 =================
     function setupStep3() {
       recalculateBilling();
       renderA4SheetLayout();
@@ -769,7 +783,6 @@
       renderA4SheetLayout();
     }
 
-    // A4 शीट पर ऊपर (Top-Aligned) अगल-बगल 1 ही सेट रेंडर करना
     function renderA4SheetLayout() {
       const container = document.getElementById('printable-sheet');
       container.innerHTML = '';
@@ -869,16 +882,70 @@
       document.getElementById('input-payment-ref').disabled = true;
     }
 
-    // प्रिंट और Firebase पर ऑर्डर भेजना (मोबाइल का प्रिंट डायलॉग खुले बिना)
+    // ================= HD A4 प्रिंट इमेज जनरेटर =================
+    function generateA4PrintImage() {
+      const a4Canvas = document.createElement('canvas');
+      a4Canvas.width = 1240;  // A4 चौड़ाई (150 DPI)
+      a4Canvas.height = 1754; // A4 लंबाई (150 DPI)
+      const ctx = a4Canvas.getContext('2d');
+
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, a4Canvas.width, a4Canvas.height);
+
+      if (isBwSelected) ctx.filter = 'grayscale(100%)';
+
+      const topMargin = 120; // ऊपर से 20mm मार्जिन
+
+      if (activeTab === 'id') {
+        const cardW = 502; // 8.5 cm
+        const cardH = 325; // 5.5 cm
+        const gap = 50;
+        const totalW = cardW * 2 + gap;
+        const startX = (a4Canvas.width - totalW) / 2;
+
+        if (finalizedCanvases.front) {
+          ctx.drawImage(finalizedCanvases.front, startX, topMargin, cardW, cardH);
+          ctx.strokeStyle = '#cbd5e1';
+          ctx.lineWidth = 1;
+          ctx.strokeRect(startX, topMargin, cardW, cardH);
+        }
+        if (finalizedCanvases.back) {
+          ctx.drawImage(finalizedCanvases.back, startX + cardW + gap, topMargin, cardW, cardH);
+          ctx.strokeStyle = '#cbd5e1';
+          ctx.lineWidth = 1;
+          ctx.strokeRect(startX + cardW + gap, topMargin, cardW, cardH);
+        }
+      } else if (activeTab === 'single' && finalizedCanvases.single) {
+        const maxW = 1000;
+        const scale = maxW / finalizedCanvases.single.width;
+        const docW = maxW;
+        const docH = finalizedCanvases.single.height * scale;
+        const startX = (a4Canvas.width - docW) / 2;
+        ctx.drawImage(finalizedCanvases.single, startX, topMargin, docW, docH);
+      } else if (activeTab === 'pdf' && pdfImageBlob) {
+        const maxW = 1050;
+        const scale = maxW / pdfImageBlob.width;
+        const docW = maxW;
+        const docH = pdfImageBlob.height * scale;
+        const startX = (a4Canvas.width - docW) / 2;
+        ctx.drawImage(pdfImageBlob, startX, topMargin, docW, docH);
+      }
+
+      return a4Canvas.toDataURL('image/jpeg', 0.80);
+    }
+
+    // ================= Firebase पर इमेज + ऑर्डर भेजने का फंक्शन =================
     function executePrintSheet() {
-      if(!isVerified) {
+      if (!isVerified) {
         alert("कृपया पहले भुगतान सत्यापित करें!");
         return;
       }
 
       const printBtn = document.getElementById('btn-execute-print');
-      printBtn.innerText = "दुकानदार (लैपटॉप) को भेजा जा रहा है...";
+      printBtn.innerText = "डॉक्यूमेंट भेजा जा रहा है...";
       printBtn.disabled = true;
+
+      const printImageData = generateA4PrintImage();
 
       const orderData = {
         doc_type: activeTab === 'id' ? 'ID Card (8.5x5.5 CM)' : (activeTab === 'single' ? 'Passbook/Document' : 'PDF Document'),
@@ -887,7 +954,8 @@
         amount: totalCalculatedAmount,
         ref_id: document.getElementById('input-payment-ref').value.trim() || 'CASH_VERIFIED',
         status: "PENDING",
-        time: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })
+        time: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }),
+        image_data: printImageData
       };
 
       fetch(FIREBASE_ORDER_URL, {
@@ -901,11 +969,11 @@
       })
       .then(data => {
         alert("✔ आपका प्रिंट ऑर्डर NEELSHANK TELECOM काउंटर पर भेज दिया गया है!\n\nकृपया काउंटर से अपना प्रिंटआउट प्राप्त करें।");
-        printBtn.innerText = "अनुरोध भेजा गया ✔ (काउंटर से लें)";
+        printBtn.innerText = "अनुरोध भेजा जा चुका है ✔";
       })
       .catch(err => {
         console.error("Firebase Error:", err);
-        alert("ऑर्डर भेजने में समस्या हुई। कृपया इंटरनेट जांचें या काउंटर पर संपर्क करें।");
+        alert("ऑर्डर भेजने में समस्या हुई। कृपया इंटरनेट जांचें।");
         printBtn.disabled = false;
         printBtn.innerText = "पुनः प्रयास करें";
       });
