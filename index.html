@@ -93,7 +93,7 @@
         <h2 class="font-bold text-sm">NEELSHANK TELECOM में आपका स्वागत है!</h2>
       </div>
       <p class="text-slate-700 leading-relaxed">
-        पहचान पत्र, पासबुक या PDF अपलोड करें। पहचान पत्र 
+        पहचान पत्र, पासबुक या PDF अपलोड करें। 
       </p>
       <div class="mt-2.5 pt-2 border-t border-indigo-200 flex items-center justify-between font-bold">
         <span class="text-emerald-700 flex items-center gap-1.5">
@@ -183,8 +183,8 @@
       <div id="editor-box" class="bg-white p-3 rounded-xl shadow-sm border border-slate-200">
         
         <div id="crop-toggle-group" class="flex gap-2 mb-3">
-          <button type="button" id="btn-side-front" onclick="switchSide('front')" class="flex-1 py-2 bg-indigo-600 text-white font-bold text-xs rounded-lg">फ्रंट साइड</button>
-          <button type="button" id="btn-side-back" onclick="switchSide('back')" class="flex-1 py-2 bg-slate-200 text-slate-700 font-bold text-xs rounded-lg">बैक साइड</button>
+          <button type="button" id="btn-side-front" onclick="switchSide('front')" class="flex-1 py-2 bg-indigo-600 text-white font-bold text-xs rounded-lg shadow-sm">फ्रंट साइड (Front)</button>
+          <button type="button" id="btn-side-back" onclick="switchSide('back')" class="flex-1 py-2 bg-slate-200 text-slate-700 font-bold text-xs rounded-lg">बैक साइड (Back)</button>
         </div>
 
         <div class="flex items-center justify-between gap-1 mb-2.5 bg-slate-50 p-2 rounded-lg border text-xs">
@@ -207,7 +207,7 @@
         </div>
 
         <p class="text-[11px] text-center text-indigo-700 font-bold mt-2">
-          👉 नीले बिंदुओं को उंगली से दस्तावेज़ के कोनों पर सेट करें।
+          👉 ऑटो-क्रॉप सेट हो चुका है। आप चाहें तो नीले बिंदुओं को उंगली से अपनी पसंद से भी खिसका सकते हैं।
         </p>
 
         <div class="mt-3 pt-3 border-t border-slate-100 space-y-3">
@@ -220,11 +220,11 @@
           <div class="grid grid-cols-2 gap-3 text-xs">
             <div>
               <span class="font-semibold text-slate-500">ब्राइटनेस (सफेदी)</span>
-              <input type="range" id="filter-bright" min="70" max="180" value="110" class="w-full h-1 bg-slate-200 rounded" oninput="updateLiveFilter()">
+              <input type="range" id="filter-bright" min="80" max="180" value="125" class="w-full h-1 bg-slate-200 rounded" oninput="updateLiveFilter()">
             </div>
             <div>
               <span class="font-semibold text-slate-500">कंट्रास्ट (अक्षर गहरे)</span>
-              <input type="range" id="filter-contrast" min="70" max="180" value="120" class="w-full h-1 bg-slate-200 rounded" oninput="updateLiveFilter()">
+              <input type="range" id="filter-contrast" min="80" max="180" value="135" class="w-full h-1 bg-slate-200 rounded" oninput="updateLiveFilter()">
             </div>
           </div>
         </div>
@@ -420,16 +420,16 @@
     const finalizedCanvases = { front: null, back: null, single: null };
     let pdfImageBlob = null;
 
-    let corners = {
-      tl: { x: 0, y: 0 },
-      tr: { x: 300, y: 0 },
-      br: { x: 300, y: 200 },
-      bl: { x: 0, y: 200 }
+    // दोनों साइड्स (Front और Back) के अलग-अलग कॉर्नर स्टोर्स
+    const cornersStore = {
+      front: null,
+      back: null,
+      single: null
     };
-    let activeCornerKey = null;
 
-    const HANDLE_RADIUS = 11;
-    const TOUCH_DETECT_RADIUS = 28;
+    let activeCornerKey = null;
+    const HANDLE_RADIUS = 13;
+    const TOUCH_DETECT_RADIUS = 32;
 
     function triggerFileInput(id) {
       const el = document.getElementById(id);
@@ -474,6 +474,7 @@
           const optimizedImg = new Image();
           optimizedImg.onload = function() {
             loadedImages[type] = optimizedImg;
+            cornersStore[type] = null; // नई इमेज के लिए ऑटो-क्रॉप रीसेट
             const thumb = document.getElementById(`thumb-${type}`);
             thumb.src = optimizedImg.src;
             thumb.classList.remove('hidden');
@@ -562,18 +563,22 @@
       if(activeTab === 'id') {
         currentTargetSide = 'front';
         document.getElementById('crop-toggle-group').classList.remove('hidden');
+        document.getElementById('btn-side-front').className = "flex-1 py-2 bg-indigo-600 text-white font-bold text-xs rounded-lg shadow-sm";
+        document.getElementById('btn-side-back').className = "flex-1 py-2 bg-slate-200 text-slate-700 font-bold text-xs rounded-lg";
       } else {
         currentTargetSide = 'single';
         document.getElementById('crop-toggle-group').classList.add('hidden');
       }
       initCropCanvas(currentTargetSide);
+      updateLiveFilter();
     }
 
     function switchSide(side) {
       commitCropToCanvas(currentTargetSide);
+
       currentTargetSide = side;
-      document.getElementById('btn-side-front').className = (side === 'front') ? "flex-1 py-2 bg-indigo-600 text-white font-bold text-xs rounded-lg" : "flex-1 py-2 bg-slate-200 text-slate-700 font-bold text-xs rounded-lg";
-      document.getElementById('btn-side-back').className = (side === 'back') ? "flex-1 py-2 bg-indigo-600 text-white font-bold text-xs rounded-lg" : "flex-1 py-2 bg-slate-200 text-slate-700 font-bold text-xs rounded-lg";
+      document.getElementById('btn-side-front').className = (side === 'front') ? "flex-1 py-2 bg-indigo-600 text-white font-bold text-xs rounded-lg shadow-sm" : "flex-1 py-2 bg-slate-200 text-slate-700 font-bold text-xs rounded-lg";
+      document.getElementById('btn-side-back').className = (side === 'back') ? "flex-1 py-2 bg-indigo-600 text-white font-bold text-xs rounded-lg shadow-sm" : "flex-1 py-2 bg-slate-200 text-slate-700 font-bold text-xs rounded-lg";
       initCropCanvas(side);
     }
 
@@ -590,12 +595,25 @@
       const w = canvas.width;
       const h = canvas.height;
 
-      corners = {
-        tl: { x: 0, y: 0 },
-        tr: { x: w, y: 0 },
-        br: { x: w, y: h },
-        bl: { x: 0, y: h }
-      };
+      if(!cornersStore[type]) {
+        const ratio = 8.5 / 5.5;
+        let boxW = w * 0.88;
+        let boxH = boxW / ratio;
+        if(boxH > h * 0.88) { 
+          boxH = h * 0.88; 
+          boxW = boxH * ratio; 
+        }
+
+        const sx = (w - boxW) / 2;
+        const sy = (h - boxH) / 2;
+
+        cornersStore[type] = {
+          tl: { x: sx, y: sy },
+          tr: { x: sx + boxW, y: sy },
+          br: { x: sx + boxW, y: sy + boxH },
+          bl: { x: sx, y: sy + boxH }
+        };
+      }
 
       drawCropCanvas();
     }
@@ -608,25 +626,41 @@
 
       const w = canvas.width;
       const h = canvas.height;
+      const curCorners = cornersStore[currentTargetSide];
+      if(!curCorners) return;
 
       ctx.clearRect(0, 0, w, h);
       ctx.drawImage(img, 0, 0, w, h);
 
-      ctx.beginPath();
-      ctx.moveTo(corners.tl.x, corners.tl.y);
-      ctx.lineTo(corners.tr.x, corners.tr.y);
-      ctx.lineTo(corners.br.x, corners.br.y);
-      ctx.lineTo(corners.bl.x, corners.bl.y);
-      ctx.closePath();
+      // बैकग्राउंड डार्क करना ताकि सिलेक्टेड कार्ड चमके
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
+      ctx.fillRect(0, 0, w, h);
 
-      ctx.fillStyle = 'rgba(79, 70, 229, 0.20)';
-      ctx.fill();
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(curCorners.tl.x, curCorners.tl.y);
+      ctx.lineTo(curCorners.tr.x, curCorners.tr.y);
+      ctx.lineTo(curCorners.br.x, curCorners.br.y);
+      ctx.lineTo(curCorners.bl.x, curCorners.bl.y);
+      ctx.closePath();
+      ctx.clip();
+      ctx.drawImage(img, 0, 0, w, h);
+      ctx.restore();
+
+      // बॉर्डर
+      ctx.beginPath();
+      ctx.moveTo(curCorners.tl.x, curCorners.tl.y);
+      ctx.lineTo(curCorners.tr.x, curCorners.tr.y);
+      ctx.lineTo(curCorners.br.x, curCorners.br.y);
+      ctx.lineTo(curCorners.bl.x, curCorners.bl.y);
+      ctx.closePath();
       ctx.lineWidth = 2.5;
       ctx.strokeStyle = '#4f46e5';
       ctx.stroke();
 
+      // 4 कोने (हैंडल्स)
       ['tl', 'tr', 'br', 'bl'].forEach(key => {
-        const pt = corners[key];
+        const pt = curCorners[key];
         ctx.beginPath();
         ctx.arc(pt.x, pt.y, HANDLE_RADIUS, 0, Math.PI * 2);
         ctx.fillStyle = '#4f46e5';
@@ -636,7 +670,7 @@
         ctx.stroke();
 
         ctx.beginPath();
-        ctx.arc(pt.x, pt.y, 2.5, 0, Math.PI * 2);
+        ctx.arc(pt.x, pt.y, 3, 0, Math.PI * 2);
         ctx.fillStyle = '#ffffff';
         ctx.fill();
       });
@@ -659,9 +693,11 @@
     function onPointerDown(e) {
       const pos = getCanvasCoordinates(e);
       activeCornerKey = null;
+      const curCorners = cornersStore[currentTargetSide];
+      if(!curCorners) return;
 
       for(let key of ['tl', 'tr', 'br', 'bl']) {
-        const pt = corners[key];
+        const pt = curCorners[key];
         const dist = Math.hypot(pt.x - pos.x, pt.y - pos.y);
         if(dist < TOUCH_DETECT_RADIUS) {
           activeCornerKey = key;
@@ -675,13 +711,17 @@
       if(!activeCornerKey) return;
       e.preventDefault();
       const pos = getCanvasCoordinates(e);
+      const curCorners = cornersStore[currentTargetSide];
+      if(!curCorners) return;
 
-      corners[activeCornerKey].x = Math.max(0, Math.min(cropCanvas.width, pos.x));
-      corners[activeCornerKey].y = Math.max(0, Math.min(cropCanvas.height, pos.y));
+      curCorners[activeCornerKey].x = Math.max(0, Math.min(cropCanvas.width, pos.x));
+      curCorners[activeCornerKey].y = Math.max(0, Math.min(cropCanvas.height, pos.y));
       drawCropCanvas();
     }
 
-    function onPointerUp() { activeCornerKey = null; }
+    function onPointerUp() { 
+      activeCornerKey = null; 
+    }
 
     cropCanvas.addEventListener('mousedown', onPointerDown);
     window.addEventListener('mousemove', onPointerMove);
@@ -696,20 +736,20 @@
       const h = cropCanvas.height;
       if(mode === 'id') {
         const ratio = 8.5 / 5.5;
-        let boxW = w * 0.95;
+        let boxW = w * 0.88;
         let boxH = boxW / ratio;
-        if(boxH > h * 0.95) { boxH = h * 0.95; boxW = boxH * ratio; }
+        if(boxH > h * 0.88) { boxH = h * 0.88; boxW = boxH * ratio; }
 
         const sx = (w - boxW) / 2;
         const sy = (h - boxH) / 2;
-        corners = {
+        cornersStore[currentTargetSide] = {
           tl: { x: sx, y: sy },
           tr: { x: sx + boxW, y: sy },
           br: { x: sx + boxW, y: sy + boxH },
           bl: { x: sx, y: sy + boxH }
         };
       } else if(mode === 'passbook') {
-        corners = {
+        cornersStore[currentTargetSide] = {
           tl: { x: 0, y: h * 0.05 },
           tr: { x: w, y: h * 0.05 },
           br: { x: w, y: h * 0.95 },
@@ -722,7 +762,7 @@
     function resetCrop() {
       const w = cropCanvas.width;
       const h = cropCanvas.height;
-      corners = {
+      cornersStore[currentTargetSide] = {
         tl: { x: 0, y: 0 },
         tr: { x: w, y: 0 },
         br: { x: w, y: h },
@@ -732,8 +772,8 @@
     }
 
     function applyMagicClean() {
-      document.getElementById('filter-bright').value = 125;
-      document.getElementById('filter-contrast').value = 140;
+      document.getElementById('filter-bright').value = 130;
+      document.getElementById('filter-contrast').value = 145;
       updateLiveFilter();
     }
 
@@ -743,44 +783,88 @@
       cropCanvas.style.filter = `brightness(${b}%) contrast(${c}%)`;
     }
 
+    // पिक्सल-लेवल फ़िल्टरिंग और 8.5x5.5 CM सटीक कैनवस क्रॉपर
     function commitCropToCanvas(type) {
       const img = loadedImages[type];
       if(!img) return;
 
+      const curCorners = cornersStore[type];
+      if(!curCorners) return;
+
       const scale = img.width / cropCanvas.width;
-      const minX = Math.min(corners.tl.x, corners.bl.x) * scale;
-      const minY = Math.min(corners.tl.y, corners.tr.y) * scale;
-      const maxX = Math.max(corners.tr.x, corners.br.x) * scale;
-      const maxY = Math.max(corners.bl.y, corners.br.y) * scale;
-      const cropW = Math.max(10, maxX - minX);
-      const cropH = Math.max(10, maxY - minY);
+      const minX = Math.min(curCorners.tl.x, curCorners.bl.x) * scale;
+      const minY = Math.min(curCorners.tl.y, curCorners.tr.y) * scale;
+      const maxX = Math.max(curCorners.tr.x, curCorners.br.x) * scale;
+      const maxY = Math.max(curCorners.bl.y, curCorners.br.y) * scale;
+      const cropW = Math.max(20, maxX - minX);
+      const cropH = Math.max(20, maxY - minY);
 
       const outputCanvas = document.createElement('canvas');
       outputCanvas.width = cropW;
       outputCanvas.height = cropH;
       const ctx = outputCanvas.getContext('2d');
 
-      const b = document.getElementById('filter-bright').value;
-      const c = document.getElementById('filter-contrast').value;
-      ctx.filter = `brightness(${b}%) contrast(${c}%)`;
+      const bVal = parseFloat(document.getElementById('filter-bright').value) / 100;
+      const cVal = parseFloat(document.getElementById('filter-contrast').value) / 100;
 
+      // ब्राउज़र इंजन लेवल हार्डवेयर रेंडरिंग
+      ctx.filter = `brightness(${bVal * 100}%) contrast(${cVal * 100}%)`;
       ctx.drawImage(img, minX, minY, cropW, cropH, 0, 0, cropW, cropH);
+
+      // पिक्सल लेवल क्लीनिंग ताकि अक्षर गहरे और बैकग्राउंड सफ़ेद रहे
+      try {
+        const imgData = ctx.getImageData(0, 0, cropW, cropH);
+        const d = imgData.data;
+        const contrastFactor = (259 * (cVal * 255 + 255)) / (255 * (259 - cVal * 255));
+        for (let i = 0; i < d.length; i += 4) {
+          // ब्राइटनेस
+          let r = d[i] * bVal;
+          let g = d[i+1] * bVal;
+          let b = d[i+2] * bVal;
+          // कंट्रास्ट
+          r = contrastFactor * (r - 128) + 128;
+          g = contrastFactor * (g - 128) + 128;
+          b = contrastFactor * (b - 128) + 128;
+
+          d[i] = Math.min(255, Math.max(0, r));
+          d[i+1] = Math.min(255, Math.max(0, g));
+          d[i+2] = Math.min(255, Math.max(0, b));
+        }
+        ctx.putImageData(imgData, 0, 0);
+      } catch (err) {
+        console.warn("Direct pixel adjust fallback", err);
+      }
+
       finalizedCanvases[type] = outputCanvas;
     }
 
     function saveCropAndProceed() {
-      if(activeTab !== 'pdf') {
-        commitCropToCanvas(currentTargetSide);
-
-        if(activeTab === 'id' && !finalizedCanvases.back && loadedImages.back) {
-          const bImg = loadedImages.back;
-          const bCanvas = document.createElement('canvas');
-          bCanvas.width = bImg.width;
-          bCanvas.height = bImg.height;
-          const bCtx = bCanvas.getContext('2d');
-          bCtx.drawImage(bImg, 0, 0);
-          finalizedCanvases.back = bCanvas;
+      if(activeTab === 'id') {
+        commitCropToCanvas('front');
+        if(loadedImages.back) {
+          if(!cornersStore.back) {
+            const img = loadedImages.back;
+            const maxW = Math.min(window.innerWidth - 30, 480);
+            const scale = maxW / img.width;
+            const w = maxW;
+            const h = Math.round(img.height * scale);
+            const ratio = 8.5 / 5.5;
+            let boxW = w * 0.88;
+            let boxH = boxW / ratio;
+            if(boxH > h * 0.88) { boxH = h * 0.88; boxW = boxH * ratio; }
+            const sx = (w - boxW) / 2;
+            const sy = (h - boxH) / 2;
+            cornersStore.back = {
+              tl: { x: sx, y: sy },
+              tr: { x: sx + boxW, y: sy },
+              br: { x: sx + boxW, y: sy + boxH },
+              bl: { x: sx, y: sy + boxH }
+            };
+          }
+          commitCropToCanvas('back');
         }
+      } else if(activeTab === 'single') {
+        commitCropToCanvas('single');
       }
       goToStep(3);
     }
@@ -995,7 +1079,7 @@
       document.getElementById('input-payment-ref').disabled = true;
     }
 
-    // HD A4 प्रिंट इमेज जनरेटर (सुरक्षित ऑटो-स्केलिंग के साथ)
+    // HD A4 प्रिंट इमेज जनरेटर
     function generateA4PrintImage() {
       const a4Canvas = document.createElement('canvas');
       a4Canvas.width = 1240;  // A4 चौड़ाई
@@ -1063,7 +1147,6 @@
       return a4Canvas.toDataURL('image/jpeg', 0.85);
     }
 
-    // A4 PDF जनरेट करने का कोर फ़ंक्शन
     function createA4PDFBlob() {
       if (!window.jspdf) {
         alert("PDF इंजन लोड हो रहा है, कृपया 2 सेकंड बाद पुनः प्रयास करें।");
