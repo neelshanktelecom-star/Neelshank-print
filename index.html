@@ -93,7 +93,7 @@
         <h2 class="font-bold text-sm">NEELSHANK TELECOM में आपका स्वागत है!</h2>
       </div>
       <p class="text-slate-700 leading-relaxed">
-        पहचान पत्र,पासबुक या PDF अपलोड करें।
+        पहचान पत्र, पासबुक या PDF अपलोड करें।
       </p>
       <div class="mt-2.5 pt-2 border-t border-indigo-200 flex items-center justify-between font-bold">
         <span class="text-emerald-700 flex items-center gap-1.5">
@@ -217,7 +217,7 @@
         </div>
 
         <p class="text-[11px] text-center text-indigo-700 font-bold mt-2">
-          👉 नीले बिंदुओं को उंगली से कार्ड के 4 कोनों पर रखें, फिर नीचे 'इस साइड को सेव करें' दबाएँ।
+          👉 नीले बिंदुओं को कार्ड के 4 कोनों पर रखें, फिर नीचे 'इस साइड को सेव करें' दबाएँ।
         </p>
 
         <!-- इस साइड को तुरंत सेव करने का बटन -->
@@ -398,7 +398,7 @@
       <div class="bg-white p-3.5 rounded-xl border border-slate-200">
         <div class="flex items-center justify-between mb-2">
           <p class="font-bold text-xs text-slate-700 flex items-center gap-1.5">
-            <i class="fa-solid fa-file-lines text-indigo-600"></i>
+            <i class="fa-solid fa-file-lines text-indigo-600"></i> प्रिंट प्रीव्यू
           </p>
           <span class="text-[10px] bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded font-bold border border-indigo-200">8.5 × 5.5 CM</span>
         </div>
@@ -447,11 +447,17 @@
     const finalizedCanvases = { front: null, back: null, single: null };
     let pdfImageBlob = null;
 
-    // दोनों साइड्स के अलग-अलग कॉर्नर स्टोर्स
+    // प्रत्येक साइड के लिए अलग-अलग सेटिंग्स और कॉर्नर
     const cornersStore = {
       front: null,
       back: null,
       single: null
+    };
+
+    const filtersStore = {
+      front: { bright: 100, contrast: 100 },
+      back: { bright: 100, contrast: 100 },
+      single: { bright: 100, contrast: 100 }
     };
 
     let activeCornerKey = null;
@@ -501,7 +507,7 @@
           const optimizedImg = new Image();
           optimizedImg.onload = function() {
             loadedImages[type] = optimizedImg;
-            cornersStore[type] = null; // नई इमेज के लिए कॉर्नर रीसेट
+            cornersStore[type] = null;
             finalizedCanvases[type] = null;
             const thumb = document.getElementById(`thumb-${type}`);
             thumb.src = optimizedImg.src;
@@ -597,6 +603,7 @@
         document.getElementById('crop-toggle-group').classList.add('hidden');
         document.getElementById('btn-current-side-text').innerText = "✔ दस्तावेज़ क्रॉप सेव करें";
       }
+      loadFiltersUI();
       initCropCanvas(currentTargetSide);
     }
 
@@ -614,15 +621,21 @@
       }
     }
 
+    function loadFiltersUI() {
+      const current = filtersStore[currentTargetSide] || { bright: 100, contrast: 100 };
+      document.getElementById('filter-bright').value = current.bright;
+      document.getElementById('filter-contrast').value = current.contrast;
+      updateLiveFilter();
+    }
+
     function switchSide(side) {
-      // पहले वर्तमान साइड को ऑटो-सेव करें
       commitCropToCanvas(currentTargetSide);
       currentTargetSide = side;
       updateSideButtonsUI(side);
+      loadFiltersUI();
       initCropCanvas(side);
     }
 
-    // ऑटो-क्रॉप और कॉर्नर इनिशियलाइज़ेशन (8.5 x 5.5 CM Ratio)
     function initCropCanvas(type) {
       const img = loadedImages[type];
       if(!img) return;
@@ -636,7 +649,6 @@
       const w = canvas.width;
       const h = canvas.height;
 
-      // अगर कॉर्नर स्टोर नहीं है तो बीच में ऑटो 8.5x5.5 CM का फ्रेम बनाएँ
       if(!cornersStore[type]) {
         const ratio = 8.5 / 5.5;
         let boxW = w * 0.90;
@@ -674,11 +686,9 @@
       ctx.clearRect(0, 0, w, h);
       ctx.drawImage(img, 0, 0, w, h);
 
-      // बैकग्राउंड को थोड़ा डार्क करें
       ctx.fillStyle = 'rgba(0, 0, 0, 0.40)';
       ctx.fillRect(0, 0, w, h);
 
-      // चुने गए हिस्से को ओरिजिनल ब्राइट दिखाएँ
       ctx.save();
       ctx.beginPath();
       ctx.moveTo(curCorners.tl.x, curCorners.tl.y);
@@ -690,7 +700,6 @@
       ctx.drawImage(img, 0, 0, w, h);
       ctx.restore();
 
-      // नीला बॉर्डर
       ctx.beginPath();
       ctx.moveTo(curCorners.tl.x, curCorners.tl.y);
       ctx.lineTo(curCorners.tr.x, curCorners.tr.y);
@@ -701,7 +710,6 @@
       ctx.strokeStyle = '#3b82f6';
       ctx.stroke();
 
-      // 4 नीले गोल बिंदु
       ['tl', 'tr', 'br', 'bl'].forEach(key => {
         const pt = curCorners[key];
         ctx.beginPath();
@@ -774,7 +782,6 @@
     window.addEventListener('touchmove', onPointerMove, { passive: false });
     window.addEventListener('touchend', onPointerUp);
 
-    // 90 डिग्री घुमाने का टूल
     function rotateImage() {
       const img = loadedImages[currentTargetSide];
       if(!img) return;
@@ -836,7 +843,6 @@
       drawCropCanvas();
     }
 
-    // सुरक्षित ऑटो-क्लीन फ़िल्टर (बिना ब्लैकआउट के)
     function applyMagicClean() {
       document.getElementById('filter-bright').value = 115;
       document.getElementById('filter-contrast').value = 115;
@@ -850,12 +856,76 @@
     }
 
     function updateLiveFilter() {
-      const b = document.getElementById('filter-bright').value;
-      const c = document.getElementById('filter-contrast').value;
+      const b = parseInt(document.getElementById('filter-bright').value);
+      const c = parseInt(document.getElementById('filter-contrast').value);
+      filtersStore[currentTargetSide] = { bright: b, contrast: c };
       cropCanvas.style.filter = `brightness(${b}%) contrast(${c}%)`;
     }
 
-    // वर्तमान साइड को पक्का क्रॉप और सेव करना
+    // =========================================================================
+    // PERSPECTIVE TRANSFORMATION ENGINE (टेढ़े कोनों को सीधा 8.5x5.5 CM में खींचना)
+    // =========================================================================
+    function warpPerspective(srcCanvas, srcPts, outW, outH) {
+      const dstCanvas = document.createElement('canvas');
+      dstCanvas.width = outW;
+      dstCanvas.height = outH;
+      const dstCtx = dstCanvas.getContext('2d');
+
+      const srcCtx = srcCanvas.getContext('2d');
+      const srcData = srcCtx.getImageData(0, 0, srcCanvas.width, srcCanvas.height);
+      const dstData = dstCtx.createImageData(outW, outH);
+
+      const d = srcData.data;
+      const out = dstData.data;
+      const sw = srcCanvas.width;
+      const sh = srcCanvas.height;
+
+      // Bilinear Interpolation Perspective Mapping
+      for (let y = 0; y < outH; y++) {
+        const v = y / (outH - 1);
+        for (let x = 0; x < outW; x++) {
+          const u = x / (outW - 1);
+
+          // Bilinear mapping of corners
+          const px = (1 - u) * (1 - v) * srcPts.tl.x +
+                     u * (1 - v) * srcPts.tr.x +
+                     u * v * srcPts.br.x +
+                     (1 - u) * v * srcPts.bl.x;
+
+          const py = (1 - u) * (1 - v) * srcPts.tl.y +
+                     u * (1 - v) * srcPts.tr.y +
+                     u * v * srcPts.br.y +
+                     (1 - u) * v * srcPts.bl.y;
+
+          const ix = Math.floor(px);
+          const iy = Math.floor(py);
+
+          if (ix >= 0 && ix < sw - 1 && iy >= 0 && iy < sh - 1) {
+            const fx = px - ix;
+            const fy = py - iy;
+
+            const idx00 = (iy * sw + ix) * 4;
+            const idx10 = (iy * sw + (ix + 1)) * 4;
+            const idx01 = ((iy + 1) * sw + ix) * 4;
+            const idx11 = ((iy + 1) * sw + (ix + 1)) * 4;
+
+            const dstIdx = (y * outW + x) * 4;
+
+            for (let c = 0; c < 3; c++) {
+              const top = d[idx00 + c] * (1 - fx) + d[idx10 + c] * fx;
+              const btm = d[idx01 + c] * (1 - fx) + d[idx11 + c] * fx;
+              out[dstIdx + c] = top * (1 - fy) + btm * fy;
+            }
+            out[dstIdx + 3] = 255;
+          }
+        }
+      }
+
+      dstCtx.putImageData(dstData, 0, 0);
+      return dstCanvas;
+    }
+
+    // क्रॉप को सही तरीके से सीधा और सेव करना
     function commitCropToCanvas(type) {
       const img = loadedImages[type];
       if(!img) return;
@@ -864,46 +934,75 @@
       if(!curCorners) return;
 
       const scale = img.width / cropCanvas.width;
-      const minX = Math.round(Math.min(curCorners.tl.x, curCorners.bl.x) * scale);
-      const minY = Math.round(Math.min(curCorners.tl.y, curCorners.tr.y) * scale);
-      const maxX = Math.round(Math.max(curCorners.tr.x, curCorners.br.x) * scale);
-      const maxY = Math.round(Math.max(curCorners.bl.y, curCorners.br.y) * scale);
-      const cropW = Math.max(30, maxX - minX);
-      const cropH = Math.max(30, maxY - minY);
 
-      const outputCanvas = document.createElement('canvas');
-      outputCanvas.width = cropW;
-      outputCanvas.height = cropH;
-      const ctx = outputCanvas.getContext('2d');
+      // ओरिजिनल फोटो के स्केल पर 4 कोने
+      const realCorners = {
+        tl: { x: curCorners.tl.x * scale, y: curCorners.tl.y * scale },
+        tr: { x: curCorners.tr.x * scale, y: curCorners.tr.y * scale },
+        br: { x: curCorners.br.x * scale, y: curCorners.br.y * scale },
+        bl: { x: curCorners.bl.x * scale, y: curCorners.bl.y * scale }
+      };
 
-      const bVal = document.getElementById('filter-bright').value;
-      const cVal = document.getElementById('filter-contrast').value;
+      // ओरिजिनल इमेज का कैनवस
+      const tempSrcCanvas = document.createElement('canvas');
+      tempSrcCanvas.width = img.width;
+      tempSrcCanvas.height = img.height;
+      const tempCtx = tempSrcCanvas.getContext('2d');
+      tempCtx.drawImage(img, 0, 0);
 
-      // साफ़ नेचुरल फ़िल्टरिंग
-      ctx.filter = `brightness(${bVal}%) contrast(${cVal}%)`;
-      ctx.drawImage(img, minX, minY, cropW, cropH, 0, 0, cropW, cropH);
+      // आउटपुट साइज: 8.5 x 5.5 cm (मानक 1006 x 650 पिक्सल)
+      const outW = 1006;
+      const outH = 650;
 
-      finalizedCanvases[type] = outputCanvas;
+      // Perspective Warp से टेढ़े कार्ड को सीधा फ्लैट रेक्टेंगल में बदलना
+      const warpedCanvas = warpPerspective(tempSrcCanvas, realCorners, outW, outH);
+
+      // फ़िल्टर लागू करना
+      const filterSettings = filtersStore[type] || { bright: 100, contrast: 100 };
+      if (filterSettings.bright !== 100 || filterSettings.contrast !== 100) {
+        const wCtx = warpedCanvas.getContext('2d');
+        const imgData = wCtx.getImageData(0, 0, outW, outH);
+        const d = imgData.data;
+        const bMul = filterSettings.bright / 100;
+        const cFactor = (filterSettings.contrast - 100) * 1.2;
+
+        for (let i = 0; i < d.length; i += 4) {
+          let r = d[i] * bMul;
+          let g = d[i+1] * bMul;
+          let b = d[i+2] * bMul;
+
+          if (cFactor !== 0) {
+            r = r + (r - 128) * (cFactor / 100);
+            g = g + (g - 128) * (cFactor / 100);
+            b = b + (b - 128) * (cFactor / 100);
+          }
+
+          d[i] = Math.min(255, Math.max(0, r));
+          d[i+1] = Math.min(255, Math.max(0, g));
+          d[i+2] = Math.min(255, Math.max(0, b));
+        }
+        wCtx.putImageData(imgData, 0, 0);
+      }
+
+      finalizedCanvases[type] = warpedCanvas;
     }
 
-    // मैनुअल साइड सेव बटन
     function commitCurrentSideManual() {
       commitCropToCanvas(currentTargetSide);
       if(activeTab === 'id') {
         if(currentTargetSide === 'front') {
           document.getElementById('status-front-saved').innerText = "✔ सेव्ड";
-          alert("✔ फ्रंट साइड सफलतापूर्वक सेव हो गया!\nअब ऊपर 'बैक साइड' बटन पर क्लिक करके पीछे का भाग सेट करें।");
+          alert("✔ फ्रंट साइड सीधा और सुरक्षित हो गया!\nअब 'बैक साइड' चुनकर उसके कोने सेट करें।");
           switchSide('back');
         } else {
           document.getElementById('status-back-saved').innerText = "✔ सेव्ड";
-          alert("✔ बैक साइड सफलतापूर्वक सेव हो गया!\nअब नीचे 'दोनों साइड सेव & पेमेंट पर जाएं' दबाएँ।");
+          alert("✔ बैक साइड सीधा और सुरक्षित हो गया!\nअब नीचे 'दोनों साइड सेव & पेमेंट पर जाएं' दबाएँ।");
         }
       } else {
-        alert("✔ दस्तावेज़ सफलतापूर्वक सेव हो गया!");
+        alert("✔ दस्तावेज़ सीधा और सुरक्षित हो गया!");
       }
     }
 
-    // दोनों साइड सेव करके आगे बढ़ना
     function saveCropAndProceed() {
       if(activeTab === 'id') {
         commitCropToCanvas('front');
@@ -1030,7 +1129,7 @@
       rzp.open();
     }
 
-    // A4 शीट वास्तविक लाइव प्रीव्यू (साफ़ और सटीक)
+    // A4 शीट वास्तविक लाइव प्रीव्यू (दोनों कार्ड्स एक सीध में)
     function renderA4SheetLayout() {
       const container = document.getElementById('printable-sheet');
       container.innerHTML = '';
@@ -1125,11 +1224,11 @@
       document.getElementById('input-payment-ref').disabled = true;
     }
 
-    // HD A4 प्रिंट शीट जनरेटर (8.5 × 5.5 CM ओरिजिनल माप)
+    // HD A4 प्रिंट शीट जनरेटर (8.5 × 5.5 CM ओरिजिनल माप, अगल-बगल)
     function generateA4PrintImage() {
       const a4Canvas = document.createElement('canvas');
-      a4Canvas.width = 1240;  // A4 चौड़ाई (150 DPI)
-      a4Canvas.height = 1754; // A4 लंबाई (150 DPI)
+      a4Canvas.width = 1240;
+      a4Canvas.height = 1754;
       const ctx = a4Canvas.getContext('2d');
 
       ctx.fillStyle = '#ffffff';
@@ -1174,7 +1273,7 @@
         ctx.drawImage(pdfImageBlob, startX, topMargin, docW, docH);
       }
 
-      // ब्लैक & व्हाइट ग्रेस्केल (यदि चुना हो)
+      // ब्लैक & व्हाइट ग्रेस्केल
       if (isBwSelected) {
         try {
           const imgData = ctx.getImageData(0, 0, a4Canvas.width, a4Canvas.height);
