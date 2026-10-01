@@ -4,15 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>NEELSHANK TELECOM - स्मार्ट प्रिंट पोर्टल</title>
-  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- PDF.js CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-  <!-- jsPDF लाइब्रेरी -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <!-- Razorpay Checkout SDK -->
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   <style>
     .crop-wrapper-box {
@@ -93,7 +88,7 @@
         <h2 class="font-bold text-sm">NEELSHANK TELECOM में आपका स्वागत है!</h2>
       </div>
       <p class="text-slate-700 leading-relaxed">
-        पहचान पत्र, पासबुक या PDF अपलोड करें।
+        पहचान पत्र, पासबुक, रसीद या PDF अपलोड करें।
       </p>
       <div class="mt-2.5 pt-2 border-t border-indigo-200 flex items-center justify-between font-bold">
         <span class="text-emerald-700 flex items-center gap-1.5">
@@ -119,7 +114,7 @@
           <i class="fa-solid fa-id-card text-base mb-0.5"></i> ID कार्ड (2-साइड)
         </button>
         <button id="tab-single" type="button" onclick="selectMode('single')" class="py-2.5 rounded-lg text-slate-600 flex flex-col items-center">
-          <i class="fa-solid fa-book-open text-base mb-0.5"></i> पासबुक / 1 फोटो
+          <i class="fa-solid fa-book-open text-base mb-0.5"></i> रसीद / 1 फोटो
         </button>
         <button id="tab-pdf" type="button" onclick="selectMode('pdf')" class="py-2.5 rounded-lg text-slate-600 flex flex-col items-center">
           <i class="fa-solid fa-file-pdf text-base mb-0.5"></i> PDF दस्तावेज़
@@ -149,13 +144,13 @@
         </div>
       </div>
 
-      <!-- 2. पासबुक अपलोड एरिया -->
+      <!-- 2. सिंगल रसीद / फोटो अपलोड एरिया -->
       <div id="section-single-upload" class="hidden bg-white p-5 rounded-xl border-2 border-dashed border-indigo-300 text-center">
-        <p class="font-bold text-xs text-slate-700 mb-2">बैंक पासबुक या सिंगल पेज डॉक्यूमेंट की फोटो</p>
+        <p class="font-bold text-xs text-slate-700 mb-2">रसीद, चालान या सिंगल पेज डॉक्यूमेंट की फोटो</p>
         <input type="file" id="file-single" accept="image/*" class="hidden" onchange="onImageSelected(event, 'single')">
         <button type="button" onclick="triggerFileInput('file-single')" class="w-full py-6 bg-indigo-50 hover:bg-indigo-100 rounded-lg text-indigo-700 flex flex-col items-center border border-indigo-200 cursor-pointer">
           <i class="fa-solid fa-image text-4xl mb-2 text-indigo-500"></i>
-          <span id="label-single" class="text-xs font-bold">पासबुक या फोटो चुनें</span>
+          <span id="label-single" class="text-xs font-bold">रसीद या फोटो चुनें</span>
         </button>
         <img id="thumb-single" class="hidden mt-3 max-h-40 mx-auto rounded border shadow-sm">
       </div>
@@ -178,11 +173,10 @@
       </button>
     </section>
 
-    <!-- ================= स्टेप 2: बड़ा 4-कॉर्नर क्रॉप & प्रो-एडिटिंग ================= -->
+    <!-- ================= स्टेप 2: 4-कॉर्नर क्रॉप & प्रो-एडिटिंग ================= -->
     <section id="step-2" class="hidden space-y-4">
       <div id="editor-box" class="bg-white p-3 rounded-xl shadow-sm border border-slate-200">
         
-        <!-- साइड स्विच बटन्स -->
         <div id="crop-toggle-group" class="flex gap-2 mb-3">
           <button type="button" id="btn-side-front" onclick="switchSide('front')" class="flex-1 py-2 bg-indigo-600 text-white font-bold text-xs rounded-lg shadow-sm">
             फ्रंट साइड <span id="status-front-saved" class="text-[10px] text-emerald-200"></span>
@@ -192,14 +186,13 @@
           </button>
         </div>
 
-        <!-- एडिटिंग टूलबार -->
         <div class="flex flex-wrap items-center justify-between gap-1.5 mb-2.5 bg-slate-50 p-2 rounded-lg border text-xs">
           <div class="flex gap-1.5 flex-wrap">
             <button type="button" onclick="setCropRatio('id')" class="px-2 py-1 bg-white border border-indigo-300 text-indigo-700 rounded font-bold shadow-sm">
               ID कार्ड (8.5×5.5)
             </button>
-            <button type="button" onclick="setCropRatio('passbook')" class="px-2 py-1 bg-white border border-slate-300 text-slate-700 rounded font-bold">
-              पासबुक
+            <button type="button" onclick="setCropRatio('full')" class="px-2 py-1 bg-white border border-slate-300 text-slate-700 rounded font-bold">
+              डॉक्यूमेंट साइज
             </button>
             <button type="button" onclick="resetCrop()" class="px-2 py-1 bg-slate-100 border text-slate-600 rounded font-bold">
               <i class="fa-solid fa-expand"></i> रीसेट
@@ -217,18 +210,9 @@
         </div>
 
         <p class="text-[11px] text-center text-indigo-700 font-bold mt-2">
-          👉 नीले बिंदुओं को कार्ड के 4 कोनों पर रखें, फिर नीचे 'इस साइड को सेव करें' दबाएँ।
+          👉 नीले बिंदुओं को डॉक्यूमेंट के 4 कोनों पर रखें, फिर नीचे 'सेव और पे' दबाएँ।
         </p>
 
-        <!-- इस साइड को तुरंत सेव करने का बटन -->
-        <div class="my-2 text-center">
-          <button type="button" onclick="commitCurrentSideManual()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-2.5 px-4 rounded-xl shadow text-xs flex items-center justify-center gap-2">
-            <i class="fa-solid fa-check-double"></i>
-            <span id="btn-current-side-text">✔ फ्रंट साइड क्रॉप सेव करें</span>
-          </button>
-        </div>
-
-        <!-- ऑटो-क्लीन और एडजस्टमेंट स्लाइडर -->
         <div class="mt-3 pt-3 border-t border-slate-100 space-y-2.5">
           <div class="flex justify-between items-center">
             <span class="text-xs font-bold text-slate-700"><i class="fa-solid fa-wand-magic-sparkles text-indigo-600"></i> दस्तावेज़ फ़िल्टर:</span>
@@ -256,21 +240,41 @@
 
       <div class="flex gap-3">
         <button type="button" onclick="goToStep(1)" class="w-1/3 bg-slate-200 font-bold py-3.5 rounded-xl text-xs">वापस</button>
-        <button type="button" onclick="saveCropAndProceed()" class="w-2/3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl shadow text-xs">
-          दोनों साइड सेव & पेमेंट पर जाएं <i class="fa-solid fa-arrow-right"></i>
+        <button type="button" onclick="saveCropAndProceed()" class="w-2/3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl shadow text-sm">
+          सेव और पे <i class="fa-solid fa-arrow-right"></i>
         </button>
       </div>
     </section>
 
-    <!-- ================= स्टेप 3: कॉपी, एडवांस्ड पेमेंट & प्रिंट ================= -->
+    <!-- ================= स्टेप 3: कॉपी, साइज विकल्प, पेमेंट & प्रिंट ================= -->
     <section id="step-3" class="hidden space-y-4">
       
-      <!-- वापस जाने का बैक बटन -->
       <div class="flex items-center justify-between bg-white p-2.5 rounded-xl border border-slate-200 shadow-sm">
         <button type="button" onclick="goToStep(2)" class="bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold py-2 px-3 rounded-lg flex items-center gap-1.5 transition">
           <i class="fa-solid fa-arrow-left"></i> वापस जाएं (क्रॉप बदलें)
         </button>
         <span class="text-xs font-bold text-indigo-700">NEELSHANK KIOSK</span>
+      </div>
+
+      <!-- सिंगल दस्तावेज़ साइज चयन पैनल -->
+      <div id="size-options-panel" class="bg-white p-3.5 rounded-xl shadow-sm border border-slate-200">
+        <span class="font-bold text-xs text-slate-700 block mb-2">
+          <i class="fa-solid fa-expand text-indigo-600"></i> A4 पेपर पर दस्तावेज़ का साइज चुनें:
+        </span>
+        <div class="grid grid-cols-2 gap-2 text-xs font-bold">
+          <button type="button" id="btn-size-id" onclick="setDocPrintSize('id')" class="p-2.5 rounded-xl border-2 border-slate-200 bg-white text-slate-700 hover:border-indigo-400">
+            ID कार्ड (8.5×5.5 CM)
+          </button>
+          <button type="button" id="btn-size-postcard" onclick="setDocPrintSize('postcard')" class="p-2.5 rounded-xl border-2 border-slate-200 bg-white text-slate-700 hover:border-indigo-400">
+            पोस्टकार्ड (A6)
+          </button>
+          <button type="button" id="btn-size-half" onclick="setDocPrintSize('half')" class="p-2.5 rounded-xl border-2 border-indigo-600 bg-indigo-50 text-indigo-800">
+            हाफ पेज (A5 आधा A4)
+          </button>
+          <button type="button" id="btn-size-full" onclick="setDocPrintSize('full')" class="p-2.5 rounded-xl border-2 border-slate-200 bg-white text-slate-700 hover:border-indigo-400">
+            फुल पेज (पूरा A4)
+          </button>
+        </div>
       </div>
 
       <!-- कॉपियों की संख्या -->
@@ -294,7 +298,7 @@
         </div>
       </div>
 
-      <!-- कलर vs ब्लैक & व्हाइट सिलेक्टर -->
+      <!-- कलर vs ब्लैक & व्हाइट -->
       <div class="bg-white p-3.5 rounded-xl shadow-sm border border-slate-200">
         <span class="font-bold text-xs text-slate-700 block mb-2.5">
           <i class="fa-solid fa-palette text-indigo-600"></i> प्रिंट का प्रकार चुनें (कलर या ब्लैक & व्हाइट):
@@ -398,13 +402,13 @@
       <div class="bg-white p-3.5 rounded-xl border border-slate-200">
         <div class="flex items-center justify-between mb-2">
           <p class="font-bold text-xs text-slate-700 flex items-center gap-1.5">
-            <i class="fa-solid fa-file-lines text-indigo-600"></i> प्रिंट प्रीव्यू
+            <i class="fa-solid fa-file-lines text-indigo-600"></i> A4 शीट वास्तविक प्रिंट प्रीव्यू:
           </p>
-          <span class="text-[10px] bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded font-bold border border-indigo-200">8.5 × 5.5 CM</span>
+          <span id="preview-size-badge" class="text-[10px] bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded font-bold border border-indigo-200">हाफ पेज (A5)</span>
         </div>
         
         <div class="a4-preview-box">
-          <div id="printable-sheet" class="w-full flex flex-row items-center justify-center gap-2.5"></div>
+          <div id="printable-sheet" class="w-full flex flex-col items-center justify-start gap-2.5"></div>
         </div>
 
         <!-- PDF डाउनलोड और शेयर विकल्प -->
@@ -437,6 +441,7 @@
 
     let activeTab = 'id';
     let currentTargetSide = 'front';
+    let docPrintSize = 'half';
     let unitRate = 10;
     let copiesCount = 1;
     let totalCalculatedAmount = 10;
@@ -447,7 +452,6 @@
     const finalizedCanvases = { front: null, back: null, single: null };
     let pdfImageBlob = null;
 
-    // प्रत्येक साइड के लिए अलग-अलग सेटिंग्स और कॉर्नर
     const cornersStore = {
       front: null,
       back: null,
@@ -491,7 +495,7 @@
       reader.onload = function(evt) {
         const img = new Image();
         img.onload = function() {
-          const maxDim = 1400;
+          const maxDim = 1600;
           let w = img.width;
           let h = img.height;
           if (w > maxDim || h > maxDim) {
@@ -514,7 +518,7 @@
             thumb.classList.remove('hidden');
             document.getElementById(`label-${type}`).innerText = file.name;
           };
-          optimizedImg.src = scaleCanvas.toDataURL('image/jpeg', 0.90);
+          optimizedImg.src = scaleCanvas.toDataURL('image/jpeg', 0.92);
         };
         img.src = evt.target.result;
       };
@@ -533,7 +537,7 @@
           pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
           pdfjsLib.getDocument(typedarray).promise.then(function(pdf) {
             pdf.getPage(1).then(function(page) {
-              const viewport = page.getViewport({ scale: 1.5 });
+              const viewport = page.getViewport({ scale: 2.0 });
               const tempCanvas = document.createElement('canvas');
               tempCanvas.width = viewport.width;
               tempCanvas.height = viewport.height;
@@ -544,7 +548,7 @@
                   pdfImageBlob = img;
                   document.getElementById('pdf-preview-indicator').classList.remove('hidden');
                 };
-                img.src = tempCanvas.toDataURL('image/jpeg', 0.85);
+                img.src = tempCanvas.toDataURL('image/jpeg', 0.90);
               });
             });
           }).catch(function(err) {
@@ -563,7 +567,7 @@
           return;
         }
         if(activeTab === 'single' && !loadedImages.single) {
-          alert('कृपया पासबुक या दस्तावेज़ की फोटो चुनें!');
+          alert('कृपया रसीद या दस्तावेज़ की फोटो चुनें!');
           return;
         }
         if(activeTab === 'pdf' && !pdfImageBlob) {
@@ -601,7 +605,6 @@
       } else {
         currentTargetSide = 'single';
         document.getElementById('crop-toggle-group').classList.add('hidden');
-        document.getElementById('btn-current-side-text').innerText = "✔ दस्तावेज़ क्रॉप सेव करें";
       }
       loadFiltersUI();
       initCropCanvas(currentTargetSide);
@@ -613,11 +616,9 @@
       if (side === 'front') {
         btnF.className = "flex-1 py-2 bg-indigo-600 text-white font-bold text-xs rounded-lg shadow-sm";
         btnB.className = "flex-1 py-2 bg-slate-200 text-slate-700 font-bold text-xs rounded-lg";
-        document.getElementById('btn-current-side-text').innerText = "✔ फ्रंट साइड क्रॉप सेव करें";
       } else {
         btnF.className = "flex-1 py-2 bg-slate-200 text-slate-700 font-bold text-xs rounded-lg";
         btnB.className = "flex-1 py-2 bg-indigo-600 text-white font-bold text-xs rounded-lg shadow-sm";
-        document.getElementById('btn-current-side-text').innerText = "✔ बैक साइड क्रॉप सेव करें";
       }
     }
 
@@ -650,23 +651,27 @@
       const h = canvas.height;
 
       if(!cornersStore[type]) {
-        const ratio = 8.5 / 5.5;
-        let boxW = w * 0.90;
-        let boxH = boxW / ratio;
-        if(boxH > h * 0.90) { 
-          boxH = h * 0.90; 
-          boxW = boxH * ratio; 
+        if(activeTab === 'id') {
+          const ratio = 8.5 / 5.5;
+          let boxW = w * 0.90;
+          let boxH = boxW / ratio;
+          if(boxH > h * 0.90) { boxH = h * 0.90; boxW = boxH * ratio; }
+          const sx = (w - boxW) / 2;
+          const sy = (h - boxH) / 2;
+          cornersStore[type] = {
+            tl: { x: sx, y: sy },
+            tr: { x: sx + boxW, y: sy },
+            br: { x: sx + boxW, y: sy + boxH },
+            bl: { x: sx, y: sy + boxH }
+          };
+        } else {
+          cornersStore[type] = {
+            tl: { x: w * 0.05, y: h * 0.05 },
+            tr: { x: w * 0.95, y: h * 0.05 },
+            br: { x: w * 0.95, y: h * 0.95 },
+            bl: { x: w * 0.05, y: h * 0.95 }
+          };
         }
-
-        const sx = (w - boxW) / 2;
-        const sy = (h - boxH) / 2;
-
-        cornersStore[type] = {
-          tl: { x: sx, y: sy },
-          tr: { x: sx + boxW, y: sy },
-          br: { x: sx + boxW, y: sy + boxH },
-          bl: { x: sx, y: sy + boxH }
-        };
       }
 
       drawCropCanvas();
@@ -770,9 +775,7 @@
       drawCropCanvas();
     }
 
-    function onPointerUp() { 
-      activeCornerKey = null; 
-    }
+    function onPointerUp() { activeCornerKey = null; }
 
     cropCanvas.addEventListener('mousedown', onPointerDown);
     window.addEventListener('mousemove', onPointerMove);
@@ -811,7 +814,6 @@
         let boxW = w * 0.90;
         let boxH = boxW / ratio;
         if(boxH > h * 0.90) { boxH = h * 0.90; boxW = boxH * ratio; }
-
         const sx = (w - boxW) / 2;
         const sy = (h - boxH) / 2;
         cornersStore[currentTargetSide] = {
@@ -820,12 +822,12 @@
           br: { x: sx + boxW, y: sy + boxH },
           bl: { x: sx, y: sy + boxH }
         };
-      } else if(mode === 'passbook') {
+      } else {
         cornersStore[currentTargetSide] = {
-          tl: { x: 0, y: h * 0.05 },
-          tr: { x: w, y: h * 0.05 },
-          br: { x: w, y: h * 0.95 },
-          bl: { x: 0, y: h * 0.95 }
+          tl: { x: w * 0.05, y: h * 0.05 },
+          tr: { x: w * 0.95, y: h * 0.05 },
+          br: { x: w * 0.95, y: h * 0.95 },
+          bl: { x: w * 0.05, y: h * 0.95 }
         };
       }
       drawCropCanvas();
@@ -862,9 +864,6 @@
       cropCanvas.style.filter = `brightness(${b}%) contrast(${c}%)`;
     }
 
-    // =========================================================================
-    // PERSPECTIVE TRANSFORMATION ENGINE (टेढ़े कोनों को सीधा 8.5x5.5 CM में खींचना)
-    // =========================================================================
     function warpPerspective(srcCanvas, srcPts, outW, outH) {
       const dstCanvas = document.createElement('canvas');
       dstCanvas.width = outW;
@@ -880,13 +879,11 @@
       const sw = srcCanvas.width;
       const sh = srcCanvas.height;
 
-      // Bilinear Interpolation Perspective Mapping
       for (let y = 0; y < outH; y++) {
         const v = y / (outH - 1);
         for (let x = 0; x < outW; x++) {
           const u = x / (outW - 1);
 
-          // Bilinear mapping of corners
           const px = (1 - u) * (1 - v) * srcPts.tl.x +
                      u * (1 - v) * srcPts.tr.x +
                      u * v * srcPts.br.x +
@@ -925,7 +922,6 @@
       return dstCanvas;
     }
 
-    // क्रॉप को सही तरीके से सीधा और सेव करना
     function commitCropToCanvas(type) {
       const img = loadedImages[type];
       if(!img) return;
@@ -935,7 +931,6 @@
 
       const scale = img.width / cropCanvas.width;
 
-      // ओरिजिनल फोटो के स्केल पर 4 कोने
       const realCorners = {
         tl: { x: curCorners.tl.x * scale, y: curCorners.tl.y * scale },
         tr: { x: curCorners.tr.x * scale, y: curCorners.tr.y * scale },
@@ -943,21 +938,38 @@
         bl: { x: curCorners.bl.x * scale, y: curCorners.bl.y * scale }
       };
 
-      // ओरिजिनल इमेज का कैनवस
       const tempSrcCanvas = document.createElement('canvas');
       tempSrcCanvas.width = img.width;
       tempSrcCanvas.height = img.height;
       const tempCtx = tempSrcCanvas.getContext('2d');
       tempCtx.drawImage(img, 0, 0);
 
-      // आउटपुट साइज: 8.5 x 5.5 cm (मानक 1006 x 650 पिक्सल)
-      const outW = 1006;
-      const outH = 650;
+      let outW, outH;
 
-      // Perspective Warp से टेढ़े कार्ड को सीधा फ्लैट रेक्टेंगल में बदलना
+      if(activeTab === 'id') {
+        outW = 1006;
+        outH = 650;
+      } else {
+        const topW = Math.hypot(realCorners.tr.x - realCorners.tl.x, realCorners.tr.y - realCorners.tl.y);
+        const btmW = Math.hypot(realCorners.br.x - realCorners.bl.x, realCorners.br.y - realCorners.bl.y);
+        const lftH = Math.hypot(realCorners.bl.x - realCorners.tl.x, realCorners.bl.y - realCorners.tl.y);
+        const rgtH = Math.hypot(realCorners.br.x - realCorners.tr.x, realCorners.br.y - realCorners.tr.y);
+
+        const avgW = Math.round((topW + btmW) / 2);
+        const avgH = Math.round((lftH + rgtH) / 2);
+
+        const maxDim = 1200;
+        if(avgW > avgH) {
+          outW = maxDim;
+          outH = Math.max(100, Math.round((avgH / avgW) * maxDim));
+        } else {
+          outH = maxDim;
+          outW = Math.max(100, Math.round((avgW / avgH) * maxDim));
+        }
+      }
+
       const warpedCanvas = warpPerspective(tempSrcCanvas, realCorners, outW, outH);
 
-      // फ़िल्टर लागू करना
       const filterSettings = filtersStore[type] || { bright: 100, contrast: 100 };
       if (filterSettings.bright !== 100 || filterSettings.contrast !== 100) {
         const wCtx = warpedCanvas.getContext('2d');
@@ -987,29 +999,11 @@
       finalizedCanvases[type] = warpedCanvas;
     }
 
-    function commitCurrentSideManual() {
-      commitCropToCanvas(currentTargetSide);
-      if(activeTab === 'id') {
-        if(currentTargetSide === 'front') {
-          document.getElementById('status-front-saved').innerText = "✔ सेव्ड";
-          alert("✔ फ्रंट साइड सीधा और सुरक्षित हो गया!\nअब 'बैक साइड' चुनकर उसके कोने सेट करें।");
-          switchSide('back');
-        } else {
-          document.getElementById('status-back-saved').innerText = "✔ सेव्ड";
-          alert("✔ बैक साइड सीधा और सुरक्षित हो गया!\nअब नीचे 'दोनों साइड सेव & पेमेंट पर जाएं' दबाएँ।");
-        }
-      } else {
-        alert("✔ दस्तावेज़ सीधा और सुरक्षित हो गया!");
-      }
-    }
-
     function saveCropAndProceed() {
       if(activeTab === 'id') {
         commitCropToCanvas('front');
         if(loadedImages.back) {
-          if(!cornersStore.back) {
-            initCropCanvas('back');
-          }
+          if(!cornersStore.back) initCropCanvas('back');
           commitCropToCanvas('back');
         }
       } else if(activeTab === 'single') {
@@ -1018,7 +1012,28 @@
       goToStep(3);
     }
 
+    function setDocPrintSize(sz) {
+      docPrintSize = sz;
+      ['id', 'postcard', 'half', 'full'].forEach(s => {
+        const btn = document.getElementById(`btn-size-${s}`);
+        if(btn) {
+          btn.className = (s === sz) 
+            ? "p-2.5 rounded-xl border-2 border-indigo-600 bg-indigo-50 text-indigo-800"
+            : "p-2.5 rounded-xl border-2 border-slate-200 bg-white text-slate-700 hover:border-indigo-400";
+        }
+      });
+
+      const badge = document.getElementById('preview-size-badge');
+      if(sz === 'id') badge.innerText = "ID कार्ड (8.5×5.5 CM)";
+      else if(sz === 'postcard') badge.innerText = "पोस्टकार्ड (A6)";
+      else if(sz === 'half') badge.innerText = "हाफ पेज (A5 आधा A4)";
+      else if(sz === 'full') badge.innerText = "फुल पेज (पूरा A4)";
+
+      renderA4SheetLayout();
+    }
+
     function setupStep3() {
+      document.getElementById('size-options-panel').classList.toggle('hidden', activeTab === 'id');
       recalculateBilling();
     }
 
@@ -1129,28 +1144,36 @@
       rzp.open();
     }
 
-    // A4 शीट वास्तविक लाइव प्रीव्यू (दोनों कार्ड्स एक सीध में)
     function renderA4SheetLayout() {
       const container = document.getElementById('printable-sheet');
       container.innerHTML = '';
       const filterCss = isBwSelected ? 'grayscale(100%)' : 'none';
 
       if(activeTab === 'id') {
+        const row = document.createElement('div');
+        row.className = "flex flex-row items-center justify-center gap-2.5 w-full";
         ['front', 'back'].forEach(s => {
           if(finalizedCanvases[s]) {
             const im = new Image();
             im.src = finalizedCanvases[s].toDataURL();
             im.style.filter = filterCss;
             im.className = "id-card-preview-item rounded border border-dashed border-slate-400 shadow-sm";
-            container.appendChild(im);
+            row.appendChild(im);
           }
         });
+        container.appendChild(row);
       } else if(activeTab === 'single') {
         if(finalizedCanvases.single) {
           const im = new Image();
           im.src = finalizedCanvases.single.toDataURL();
           im.style.filter = filterCss;
-          im.className = "w-full max-w-[280px] rounded border border-slate-300 shadow-sm";
+          
+          let previewWidth = "w-[65%]";
+          if(docPrintSize === 'id') previewWidth = "w-[48%] max-w-[160px]";
+          else if(docPrintSize === 'postcard') previewWidth = "w-[50%]";
+          else if(docPrintSize === 'full') previewWidth = "w-[92%]";
+
+          im.className = `${previewWidth} h-auto rounded border border-slate-300 shadow-sm object-contain`;
           container.appendChild(im);
         }
       } else if(activeTab === 'pdf') {
@@ -1158,7 +1181,7 @@
           const im = new Image();
           im.src = pdfImageBlob.src;
           im.style.filter = filterCss;
-          im.className = "w-full max-w-[280px] rounded border shadow-sm";
+          im.className = "w-[90%] h-auto rounded border shadow-sm object-contain";
           container.appendChild(im);
         }
       }
@@ -1224,7 +1247,6 @@
       document.getElementById('input-payment-ref').disabled = true;
     }
 
-    // HD A4 प्रिंट शीट जनरेटर (8.5 × 5.5 CM ओरिजिनल माप, अगल-बगल)
     function generateA4PrintImage() {
       const a4Canvas = document.createElement('canvas');
       a4Canvas.width = 1240;
@@ -1234,11 +1256,11 @@
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, a4Canvas.width, a4Canvas.height);
 
-      const topMargin = 120; // ऊपर से 20mm मार्जिन
+      const topMargin = 100;
 
       if (activeTab === 'id') {
-        const cardW = 502; // 8.5 cm
-        const cardH = 325; // 5.5 cm
+        const cardW = 502;
+        const cardH = 325;
         const gap = 50;
         const totalW = cardW * 2 + gap;
         const startX = (a4Canvas.width - totalW) / 2;
@@ -1256,24 +1278,47 @@
           ctx.strokeRect(startX + cardW + gap, topMargin, cardW, cardH);
         }
       } else if (activeTab === 'single' && finalizedCanvases.single) {
-        const maxW = 1000;
-        const maxH = 1500;
-        const scale = Math.min(maxW / finalizedCanvases.single.width, maxH / finalizedCanvases.single.height);
-        const docW = finalizedCanvases.single.width * scale;
-        const docH = finalizedCanvases.single.height * scale;
-        const startX = (a4Canvas.width - docW) / 2;
-        ctx.drawImage(finalizedCanvases.single, startX, topMargin, docW, docH);
+        const doc = finalizedCanvases.single;
+        let targetW, targetH;
+
+        if(docPrintSize === 'id') {
+          targetW = 502;
+          targetH = 325;
+        } else if(docPrintSize === 'postcard') {
+          const maxW = 620;
+          const maxH = 870;
+          const scale = Math.min(maxW / doc.width, maxH / doc.height);
+          targetW = Math.round(doc.width * scale);
+          targetH = Math.round(doc.height * scale);
+        } else if(docPrintSize === 'half') {
+          const maxW = 850;
+          const maxH = 1100;
+          const scale = Math.min(maxW / doc.width, maxH / doc.height);
+          targetW = Math.round(doc.width * scale);
+          targetH = Math.round(doc.height * scale);
+        } else {
+          const maxW = 1100;
+          const maxH = 1550;
+          const scale = Math.min(maxW / doc.width, maxH / doc.height);
+          targetW = Math.round(doc.width * scale);
+          targetH = Math.round(doc.height * scale);
+        }
+
+        const startX = (a4Canvas.width - targetW) / 2;
+        ctx.drawImage(doc, startX, topMargin, targetW, targetH);
+        ctx.strokeStyle = '#cbd5e1';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(startX, topMargin, targetW, targetH);
       } else if (activeTab === 'pdf' && pdfImageBlob) {
-        const maxW = 1050;
-        const maxH = 1500;
+        const maxW = 1100;
+        const maxH = 1550;
         const scale = Math.min(maxW / pdfImageBlob.width, maxH / pdfImageBlob.height);
-        const docW = pdfImageBlob.width * scale;
-        const docH = pdfImageBlob.height * scale;
+        const docW = Math.round(pdfImageBlob.width * scale);
+        const docH = Math.round(pdfImageBlob.height * scale);
         const startX = (a4Canvas.width - docW) / 2;
         ctx.drawImage(pdfImageBlob, startX, topMargin, docW, docH);
       }
 
-      // ब्लैक & व्हाइट ग्रेस्केल
       if (isBwSelected) {
         try {
           const imgData = ctx.getImageData(0, 0, a4Canvas.width, a4Canvas.height);
@@ -1290,7 +1335,7 @@
         }
       }
 
-      return a4Canvas.toDataURL('image/jpeg', 0.88);
+      return a4Canvas.toDataURL('image/jpeg', 0.90);
     }
 
     function createA4PDFBlob() {
@@ -1359,7 +1404,7 @@
       const printImageData = generateA4PrintImage();
 
       const orderData = {
-        doc_type: activeTab === 'id' ? 'ID Card (8.5x5.5 CM)' : (activeTab === 'single' ? 'Passbook/Document' : 'PDF Document'),
+        doc_type: activeTab === 'id' ? 'ID Card (8.5x5.5 CM)' : (activeTab === 'single' ? `Single Doc (${docPrintSize.toUpperCase()})` : 'PDF Document'),
         color_mode: isBwSelected ? 'Black & White' : 'Color Print',
         copies: copiesCount,
         amount: totalCalculatedAmount,
