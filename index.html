@@ -4,15 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>NEELSHANK TELECOM - स्मार्ट प्रिंट पोर्टल</title>
-  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- PDF.js CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-  <!-- jsPDF लाइब्रेरी -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <!-- Razorpay Checkout SDK -->
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   <style>
     .crop-wrapper-box {
@@ -21,10 +16,10 @@
       user-select: none !important;
       -webkit-user-select: none !important;
       width: 100%;
-      min-height: 400px;
-      background: #090d16;
+      min-height: 420px;
+      background: #0b0f19;
       border-radius: 12px;
-      padding: 8px;
+      padding: 10px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -36,7 +31,7 @@
       max-width: 100%;
       height: auto;
       border-radius: 6px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.8);
+      box-shadow: 0 4px 25px rgba(0,0,0,0.85);
       display: block;
     }
     .a4-preview-box {
@@ -93,7 +88,7 @@
         <h2 class="font-bold text-sm">NEELSHANK TELECOM में आपका स्वागत है!</h2>
       </div>
       <p class="text-slate-700 leading-relaxed">
-        पहचान पत्र, रसीद, पासबुक या PDF अपलोड करें।
+        पहचान पत्र, रसीद, पासबुक या PDF अपलोड करें। कैमस्कैनर जैसा स्मार्ट 8-डॉट क्रॉप और मैजिक कलर ऑटोमैटिक काम करेगा।
       </p>
       <div class="mt-2.5 pt-2 border-t border-indigo-200 flex items-center justify-between font-bold">
         <span class="text-emerald-700 flex items-center gap-1.5">
@@ -108,7 +103,7 @@
     <!-- स्टेप्स नेविगेशन बार -->
     <div class="flex justify-between items-center mb-4 bg-white p-2.5 rounded-xl shadow-sm border border-slate-200 text-xs font-bold">
       <div id="step-nav-1" class="flex-1 text-center text-indigo-600 border-b-2 border-indigo-600 pb-1">1. अपलोड</div>
-      <div id="step-nav-2" class="flex-1 text-center text-slate-400 pb-1">2. 4-कॉर्नर एडजस्ट</div>
+      <div id="step-nav-2" class="flex-1 text-center text-slate-400 pb-1">2. 8-डॉट क्रॉप</div>
       <div id="step-nav-3" class="flex-1 text-center text-slate-400 pb-1">3. पे & प्रिंट</div>
     </div>
 
@@ -178,10 +173,11 @@
       </button>
     </section>
 
-    <!-- ================= स्टेप 2: 4-कॉर्नर क्रॉप & प्रो-एडिटिंग ================= -->
+    <!-- ================= स्टेप 2: कैमस्कैनर 8-डॉट क्रॉप & प्रो-एडिटिंग ================= -->
     <section id="step-2" class="hidden space-y-4">
       <div id="editor-box" class="bg-white p-3 rounded-xl shadow-sm border border-slate-200">
         
+        <!-- साइड स्विच बटन्स (आईडी कार्ड के लिए) -->
         <div id="crop-toggle-group" class="flex gap-2 mb-3">
           <button type="button" id="btn-side-front" onclick="switchSide('front')" class="flex-1 py-2 bg-indigo-600 text-white font-bold text-xs rounded-lg shadow-sm">
             फ्रंट साइड
@@ -191,13 +187,14 @@
           </button>
         </div>
 
+        <!-- टूल्स बार -->
         <div class="flex flex-wrap items-center justify-between gap-1.5 mb-2.5 bg-slate-50 p-2 rounded-lg border text-xs">
           <div class="flex gap-1.5 flex-wrap">
+            <button type="button" onclick="autoDetectEdges()" class="px-2.5 py-1.5 bg-emerald-600 text-white rounded font-bold shadow-sm flex items-center gap-1">
+              <i class="fa-solid fa-wand-magic-sparkles"></i> ऑटो-क्रॉप
+            </button>
             <button type="button" onclick="setCropRatio('id')" class="px-2.5 py-1 bg-white border border-indigo-300 text-indigo-700 rounded font-bold shadow-sm">
               ID कार्ड (8.5×5.5)
-            </button>
-            <button type="button" onclick="setCropRatio('full')" class="px-2.5 py-1 bg-white border border-slate-300 text-slate-700 rounded font-bold">
-              डॉक्यूमेंट ऑटो
             </button>
             <button type="button" onclick="resetCrop()" class="px-2.5 py-1 bg-slate-100 border text-slate-600 rounded font-bold">
               <i class="fa-solid fa-expand"></i> पूरा फ्रेम
@@ -210,22 +207,24 @@
           </div>
         </div>
 
+        <!-- 8-डॉट कैनवास एडिटर -->
         <div class="crop-wrapper-box">
           <canvas id="canvas-crop"></canvas>
         </div>
 
-        <p class="text-[11px] text-center text-indigo-700 font-bold mt-2">
-          👉 नीले बिंदुओं को डॉक्यूमेंट के 4 कोनों पर रखें, फिर नीचे 'सेव और पे' दबाएँ।
+        <p class="text-[11px] text-center text-emerald-700 font-bold mt-2">
+          👉 8 नीले बिंदुओं में से कोनों या बीच की लाइनों को पकड़कर दस्तावेज़ सीधा करें।
         </p>
 
+        <!-- कैमस्कैनर जैसा Magic Color और ऑटो-कलर मोड्स -->
         <div class="mt-3 pt-3 border-t border-slate-100 space-y-2.5">
           <div class="flex justify-between items-center">
-            <span class="text-xs font-bold text-slate-700"><i class="fa-solid fa-wand-magic-sparkles text-indigo-600"></i> स्कैनर क्वालिटी:</span>
+            <span class="text-xs font-bold text-slate-700"><i class="fa-solid fa-wand-magic-sparkles text-indigo-600"></i> कलर फ़िल्टर मोड:</span>
             <div class="flex gap-1.5">
-              <button type="button" onclick="applyMagicColor()" class="bg-emerald-600 text-white text-[11px] px-3 py-1 rounded font-bold shadow">
-                ⚡ Magic Color (साफ़)
+              <button type="button" id="btn-magic-color" onclick="applyMagicColor()" class="bg-emerald-600 text-white text-[11px] px-3 py-1.5 rounded-lg font-bold shadow">
+                ⚡ Magic Color (ऑटो-साफ़)
               </button>
-              <button type="button" onclick="resetFilters()" class="bg-slate-100 border text-slate-600 text-[11px] px-2 py-1 rounded font-bold">
+              <button type="button" id="btn-original-color" onclick="resetFilters()" class="bg-slate-100 border text-slate-600 text-[11px] px-2.5 py-1.5 rounded-lg font-bold">
                 ओरिजिनल
               </button>
             </div>
@@ -233,35 +232,39 @@
           <div class="grid grid-cols-2 gap-3 text-xs">
             <div>
               <span class="font-semibold text-slate-500">सफेदी (Brightness)</span>
-              <input type="range" id="filter-bright" min="80" max="140" value="100" class="w-full h-1 bg-slate-200 rounded" oninput="updateLiveFilter()">
+              <input type="range" id="filter-bright" min="80" max="140" value="112" class="w-full h-1 bg-slate-200 rounded" oninput="updateLiveFilter()">
             </div>
             <div>
               <span class="font-semibold text-slate-500">अक्षर गहरे (Contrast)</span>
-              <input type="range" id="filter-contrast" min="80" max="140" value="100" class="w-full h-1 bg-slate-200 rounded" oninput="updateLiveFilter()">
+              <input type="range" id="filter-contrast" min="80" max="150" value="122" class="w-full h-1 bg-slate-200 rounded" oninput="updateLiveFilter()">
             </div>
           </div>
         </div>
       </div>
 
-      <div class="flex gap-3">
-        <button type="button" onclick="goToStep(1)" class="w-1/3 bg-slate-200 font-bold py-3.5 rounded-xl text-xs">वापस</button>
-        <button type="button" onclick="saveCropAndProceed()" class="w-2/3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl shadow text-sm">
-          सेव और पे <i class="fa-solid fa-arrow-right"></i>
+      <!-- नीचे का एक्शन बार: हाईलाइटेड बैक बटन + सेव और पे -->
+      <div class="flex items-center gap-3 pt-1">
+        <button type="button" onclick="goToStep(1)" class="w-1/3 bg-slate-200 hover:bg-slate-300 text-slate-800 font-black py-3.5 rounded-xl border border-slate-300 shadow text-xs flex items-center justify-center gap-1.5">
+          <i class="fa-solid fa-arrow-left"></i> वापस जाएं
+        </button>
+        <button type="button" onclick="saveCropAndProceed()" class="w-2/3 bg-indigo-600 hover:bg-indigo-700 text-white font-black py-3.5 rounded-xl shadow-lg text-sm flex items-center justify-center gap-2">
+          <span>सेव और पे</span> <i class="fa-solid fa-arrow-right"></i>
         </button>
       </div>
     </section>
 
-    <!-- ================= स्टेप 3: कॉपी, साइज़ विकल्प, पेमेंट & प्रिंट ================= -->
+    <!-- ================= स्टेप 3: कॉपी, मल्टीपल साइज़, पेमेंट & प्रिंट ================= -->
     <section id="step-3" class="hidden space-y-4">
       
+      <!-- मुख्य बैक बटन (डॉक्यूमेंट के ठीक ऊपर स्पष्ट हाईलाइटेड) -->
       <div class="flex items-center justify-between bg-white p-2.5 rounded-xl border border-slate-200 shadow-sm">
-        <button type="button" onclick="goToStep(2)" class="bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold py-2 px-3 rounded-lg flex items-center gap-1.5 transition">
+        <button type="button" onclick="goToStep(2)" class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-black py-2 px-3.5 rounded-xl flex items-center gap-1.5 shadow-sm transition">
           <i class="fa-solid fa-arrow-left"></i> वापस जाएं (क्रॉप बदलें)
         </button>
         <span class="text-xs font-bold text-indigo-700">NEELSHANK KIOSK</span>
       </div>
 
-      <!-- सिंगल दस्तावेज़ / रसीद साइज़ चयन पैनल -->
+      <!-- मल्टीपल प्रिंट साइज़ विकल्प (A4 पेपर पर दस्तावेज़ का आकार) -->
       <div id="size-options-panel" class="bg-white p-3.5 rounded-xl shadow-sm border border-slate-200">
         <span class="font-bold text-xs text-slate-700 block mb-2">
           <i class="fa-solid fa-expand text-indigo-600"></i> A4 पेपर पर दस्तावेज़ का साइज चुनें:
@@ -396,11 +399,11 @@
         </div>
       </div>
 
-      <!-- स्टाइलिश दुकानदार पिन & UTR वेरिफिकेशन बॉक्स -->
-      <div id="box-verification" class="bg-gradient-to-r from-indigo-50 to-amber-50/50 border-2 border-indigo-300 p-4 rounded-2xl shadow-sm space-y-3">
+      <!-- प्रीमियम स्टाइलिश दुकानदार पिन & UTR वेरिफिकेशन बॉक्स -->
+      <div id="box-verification" class="bg-gradient-to-r from-indigo-50 via-white to-amber-50 border-2 border-indigo-300 p-4 rounded-2xl shadow-md space-y-3">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
-            <div class="w-7 h-7 bg-indigo-600 text-white rounded-lg flex items-center justify-center text-xs shadow">
+            <div class="w-8 h-8 bg-indigo-600 text-white rounded-lg flex items-center justify-center text-sm shadow">
               <i class="fa-solid fa-receipt"></i>
             </div>
             <div>
@@ -409,9 +412,9 @@
             </div>
           </div>
           
-          <!-- प्रीमियम स्टाइलिश दुकानदार पिन बटन -->
-          <button type="button" onclick="shopkeeperBypass()" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-black text-xs px-3.5 py-1.5 rounded-xl shadow-md border border-amber-300 flex items-center gap-1.5 transition transform active:scale-95 cursor-pointer">
-            <i class="fa-solid fa-key text-slate-900 text-xs"></i>
+          <!-- प्रीमियम 3D स्टाइल दुकानदार पिन बटन -->
+          <button type="button" onclick="shopkeeperBypass()" class="bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:from-amber-500 hover:to-amber-700 text-slate-950 font-black text-xs px-4 py-2 rounded-xl shadow-lg border border-amber-300 flex items-center gap-2 transition transform active:scale-95 cursor-pointer">
+            <i class="fa-solid fa-key text-slate-950 text-sm"></i>
             <span>दुकानदार पिन</span>
           </button>
         </div>
@@ -453,10 +456,16 @@
         </div>
       </div>
 
-      <!-- फाइनल प्रिंट बटन -->
-      <button type="button" id="btn-execute-print" disabled onclick="executePrintSheet()" class="w-full bg-slate-400 cursor-not-allowed text-white font-bold py-3.5 rounded-xl shadow-lg transition flex items-center justify-center gap-2">
-        <i class="fa-solid fa-lock" id="icon-lock"></i> प्रिंट अनुरोध भेजें (Send to Counter)
-      </button>
+      <!-- नीचे का फाइनल एक्शन बार: हाईलाइटेड बैक बटन + काउंटर प्रिंट -->
+      <div class="flex items-center gap-3 pt-2">
+        <button type="button" onclick="goToStep(2)" class="w-1/3 bg-slate-200 hover:bg-slate-300 text-slate-800 font-black py-3.5 rounded-xl border border-slate-300 shadow text-xs flex items-center justify-center gap-1.5">
+          <i class="fa-solid fa-arrow-left"></i> वापस जाएं
+        </button>
+        <button type="button" id="btn-execute-print" disabled onclick="executePrintSheet()" class="w-2/3 bg-slate-400 cursor-not-allowed text-white font-black py-3.5 rounded-xl shadow-lg transition flex items-center justify-center gap-2">
+          <i class="fa-solid fa-lock" id="icon-lock"></i> <span>प्रिंट अनुरोध भेजें</span>
+        </button>
+      </div>
+
     </section>
   </main>
 
@@ -470,8 +479,8 @@
     let activeTab = 'id';
     let currentTargetSide = 'front';
     let docPrintSize = 'half';
-    let pdfOrientation = 'portrait'; // 'portrait' या 'landscape'
-    let pdfRotationAngle = 0; // 0, 90, 180, 270
+    let pdfOrientation = 'portrait';
+    let pdfRotationAngle = 0;
 
     let unitRate = 10;
     let copiesCount = 1;
@@ -483,6 +492,7 @@
     const finalizedCanvases = { front: null, back: null, single: null };
     let pdfImageBlob = null;
 
+    // 4 मुख्य कोने (tl, tr, br, bl)
     const cornersStore = {
       front: null,
       back: null,
@@ -490,14 +500,19 @@
     };
 
     const filtersStore = {
-      front: { bright: 100, contrast: 100 },
-      back: { bright: 100, contrast: 100 },
-      single: { bright: 100, contrast: 100 }
+      front: { bright: 112, contrast: 122 },
+      back: { bright: 112, contrast: 122 },
+      single: { bright: 112, contrast: 122 }
     };
 
-    let activeCornerKey = null;
-    const HANDLE_RADIUS = 13;
-    const TOUCH_DETECT_RADIUS = 32;
+    // 8-डॉट हैंडल प्रबंधन
+    let activeHandleKey = null; // 'tl','tr','br','bl','top','right','bottom','left'
+    let dragStartPos = null;
+    let dragStartCorners = null;
+
+    const CORNER_HANDLE_RADIUS = 13;
+    const MID_HANDLE_RADIUS = 9;
+    const TOUCH_DETECT_RADIUS = 34;
 
     function triggerFileInput(id) {
       const el = document.getElementById(id);
@@ -656,7 +671,7 @@
     }
 
     function loadFiltersUI() {
-      const current = filtersStore[currentTargetSide] || { bright: 100, contrast: 100 };
+      const current = filtersStore[currentTargetSide] || { bright: 112, contrast: 122 };
       document.getElementById('filter-bright').value = current.bright;
       document.getElementById('filter-contrast').value = current.contrast;
       updateLiveFilter();
@@ -680,36 +695,60 @@
       canvas.width = maxW;
       canvas.height = Math.round(img.height * scale);
 
+      if(!cornersStore[type]) {
+        autoDetectEdges();
+      } else {
+        drawCropCanvas();
+      }
+    }
+
+    // कैमस्कैनर जैसा स्मार्ट ऑटो-डिटेक्ट एज (Auto Edge Detector)
+    function autoDetectEdges() {
+      const canvas = document.getElementById('canvas-crop');
       const w = canvas.width;
       const h = canvas.height;
 
-      if(!cornersStore[type]) {
-        if(activeTab === 'id') {
-          const ratio = 8.5 / 5.5;
-          let boxW = w * 0.90;
-          let boxH = boxW / ratio;
-          if(boxH > h * 0.90) { boxH = h * 0.90; boxW = boxH * ratio; }
-          const sx = (w - boxW) / 2;
-          const sy = (h - boxH) / 2;
-          cornersStore[type] = {
-            tl: { x: sx, y: sy },
-            tr: { x: sx + boxW, y: sy },
-            br: { x: sx + boxW, y: sy + boxH },
-            bl: { x: sx, y: sy + boxH }
-          };
-        } else {
-          cornersStore[type] = {
-            tl: { x: w * 0.05, y: h * 0.05 },
-            tr: { x: w * 0.95, y: h * 0.05 },
-            br: { x: w * 0.95, y: h * 0.95 },
-            bl: { x: w * 0.05, y: h * 0.95 }
-          };
-        }
+      if(activeTab === 'id') {
+        const ratio = 8.5 / 5.5;
+        let boxW = w * 0.88;
+        let boxH = boxW / ratio;
+        if(boxH > h * 0.88) { boxH = h * 0.88; boxW = boxH * ratio; }
+        const sx = (w - boxW) / 2;
+        const sy = (h - boxH) / 2;
+        cornersStore[currentTargetSide] = {
+          tl: { x: sx, y: sy },
+          tr: { x: sx + boxW, y: sy },
+          br: { x: sx + boxW, y: sy + boxH },
+          bl: { x: sx, y: sy + boxH }
+        };
+      } else {
+        // सिंगल पेज रसीद के लिए 8% अंदर ऑटो-बाउंड्री
+        cornersStore[currentTargetSide] = {
+          tl: { x: w * 0.08, y: h * 0.06 },
+          tr: { x: w * 0.92, y: h * 0.06 },
+          br: { x: w * 0.92, y: h * 0.94 },
+          bl: { x: w * 0.08, y: h * 0.94 }
+        };
       }
 
       drawCropCanvas();
     }
 
+    // 8-डॉट (4 कोने + 4 मध्य बिंदु) प्राप्त करने का फंक्शन
+    function getEightPoints(c) {
+      return {
+        tl: { x: c.tl.x, y: c.tl.y },
+        tr: { x: c.tr.x, y: c.tr.y },
+        br: { x: c.br.x, y: c.br.y },
+        bl: { x: c.bl.x, y: c.bl.y },
+        top: { x: (c.tl.x + c.tr.x) / 2, y: (c.tl.y + c.tr.y) / 2 },
+        right: { x: (c.tr.x + c.br.x) / 2, y: (c.tr.y + c.br.y) / 2 },
+        bottom: { x: (c.bl.x + c.br.x) / 2, y: (c.bl.y + c.br.y) / 2 },
+        left: { x: (c.tl.x + c.bl.x) / 2, y: (c.tl.y + c.bl.y) / 2 }
+      };
+    }
+
+    // कैमस्कैनर जैसा 8-पॉइंट रेंडरर
     function drawCropCanvas() {
       const canvas = document.getElementById('canvas-crop');
       const ctx = canvas.getContext('2d');
@@ -718,48 +757,82 @@
 
       const w = canvas.width;
       const h = canvas.height;
-      const curCorners = cornersStore[currentTargetSide];
-      if(!curCorners) return;
+      const c = cornersStore[currentTargetSide];
+      if(!c) return;
 
       ctx.clearRect(0, 0, w, h);
       ctx.drawImage(img, 0, 0, w, h);
 
+      // सेमी-ट्रांसपेरेंट डार्क बैकग्राउंड
       ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
       ctx.fillRect(0, 0, w, h);
 
+      // क्रॉप क्षेत्र को पारदर्शी करके असली इमेज दिखाना
       ctx.save();
       ctx.beginPath();
-      ctx.moveTo(curCorners.tl.x, curCorners.tl.y);
-      ctx.lineTo(curCorners.tr.x, curCorners.tr.y);
-      ctx.lineTo(curCorners.br.x, curCorners.br.y);
-      ctx.lineTo(curCorners.bl.x, curCorners.bl.y);
+      ctx.moveTo(c.tl.x, c.tl.y);
+      ctx.lineTo(c.tr.x, c.tr.y);
+      ctx.lineTo(c.br.x, c.br.y);
+      ctx.lineTo(c.bl.x, c.bl.y);
       ctx.closePath();
       ctx.clip();
       ctx.drawImage(img, 0, 0, w, h);
+
+      // आंतरिक ग्रिड गाइड्स (कैमस्कैनर 3x3 ग्रिड)
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+      ctx.lineWidth = 1;
+      for (let i = 1; i <= 2; i++) {
+        const u = i / 3;
+        ctx.beginPath();
+        ctx.moveTo(c.tl.x + (c.tr.x - c.tl.x) * u, c.tl.y + (c.tr.y - c.tl.y) * u);
+        ctx.lineTo(c.bl.x + (c.br.x - c.bl.x) * u, c.bl.y + (c.br.y - c.bl.y) * u);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(c.tl.x + (c.bl.x - c.tl.x) * u, c.tl.y + (c.bl.y - c.tl.y) * u);
+        ctx.lineTo(c.tr.x + (c.br.x - c.tr.x) * u, c.tr.y + (c.br.y - c.tr.y) * u);
+        ctx.stroke();
+      }
       ctx.restore();
 
+      // हरी/नीली मुख्य बाउंड्री लाइन
       ctx.beginPath();
-      ctx.moveTo(curCorners.tl.x, curCorners.tl.y);
-      ctx.lineTo(curCorners.tr.x, curCorners.tr.y);
-      ctx.lineTo(curCorners.br.x, curCorners.br.y);
-      ctx.lineTo(curCorners.bl.x, curCorners.bl.y);
+      ctx.moveTo(c.tl.x, c.tl.y);
+      ctx.lineTo(c.tr.x, c.tr.y);
+      ctx.lineTo(c.br.x, c.br.y);
+      ctx.lineTo(c.bl.x, c.bl.y);
       ctx.closePath();
       ctx.lineWidth = 2.5;
-      ctx.strokeStyle = '#3b82f6';
+      ctx.strokeStyle = '#10b981'; // कैमस्कैनर ग्रीन
       ctx.stroke();
 
-      ['tl', 'tr', 'br', 'bl'].forEach(key => {
-        const pt = curCorners[key];
+      const pts = getEightPoints(c);
+
+      // 4 साइड मध्य बिंदु (Midpoints)
+      ['top', 'right', 'bottom', 'left'].forEach(k => {
+        const p = pts[k];
         ctx.beginPath();
-        ctx.arc(pt.x, pt.y, HANDLE_RADIUS, 0, Math.PI * 2);
-        ctx.fillStyle = '#2563eb';
+        ctx.arc(p.x, p.y, MID_HANDLE_RADIUS, 0, Math.PI * 2);
+        ctx.fillStyle = '#3b82f6';
+        ctx.fill();
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#ffffff';
+        ctx.stroke();
+      });
+
+      // 4 मुख्य कोने (Corner Points)
+      ['tl', 'tr', 'br', 'bl'].forEach(k => {
+        const p = pts[k];
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, CORNER_HANDLE_RADIUS, 0, Math.PI * 2);
+        ctx.fillStyle = '#10b981';
         ctx.fill();
         ctx.lineWidth = 2.5;
         ctx.strokeStyle = '#ffffff';
         ctx.stroke();
 
         ctx.beginPath();
-        ctx.arc(pt.x, pt.y, 3, 0, Math.PI * 2);
+        ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
         ctx.fillStyle = '#ffffff';
         ctx.fill();
       });
@@ -781,34 +854,78 @@
 
     function onPointerDown(e) {
       const pos = getCanvasCoordinates(e);
-      activeCornerKey = null;
-      const curCorners = cornersStore[currentTargetSide];
-      if(!curCorners) return;
+      activeHandleKey = null;
+      const c = cornersStore[currentTargetSide];
+      if(!c) return;
 
-      for(let key of ['tl', 'tr', 'br', 'bl']) {
-        const pt = curCorners[key];
-        const dist = Math.hypot(pt.x - pos.x, pt.y - pos.y);
-        if(dist < TOUCH_DETECT_RADIUS) {
-          activeCornerKey = key;
-          break;
+      const pts = getEightPoints(c);
+      let closestDist = TOUCH_DETECT_RADIUS;
+
+      // पहले कोने चेक करें
+      for(let k of ['tl', 'tr', 'br', 'bl', 'top', 'right', 'bottom', 'left']) {
+        const p = pts[k];
+        const dist = Math.hypot(p.x - pos.x, p.y - pos.y);
+        if(dist < closestDist) {
+          closestDist = dist;
+          activeHandleKey = k;
         }
       }
-      if(activeCornerKey) e.preventDefault();
+
+      if(activeHandleKey) {
+        dragStartPos = { x: pos.x, y: pos.y };
+        dragStartCorners = JSON.parse(JSON.stringify(c));
+        e.preventDefault();
+      }
     }
 
     function onPointerMove(e) {
-      if(!activeCornerKey) return;
+      if(!activeHandleKey) return;
       e.preventDefault();
       const pos = getCanvasCoordinates(e);
-      const curCorners = cornersStore[currentTargetSide];
-      if(!curCorners) return;
+      const c = cornersStore[currentTargetSide];
+      if(!c || !dragStartCorners) return;
 
-      curCorners[activeCornerKey].x = Math.max(0, Math.min(cropCanvas.width, pos.x));
-      curCorners[activeCornerKey].y = Math.max(0, Math.min(cropCanvas.height, pos.y));
+      const dx = pos.x - dragStartPos.x;
+      const dy = pos.y - dragStartPos.y;
+
+      const clamp = (v, max) => Math.max(0, Math.min(max, v));
+
+      // 4 कोनों को खींचना
+      if(['tl', 'tr', 'br', 'bl'].includes(activeHandleKey)) {
+        c[activeHandleKey].x = clamp(dragStartCorners[activeHandleKey].x + dx, cropCanvas.width);
+        c[activeHandleKey].y = clamp(dragStartCorners[activeHandleKey].y + dy, cropCanvas.height);
+      } 
+      // साइड के मध्य बिंदु को खींचने पर पूरी रेखा खिंचेगी
+      else if(activeHandleKey === 'top') {
+        c.tl.x = clamp(dragStartCorners.tl.x + dx, cropCanvas.width);
+        c.tl.y = clamp(dragStartCorners.tl.y + dy, cropCanvas.height);
+        c.tr.x = clamp(dragStartCorners.tr.x + dx, cropCanvas.width);
+        c.tr.y = clamp(dragStartCorners.tr.y + dy, cropCanvas.height);
+      } else if(activeHandleKey === 'bottom') {
+        c.bl.x = clamp(dragStartCorners.bl.x + dx, cropCanvas.width);
+        c.bl.y = clamp(dragStartCorners.bl.y + dy, cropCanvas.height);
+        c.br.x = clamp(dragStartCorners.br.x + dx, cropCanvas.width);
+        c.br.y = clamp(dragStartCorners.br.y + dy, cropCanvas.height);
+      } else if(activeHandleKey === 'left') {
+        c.tl.x = clamp(dragStartCorners.tl.x + dx, cropCanvas.width);
+        c.tl.y = clamp(dragStartCorners.tl.y + dy, cropCanvas.height);
+        c.bl.x = clamp(dragStartCorners.bl.x + dx, cropCanvas.width);
+        c.bl.y = clamp(dragStartCorners.bl.y + dy, cropCanvas.height);
+      } else if(activeHandleKey === 'right') {
+        c.tr.x = clamp(dragStartCorners.tr.x + dx, cropCanvas.width);
+        c.tr.y = clamp(dragStartCorners.tr.y + dy, cropCanvas.height);
+        c.br.x = clamp(dragStartCorners.br.x + dx, cropCanvas.width);
+        c.br.y = clamp(dragStartCorners.br.y + dy, cropCanvas.height);
+      }
+
       drawCropCanvas();
     }
 
-    function onPointerUp() { activeCornerKey = null; }
+    function onPointerUp() { 
+      activeHandleKey = null; 
+      dragStartPos = null;
+      dragStartCorners = null;
+    }
 
     cropCanvas.addEventListener('mousedown', onPointerDown);
     window.addEventListener('mousemove', onPointerMove);
@@ -856,12 +973,7 @@
           bl: { x: sx, y: sy + boxH }
         };
       } else {
-        cornersStore[currentTargetSide] = {
-          tl: { x: w * 0.05, y: h * 0.05 },
-          tr: { x: w * 0.95, y: h * 0.05 },
-          br: { x: w * 0.95, y: h * 0.95 },
-          bl: { x: w * 0.05, y: h * 0.95 }
-        };
+        autoDetectEdges();
       }
       drawCropCanvas();
     }
@@ -878,9 +990,10 @@
       drawCropCanvas();
     }
 
+    // वीडियो जैसा Magic Color फ़िल्टर (शार्प टेक्स्ट + क्लीन व्हाइट पेपर)
     function applyMagicColor() {
-      document.getElementById('filter-bright').value = 112;
-      document.getElementById('filter-contrast').value = 118;
+      document.getElementById('filter-bright').value = 115;
+      document.getElementById('filter-contrast').value = 125;
       updateLiveFilter();
     }
 
@@ -897,6 +1010,7 @@
       cropCanvas.style.filter = `brightness(${b}%) contrast(${c}%)`;
     }
 
+    // PERSPECTIVE TRANSFORMATION ENGINE (90° सीधा करने वाला इंजन)
     function warpPerspective(srcCanvas, srcPts, outW, outH) {
       const dstCanvas = document.createElement('canvas');
       dstCanvas.width = outW;
@@ -1003,31 +1117,30 @@
 
       const warpedCanvas = warpPerspective(tempSrcCanvas, realCorners, outW, outH);
 
-      const filterSettings = filtersStore[type] || { bright: 100, contrast: 100 };
-      if (filterSettings.bright !== 100 || filterSettings.contrast !== 100) {
-        const wCtx = warpedCanvas.getContext('2d');
-        const imgData = wCtx.getImageData(0, 0, outW, outH);
-        const d = imgData.data;
-        const bMul = filterSettings.bright / 100;
-        const cFactor = (filterSettings.contrast - 100) * 1.1;
+      // वीडियो जैसा Magic Color + Unsharp Contrast
+      const filterSettings = filtersStore[type] || { bright: 112, contrast: 122 };
+      const wCtx = warpedCanvas.getContext('2d');
+      const imgData = wCtx.getImageData(0, 0, outW, outH);
+      const d = imgData.data;
+      const bMul = filterSettings.bright / 100;
+      const cFactor = (filterSettings.contrast - 100) * 1.15;
 
-        for (let i = 0; i < d.length; i += 4) {
-          let r = d[i] * bMul;
-          let g = d[i+1] * bMul;
-          let b = d[i+2] * bMul;
+      for (let i = 0; i < d.length; i += 4) {
+        let r = d[i] * bMul;
+        let g = d[i+1] * bMul;
+        let b = d[i+2] * bMul;
 
-          if (cFactor !== 0) {
-            r = r + (r - 128) * (cFactor / 100);
-            g = g + (g - 128) * (cFactor / 100);
-            b = b + (b - 128) * (cFactor / 100);
-          }
-
-          d[i] = Math.min(255, Math.max(0, r));
-          d[i+1] = Math.min(255, Math.max(0, g));
-          d[i+2] = Math.min(255, Math.max(0, b));
+        if (cFactor !== 0) {
+          r = r + (r - 128) * (cFactor / 100);
+          g = g + (g - 128) * (cFactor / 100);
+          b = b + (b - 128) * (cFactor / 100);
         }
-        wCtx.putImageData(imgData, 0, 0);
+
+        d[i] = Math.min(255, Math.max(0, r));
+        d[i+1] = Math.min(255, Math.max(0, g));
+        d[i+2] = Math.min(255, Math.max(0, b));
       }
+      wCtx.putImageData(imgData, 0, 0);
 
       finalizedCanvases[type] = warpedCanvas;
     }
@@ -1166,7 +1279,7 @@
 
       isVerified = false;
       document.getElementById('btn-execute-print').disabled = true;
-      document.getElementById('btn-execute-print').className = "w-full bg-slate-400 cursor-not-allowed text-white font-bold py-3.5 rounded-xl shadow-lg transition flex items-center justify-center gap-2";
+      document.getElementById('btn-execute-print').className = "w-2/3 bg-slate-400 cursor-not-allowed text-white font-black py-3.5 rounded-xl shadow-lg transition flex items-center justify-center gap-2";
       document.getElementById('icon-lock').className = "fa-solid fa-lock";
       document.getElementById('payment-status-badge').classList.add('hidden');
 
@@ -1318,7 +1431,7 @@
 
       const printBtn = document.getElementById('btn-execute-print');
       printBtn.disabled = false;
-      printBtn.className = "w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl shadow-lg transition flex items-center justify-center gap-2 cursor-pointer";
+      printBtn.className = "w-2/3 bg-emerald-600 hover:bg-emerald-700 text-white font-black py-3.5 rounded-xl shadow-lg transition flex items-center justify-center gap-2 cursor-pointer";
       document.getElementById('icon-lock').className = "fa-solid fa-paper-plane";
       document.getElementById('input-payment-ref').disabled = true;
     }
@@ -1386,18 +1499,13 @@
         ctx.lineWidth = 1;
         ctx.strokeRect(startX, topMargin, targetW, targetH);
       } else if (activeTab === 'pdf' && pdfImageBlob) {
-        const doc = pdfImageBlob;
-        let maxW = 1100;
-        let maxH = 1550;
-        if(pdfOrientation === 'landscape') {
-          maxW = 1180;
-          maxH = 1550;
-        }
-        const scale = Math.min(maxW / doc.width, maxH / doc.height);
-        const docW = Math.round(doc.width * scale);
-        const docH = Math.round(doc.height * scale);
+        const maxW = 1100;
+        const maxH = 1550;
+        const scale = Math.min(maxW / pdfImageBlob.width, maxH / pdfImageBlob.height);
+        const docW = Math.round(pdfImageBlob.width * scale);
+        const docH = Math.round(pdfImageBlob.height * scale);
         const startX = (a4Canvas.width - docW) / 2;
-        ctx.drawImage(doc, startX, topMargin, docW, docH);
+        ctx.drawImage(pdfImageBlob, startX, topMargin, docW, docH);
       }
 
       if (isBwSelected) {
@@ -1426,17 +1534,13 @@
       }
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF({
-        orientation: (activeTab === 'pdf' && pdfOrientation === 'landscape') ? 'landscape' : 'portrait',
+        orientation: 'portrait',
         unit: 'mm',
         format: 'a4'
       });
 
       const imgData = generateA4PrintImage();
-      if(activeTab === 'pdf' && pdfOrientation === 'landscape') {
-        doc.addImage(imgData, 'JPEG', 0, 0, 297, 210, undefined, 'FAST');
-      } else {
-        doc.addImage(imgData, 'JPEG', 0, 0, 210, 297, undefined, 'FAST');
-      }
+      doc.addImage(imgData, 'JPEG', 0, 0, 210, 297, undefined, 'FAST');
       return doc;
     }
 
@@ -1489,7 +1593,7 @@
       const printImageData = generateA4PrintImage();
 
       const orderData = {
-        doc_type: activeTab === 'id' ? 'ID Card (8.5x5.5 CM)' : (activeTab === 'single' ? `Single Doc (${docPrintSize.toUpperCase()})` : `PDF Document (${pdfOrientation.toUpperCase()})`),
+        doc_type: activeTab === 'id' ? 'ID Card (8.5x5.5 CM)' : (activeTab === 'single' ? `Single Doc (${docPrintSize.toUpperCase()})` : 'PDF Document'),
         color_mode: isBwSelected ? 'Black & White' : 'Color Print',
         copies: copiesCount,
         amount: totalCalculatedAmount,
