@@ -4,10 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>NEELSHANK TELECOM - स्मार्ट प्रिंट पोर्टल</title>
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- PDF.js CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <!-- jsPDF लाइब्रेरी -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <!-- Razorpay Checkout SDK -->
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   <style>
     .crop-wrapper-box {
@@ -16,7 +21,7 @@
       user-select: none !important;
       -webkit-user-select: none !important;
       width: 100%;
-      min-height: 380px;
+      min-height: 400px;
       background: #090d16;
       border-radius: 12px;
       padding: 8px;
@@ -31,13 +36,13 @@
       max-width: 100%;
       height: auto;
       border-radius: 6px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.7);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.8);
       display: block;
     }
     .a4-preview-box {
       width: 100%;
       max-width: 380px;
-      min-height: 480px;
+      min-height: 490px;
       background: #ffffff;
       border: 1px solid #cbd5e1;
       border-radius: 8px;
@@ -88,7 +93,7 @@
         <h2 class="font-bold text-sm">NEELSHANK TELECOM में आपका स्वागत है!</h2>
       </div>
       <p class="text-slate-700 leading-relaxed">
-        पहचान पत्र, पासबुक, रसीद या PDF अपलोड करें।
+        पहचान पत्र, रसीद, पासबुक या PDF अपलोड करें।
       </p>
       <div class="mt-2.5 pt-2 border-t border-indigo-200 flex items-center justify-between font-bold">
         <span class="text-emerald-700 flex items-center gap-1.5">
@@ -114,7 +119,7 @@
           <i class="fa-solid fa-id-card text-base mb-0.5"></i> ID कार्ड (2-साइड)
         </button>
         <button id="tab-single" type="button" onclick="selectMode('single')" class="py-2.5 rounded-lg text-slate-600 flex flex-col items-center">
-          <i class="fa-solid fa-book-open text-base mb-0.5"></i> रसीद / 1 फोटो
+          <i class="fa-solid fa-file-invoice text-base mb-0.5"></i> रसीद / 1 पेज
         </button>
         <button id="tab-pdf" type="button" onclick="selectMode('pdf')" class="py-2.5 rounded-lg text-slate-600 flex flex-col items-center">
           <i class="fa-solid fa-file-pdf text-base mb-0.5"></i> PDF दस्तावेज़
@@ -144,13 +149,13 @@
         </div>
       </div>
 
-      <!-- 2. सिंगल रसीद / फोटो अपलोड एरिया -->
+      <!-- 2. सिंगल रसीद / डॉक्यूमेंट अपलोड एरिया -->
       <div id="section-single-upload" class="hidden bg-white p-5 rounded-xl border-2 border-dashed border-indigo-300 text-center">
-        <p class="font-bold text-xs text-slate-700 mb-2">रसीद, चालान या सिंगल पेज डॉक्यूमेंट की फोटो</p>
+        <p class="font-bold text-xs text-slate-700 mb-2">कॉलेज रसीद, चालान, पासबुक या किसी भी पेज की फोटो</p>
         <input type="file" id="file-single" accept="image/*" class="hidden" onchange="onImageSelected(event, 'single')">
         <button type="button" onclick="triggerFileInput('file-single')" class="w-full py-6 bg-indigo-50 hover:bg-indigo-100 rounded-lg text-indigo-700 flex flex-col items-center border border-indigo-200 cursor-pointer">
-          <i class="fa-solid fa-image text-4xl mb-2 text-indigo-500"></i>
-          <span id="label-single" class="text-xs font-bold">रसीद या फोटो चुनें</span>
+          <i class="fa-solid fa-file-circle-plus text-4xl mb-2 text-indigo-500"></i>
+          <span id="label-single" class="text-xs font-bold">रसीद या डॉक्यूमेंट की फोटो चुनें</span>
         </button>
         <img id="thumb-single" class="hidden mt-3 max-h-40 mx-auto rounded border shadow-sm">
       </div>
@@ -164,7 +169,7 @@
           <span id="label-pdf" class="text-xs font-bold">यहाँ क्लिक करके PDF फ़ाइल चुनें</span>
         </button>
         <div id="pdf-preview-indicator" class="hidden text-xs font-bold text-emerald-600 bg-emerald-50 py-2 rounded border border-emerald-200">
-          <i class="fa-solid fa-circle-check"></i> PDF फ़ाइल लोड हो चुकी है
+          <i class="fa-solid fa-circle-check"></i> PDF लोड हो चुकी है
         </div>
       </div>
 
@@ -179,23 +184,23 @@
         
         <div id="crop-toggle-group" class="flex gap-2 mb-3">
           <button type="button" id="btn-side-front" onclick="switchSide('front')" class="flex-1 py-2 bg-indigo-600 text-white font-bold text-xs rounded-lg shadow-sm">
-            फ्रंट साइड <span id="status-front-saved" class="text-[10px] text-emerald-200"></span>
+            फ्रंट साइड
           </button>
           <button type="button" id="btn-side-back" onclick="switchSide('back')" class="flex-1 py-2 bg-slate-200 text-slate-700 font-bold text-xs rounded-lg">
-            बैक साइड <span id="status-back-saved" class="text-[10px] text-emerald-600"></span>
+            बैक साइड
           </button>
         </div>
 
         <div class="flex flex-wrap items-center justify-between gap-1.5 mb-2.5 bg-slate-50 p-2 rounded-lg border text-xs">
           <div class="flex gap-1.5 flex-wrap">
-            <button type="button" onclick="setCropRatio('id')" class="px-2 py-1 bg-white border border-indigo-300 text-indigo-700 rounded font-bold shadow-sm">
+            <button type="button" onclick="setCropRatio('id')" class="px-2.5 py-1 bg-white border border-indigo-300 text-indigo-700 rounded font-bold shadow-sm">
               ID कार्ड (8.5×5.5)
             </button>
-            <button type="button" onclick="setCropRatio('full')" class="px-2 py-1 bg-white border border-slate-300 text-slate-700 rounded font-bold">
-              डॉक्यूमेंट साइज
+            <button type="button" onclick="setCropRatio('full')" class="px-2.5 py-1 bg-white border border-slate-300 text-slate-700 rounded font-bold">
+              डॉक्यूमेंट ऑटो
             </button>
-            <button type="button" onclick="resetCrop()" class="px-2 py-1 bg-slate-100 border text-slate-600 rounded font-bold">
-              <i class="fa-solid fa-expand"></i> रीसेट
+            <button type="button" onclick="resetCrop()" class="px-2.5 py-1 bg-slate-100 border text-slate-600 rounded font-bold">
+              <i class="fa-solid fa-expand"></i> पूरा फ्रेम
             </button>
           </div>
           <div class="flex gap-1.5">
@@ -215,24 +220,24 @@
 
         <div class="mt-3 pt-3 border-t border-slate-100 space-y-2.5">
           <div class="flex justify-between items-center">
-            <span class="text-xs font-bold text-slate-700"><i class="fa-solid fa-wand-magic-sparkles text-indigo-600"></i> दस्तावेज़ फ़िल्टर:</span>
+            <span class="text-xs font-bold text-slate-700"><i class="fa-solid fa-wand-magic-sparkles text-indigo-600"></i> स्कैनर क्वालिटी:</span>
             <div class="flex gap-1.5">
-              <button type="button" onclick="applyMagicClean()" class="bg-indigo-50 border border-indigo-300 text-indigo-700 text-[11px] px-2.5 py-1 rounded font-bold">
-                ऑटो-सफ़ेद (साफ़)
+              <button type="button" onclick="applyMagicColor()" class="bg-emerald-600 text-white text-[11px] px-3 py-1 rounded font-bold shadow">
+                ⚡ Magic Color (साफ़)
               </button>
               <button type="button" onclick="resetFilters()" class="bg-slate-100 border text-slate-600 text-[11px] px-2 py-1 rounded font-bold">
-                मूल रंग (Original)
+                ओरिजिनल
               </button>
             </div>
           </div>
           <div class="grid grid-cols-2 gap-3 text-xs">
             <div>
-              <span class="font-semibold text-slate-500">ब्राइटनेस (सफेदी)</span>
-              <input type="range" id="filter-bright" min="80" max="150" value="100" class="w-full h-1 bg-slate-200 rounded" oninput="updateLiveFilter()">
+              <span class="font-semibold text-slate-500">सफेदी (Brightness)</span>
+              <input type="range" id="filter-bright" min="80" max="140" value="100" class="w-full h-1 bg-slate-200 rounded" oninput="updateLiveFilter()">
             </div>
             <div>
-              <span class="font-semibold text-slate-500">कंट्रास्ट (अक्षर गहरे)</span>
-              <input type="range" id="filter-contrast" min="80" max="150" value="100" class="w-full h-1 bg-slate-200 rounded" oninput="updateLiveFilter()">
+              <span class="font-semibold text-slate-500">अक्षर गहरे (Contrast)</span>
+              <input type="range" id="filter-contrast" min="80" max="140" value="100" class="w-full h-1 bg-slate-200 rounded" oninput="updateLiveFilter()">
             </div>
           </div>
         </div>
@@ -246,7 +251,7 @@
       </div>
     </section>
 
-    <!-- ================= स्टेप 3: कॉपी, साइज विकल्प, पेमेंट & प्रिंट ================= -->
+    <!-- ================= स्टेप 3: कॉपी, साइज़ विकल्प, पेमेंट & प्रिंट ================= -->
     <section id="step-3" class="hidden space-y-4">
       
       <div class="flex items-center justify-between bg-white p-2.5 rounded-xl border border-slate-200 shadow-sm">
@@ -256,23 +261,41 @@
         <span class="text-xs font-bold text-indigo-700">NEELSHANK KIOSK</span>
       </div>
 
-      <!-- सिंगल दस्तावेज़ साइज चयन पैनल -->
+      <!-- सिंगल दस्तावेज़ / रसीद साइज़ चयन पैनल -->
       <div id="size-options-panel" class="bg-white p-3.5 rounded-xl shadow-sm border border-slate-200">
         <span class="font-bold text-xs text-slate-700 block mb-2">
           <i class="fa-solid fa-expand text-indigo-600"></i> A4 पेपर पर दस्तावेज़ का साइज चुनें:
         </span>
         <div class="grid grid-cols-2 gap-2 text-xs font-bold">
           <button type="button" id="btn-size-id" onclick="setDocPrintSize('id')" class="p-2.5 rounded-xl border-2 border-slate-200 bg-white text-slate-700 hover:border-indigo-400">
-            ID कार्ड (8.5×5.5 CM)
+            ID कार्ड साइज़ (8.5×5.5 CM)
           </button>
           <button type="button" id="btn-size-postcard" onclick="setDocPrintSize('postcard')" class="p-2.5 rounded-xl border-2 border-slate-200 bg-white text-slate-700 hover:border-indigo-400">
-            पोस्टकार्ड (A6)
+            पोस्टकार्ड साइज़ (A6)
           </button>
           <button type="button" id="btn-size-half" onclick="setDocPrintSize('half')" class="p-2.5 rounded-xl border-2 border-indigo-600 bg-indigo-50 text-indigo-800">
             हाफ पेज (A5 आधा A4)
           </button>
           <button type="button" id="btn-size-full" onclick="setDocPrintSize('full')" class="p-2.5 rounded-xl border-2 border-slate-200 bg-white text-slate-700 hover:border-indigo-400">
-            फुल पेज (पूरा A4)
+            फुल पेज (पूरा A4 पेज)
+          </button>
+        </div>
+      </div>
+
+      <!-- PDF ओरिएंटेशन और रोटेशन टूलबार -->
+      <div id="pdf-tools-panel" class="hidden bg-white p-3.5 rounded-xl shadow-sm border border-slate-200">
+        <span class="font-bold text-xs text-slate-700 block mb-2">
+          <i class="fa-solid fa-arrows-rotate text-indigo-600"></i> PDF ओरिएंटेशन और रोटेशन सेटिंग्स:
+        </span>
+        <div class="grid grid-cols-3 gap-2 text-xs font-bold">
+          <button type="button" id="btn-pdf-portrait" onclick="setPdfOrientation('portrait')" class="p-2.5 rounded-xl border-2 border-indigo-600 bg-indigo-50 text-indigo-800 flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-file"></i> सीधा (Portrait)
+          </button>
+          <button type="button" id="btn-pdf-landscape" onclick="setPdfOrientation('landscape')" class="p-2.5 rounded-xl border-2 border-slate-200 bg-white text-slate-700 hover:border-indigo-400 flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-file rotate-90"></i> आड़ा (Landscape)
+          </button>
+          <button type="button" onclick="rotatePdfLive()" class="p-2.5 rounded-xl border-2 border-amber-300 bg-amber-50 text-amber-800 flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-rotate-right"></i> 90° घुमाएँ
           </button>
         </div>
       </div>
@@ -324,7 +347,7 @@
         </div>
       </div>
 
-      <!-- एडवांस्ड पेमेंट हब -->
+      <!-- सिक्योर पेमेंट हब -->
       <div class="bg-gradient-to-br from-indigo-900 via-indigo-800 to-indigo-950 text-white p-4.5 rounded-2xl shadow-xl text-center space-y-3.5 border border-indigo-700/50">
         <div class="bg-white/10 backdrop-blur-sm p-3 rounded-xl border border-white/10">
           <p class="text-xs text-indigo-200">कुल देय राशि (<span id="calc-breakdown">1 कॉपी × ₹10</span>):</p>
@@ -373,24 +396,29 @@
         </div>
       </div>
 
-      <!-- पेमेंट वेरिफिकेशन बॉक्स -->
-      <div id="box-verification" class="bg-indigo-50 border-2 border-dashed border-indigo-300 p-4 rounded-xl space-y-2.5">
+      <!-- स्टाइलिश दुकानदार पिन & UTR वेरिफिकेशन बॉक्स -->
+      <div id="box-verification" class="bg-gradient-to-r from-indigo-50 to-amber-50/50 border-2 border-indigo-300 p-4 rounded-2xl shadow-sm space-y-3">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
-            <i class="fa-solid fa-circle-check text-indigo-600 text-lg"></i>
+            <div class="w-7 h-7 bg-indigo-600 text-white rounded-lg flex items-center justify-center text-xs shadow">
+              <i class="fa-solid fa-receipt"></i>
+            </div>
             <div>
-              <h4 class="font-bold text-xs text-slate-800">मैन्युअल UTR या नकद वेरिफिकेशन</h4>
-              <p class="text-[10px] text-slate-500">यदि ऐप से पे किया है, तो 12 अंकों का UTR नंबर यहाँ दर्ज करें</p>
+              <h4 class="font-bold text-xs text-slate-800">मैन्युअल UTR या नकद भुगतान</h4>
+              <p class="text-[10px] text-slate-500">ऐप से भुगतान करने पर 12 अंकों का UTR डालें</p>
             </div>
           </div>
-          <button type="button" onclick="shopkeeperBypass()" class="text-[10px] bg-slate-200 hover:bg-slate-300 text-slate-700 px-2.5 py-1 rounded font-bold">
-            दुकानदार पिन
+          
+          <!-- प्रीमियम स्टाइलिश दुकानदार पिन बटन -->
+          <button type="button" onclick="shopkeeperBypass()" class="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-black text-xs px-3.5 py-1.5 rounded-xl shadow-md border border-amber-300 flex items-center gap-1.5 transition transform active:scale-95 cursor-pointer">
+            <i class="fa-solid fa-key text-slate-900 text-xs"></i>
+            <span>दुकानदार पिन</span>
           </button>
         </div>
 
         <div class="flex gap-2">
-          <input type="text" id="input-payment-ref" placeholder="12 अंकों का UTR नंबर" class="flex-1 border rounded-lg px-3 py-2 text-xs font-mono font-bold text-slate-800 outline-none focus:border-indigo-600">
-          <button type="button" id="btn-verify-ref" onclick="verifyPaymentRef()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-4 py-2 rounded-lg shadow">
+          <input type="text" id="input-payment-ref" placeholder="12 अंकों का UTR नंबर दर्ज करें" class="flex-1 border-2 border-indigo-200 bg-white rounded-xl px-3 py-2 text-xs font-mono font-bold text-slate-800 outline-none focus:border-indigo-600">
+          <button type="button" id="btn-verify-ref" onclick="verifyPaymentRef()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-4 py-2 rounded-xl shadow">
             सत्यापित करें
           </button>
         </div>
@@ -442,6 +470,9 @@
     let activeTab = 'id';
     let currentTargetSide = 'front';
     let docPrintSize = 'half';
+    let pdfOrientation = 'portrait'; // 'portrait' या 'landscape'
+    let pdfRotationAngle = 0; // 0, 90, 180, 270
+
     let unitRate = 10;
     let copiesCount = 1;
     let totalCalculatedAmount = 10;
@@ -546,6 +577,8 @@
                 const img = new Image();
                 img.onload = function() {
                   pdfImageBlob = img;
+                  pdfRotationAngle = 0;
+                  pdfOrientation = (img.width > img.height) ? 'landscape' : 'portrait';
                   document.getElementById('pdf-preview-indicator').classList.remove('hidden');
                 };
                 img.src = tempCanvas.toDataURL('image/jpeg', 0.90);
@@ -691,7 +724,7 @@
       ctx.clearRect(0, 0, w, h);
       ctx.drawImage(img, 0, 0, w, h);
 
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.40)';
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
       ctx.fillRect(0, 0, w, h);
 
       ctx.save();
@@ -845,9 +878,9 @@
       drawCropCanvas();
     }
 
-    function applyMagicClean() {
-      document.getElementById('filter-bright').value = 115;
-      document.getElementById('filter-contrast').value = 115;
+    function applyMagicColor() {
+      document.getElementById('filter-bright').value = 112;
+      document.getElementById('filter-contrast').value = 118;
       updateLiveFilter();
     }
 
@@ -958,7 +991,7 @@
         const avgW = Math.round((topW + btmW) / 2);
         const avgH = Math.round((lftH + rgtH) / 2);
 
-        const maxDim = 1200;
+        const maxDim = 1400;
         if(avgW > avgH) {
           outW = maxDim;
           outH = Math.max(100, Math.round((avgH / avgW) * maxDim));
@@ -976,7 +1009,7 @@
         const imgData = wCtx.getImageData(0, 0, outW, outH);
         const d = imgData.data;
         const bMul = filterSettings.bright / 100;
-        const cFactor = (filterSettings.contrast - 100) * 1.2;
+        const cFactor = (filterSettings.contrast - 100) * 1.1;
 
         for (let i = 0; i < d.length; i += 4) {
           let r = d[i] * bMul;
@@ -1032,8 +1065,50 @@
       renderA4SheetLayout();
     }
 
+    function setPdfOrientation(ori) {
+      pdfOrientation = ori;
+      const btnP = document.getElementById('btn-pdf-portrait');
+      const btnL = document.getElementById('btn-pdf-landscape');
+      if(ori === 'portrait') {
+        btnP.className = "p-2.5 rounded-xl border-2 border-indigo-600 bg-indigo-50 text-indigo-800 flex items-center justify-center gap-1.5";
+        btnL.className = "p-2.5 rounded-xl border-2 border-slate-200 bg-white text-slate-700 hover:border-indigo-400 flex items-center justify-center gap-1.5";
+      } else {
+        btnL.className = "p-2.5 rounded-xl border-2 border-indigo-600 bg-indigo-50 text-indigo-800 flex items-center justify-center gap-1.5";
+        btnP.className = "p-2.5 rounded-xl border-2 border-slate-200 bg-white text-slate-700 hover:border-indigo-400 flex items-center justify-center gap-1.5";
+      }
+      renderA4SheetLayout();
+    }
+
+    function rotatePdfLive() {
+      if(!pdfImageBlob) return;
+      pdfRotationAngle = (pdfRotationAngle + 90) % 360;
+
+      const rCanvas = document.createElement('canvas');
+      const img = pdfImageBlob;
+      if (pdfRotationAngle === 90 || pdfRotationAngle === 270) {
+        rCanvas.width = img.height;
+        rCanvas.height = img.width;
+      } else {
+        rCanvas.width = img.width;
+        rCanvas.height = img.height;
+      }
+      const rCtx = rCanvas.getContext('2d');
+      rCtx.translate(rCanvas.width / 2, rCanvas.height / 2);
+      rCtx.rotate((90 * Math.PI) / 180);
+      rCtx.drawImage(img, -img.width / 2, -img.height / 2);
+
+      const rotatedImg = new Image();
+      rotatedImg.onload = function() {
+        pdfImageBlob = rotatedImg;
+        pdfOrientation = (pdfImageBlob.width > pdfImageBlob.height) ? 'landscape' : 'portrait';
+        setPdfOrientation(pdfOrientation);
+      };
+      rotatedImg.src = rCanvas.toDataURL('image/jpeg', 0.90);
+    }
+
     function setupStep3() {
-      document.getElementById('size-options-panel').classList.toggle('hidden', activeTab === 'id');
+      document.getElementById('size-options-panel').classList.toggle('hidden', activeTab !== 'single');
+      document.getElementById('pdf-tools-panel').classList.toggle('hidden', activeTab !== 'pdf');
       recalculateBilling();
     }
 
@@ -1114,7 +1189,7 @@
 
     function payWithRazorpayPopup() {
       if (!window.Razorpay) {
-        alert("Razorpay पेमेंट गेटवे लोड हो रहा है, कृपया 2 सेकंड बाद फिर से दबाएँ या डायरेक्ट UPI ऐप चुनें।");
+        alert("Razorpay लोड हो रहा है, कृपया 2 सेकंड बाद फिर से दबाएँ या डायरेक्ट UPI ऐप चुनें।");
         return;
       }
 
@@ -1181,7 +1256,8 @@
           const im = new Image();
           im.src = pdfImageBlob.src;
           im.style.filter = filterCss;
-          im.className = "w-[90%] h-auto rounded border shadow-sm object-contain";
+          const wClass = (pdfOrientation === 'landscape') ? "w-[96%]" : "w-[85%]";
+          im.className = `${wClass} h-auto rounded border shadow-sm object-contain`;
           container.appendChild(im);
         }
       }
@@ -1249,8 +1325,8 @@
 
     function generateA4PrintImage() {
       const a4Canvas = document.createElement('canvas');
-      a4Canvas.width = 1240;
-      a4Canvas.height = 1754;
+      a4Canvas.width = 1240;  // 150 DPI A4
+      a4Canvas.height = 1754; // 150 DPI A4
       const ctx = a4Canvas.getContext('2d');
 
       ctx.fillStyle = '#ffffff';
@@ -1259,8 +1335,8 @@
       const topMargin = 100;
 
       if (activeTab === 'id') {
-        const cardW = 502;
-        const cardH = 325;
+        const cardW = 502; // 8.5 cm
+        const cardH = 325; // 5.5 cm
         const gap = 50;
         const totalW = cardW * 2 + gap;
         const startX = (a4Canvas.width - totalW) / 2;
@@ -1310,13 +1386,18 @@
         ctx.lineWidth = 1;
         ctx.strokeRect(startX, topMargin, targetW, targetH);
       } else if (activeTab === 'pdf' && pdfImageBlob) {
-        const maxW = 1100;
-        const maxH = 1550;
-        const scale = Math.min(maxW / pdfImageBlob.width, maxH / pdfImageBlob.height);
-        const docW = Math.round(pdfImageBlob.width * scale);
-        const docH = Math.round(pdfImageBlob.height * scale);
+        const doc = pdfImageBlob;
+        let maxW = 1100;
+        let maxH = 1550;
+        if(pdfOrientation === 'landscape') {
+          maxW = 1180;
+          maxH = 1550;
+        }
+        const scale = Math.min(maxW / doc.width, maxH / doc.height);
+        const docW = Math.round(doc.width * scale);
+        const docH = Math.round(doc.height * scale);
         const startX = (a4Canvas.width - docW) / 2;
-        ctx.drawImage(pdfImageBlob, startX, topMargin, docW, docH);
+        ctx.drawImage(doc, startX, topMargin, docW, docH);
       }
 
       if (isBwSelected) {
@@ -1345,13 +1426,17 @@
       }
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF({
-        orientation: 'portrait',
+        orientation: (activeTab === 'pdf' && pdfOrientation === 'landscape') ? 'landscape' : 'portrait',
         unit: 'mm',
         format: 'a4'
       });
 
       const imgData = generateA4PrintImage();
-      doc.addImage(imgData, 'JPEG', 0, 0, 210, 297, undefined, 'FAST');
+      if(activeTab === 'pdf' && pdfOrientation === 'landscape') {
+        doc.addImage(imgData, 'JPEG', 0, 0, 297, 210, undefined, 'FAST');
+      } else {
+        doc.addImage(imgData, 'JPEG', 0, 0, 210, 297, undefined, 'FAST');
+      }
       return doc;
     }
 
@@ -1404,7 +1489,7 @@
       const printImageData = generateA4PrintImage();
 
       const orderData = {
-        doc_type: activeTab === 'id' ? 'ID Card (8.5x5.5 CM)' : (activeTab === 'single' ? `Single Doc (${docPrintSize.toUpperCase()})` : 'PDF Document'),
+        doc_type: activeTab === 'id' ? 'ID Card (8.5x5.5 CM)' : (activeTab === 'single' ? `Single Doc (${docPrintSize.toUpperCase()})` : `PDF Document (${pdfOrientation.toUpperCase()})`),
         color_mode: isBwSelected ? 'Black & White' : 'Color Print',
         copies: copiesCount,
         amount: totalCalculatedAmount,
