@@ -88,7 +88,7 @@
         <h2 class="font-bold text-sm">NEELSHANK TELECOM में आपका स्वागत है!</h2>
       </div>
       <p class="text-slate-700 leading-relaxed">
-        पहचान पत्र, रसीद, पासबुक या PDF अपलोड करें। कैमस्कैनर जैसा स्मार्ट 8-डॉट क्रॉप और मैजिक कलर ऑटोमैटिक काम करेगा।
+        ID कार्ड, आधार कार्ड,पहचान पत्र,रसीद,पासबुक या PDF अपलोड करें।
       </p>
       <div class="mt-2.5 pt-2 border-t border-indigo-200 flex items-center justify-between font-bold">
         <span class="text-emerald-700 flex items-center gap-1.5">
@@ -222,7 +222,7 @@
             <span class="text-xs font-bold text-slate-700"><i class="fa-solid fa-wand-magic-sparkles text-indigo-600"></i> कलर फ़िल्टर मोड:</span>
             <div class="flex gap-1.5">
               <button type="button" id="btn-magic-color" onclick="applyMagicColor()" class="bg-emerald-600 text-white text-[11px] px-3 py-1.5 rounded-lg font-bold shadow">
-                ⚡ Magic Color (ऑटो-साफ़)
+                ⚡ Magic Color (ऑटो-क्लीन)
               </button>
               <button type="button" id="btn-original-color" onclick="resetFilters()" class="bg-slate-100 border text-slate-600 text-[11px] px-2.5 py-1.5 rounded-lg font-bold">
                 ओरिजिनल
@@ -261,7 +261,7 @@
         <button type="button" onclick="goToStep(2)" class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-black py-2 px-3.5 rounded-xl flex items-center gap-1.5 shadow-sm transition">
           <i class="fa-solid fa-arrow-left"></i> वापस जाएं (क्रॉप बदलें)
         </button>
-        <span class="text-xs font-bold text-indigo-700">NEELSHANK KIOSK</span>
+        <span class="text-xs font-bold text-indigo-700">NEELSHANK TELECOM</span>
       </div>
 
       <!-- मल्टीपल प्रिंट साइज़ विकल्प (A4 पेपर पर दस्तावेज़ का आकार) -->
@@ -271,16 +271,16 @@
         </span>
         <div class="grid grid-cols-2 gap-2 text-xs font-bold">
           <button type="button" id="btn-size-id" onclick="setDocPrintSize('id')" class="p-2.5 rounded-xl border-2 border-slate-200 bg-white text-slate-700 hover:border-indigo-400">
-            ID कार्ड साइज़ (8.5×5.5 CM)
+            ID कार्ड साइज़ 
           </button>
           <button type="button" id="btn-size-postcard" onclick="setDocPrintSize('postcard')" class="p-2.5 rounded-xl border-2 border-slate-200 bg-white text-slate-700 hover:border-indigo-400">
             पोस्टकार्ड साइज़ (A6)
           </button>
           <button type="button" id="btn-size-half" onclick="setDocPrintSize('half')" class="p-2.5 rounded-xl border-2 border-indigo-600 bg-indigo-50 text-indigo-800">
-            हाफ पेज (A5 आधा A4)
+            हाफ पेज (A5)
           </button>
           <button type="button" id="btn-size-full" onclick="setDocPrintSize('full')" class="p-2.5 rounded-xl border-2 border-slate-200 bg-white text-slate-700 hover:border-indigo-400">
-            फुल पेज (पूरा A4 पेज)
+            फुल पेज (A4)
           </button>
         </div>
       </div>
