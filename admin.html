@@ -1,1 +1,125 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEELSHANK - मोबाइल प्रिंट कंट्रोल</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-900 text-white min-h-screen p-4 pb-20">
 
+  <!-- हेडर -->
+  <header class="flex items-center justify-between pb-4 border-b border-slate-700">
+    <div>
+      <h1 class="text-lg font-black text-amber-400">NEELSHANK एडमिन</h1>
+      <p class="text-xs text-slate-400">लाइव प्रिंट रिक्वेस्ट (मोबाइल कंट्रोल)</p>
+    </div>
+    <button onclick="fetchOrders()" class="bg-indigo-600 active:scale-95 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1">
+      <i class="fa-solid fa-rotate"></i> रीफ्रेश
+    </button>
+  </header>
+
+  <!-- ऑर्डर लिस्ट -->
+  <div id="orders-container" class="mt-4 space-y-4">
+    <p class="text-center text-sm text-slate-400 mt-10">नए ऑर्डर्स लोड हो रहे हैं...</p>
+  </div>
+
+  <script>
+    const FIREBASE_ORDER_URL = "https://neelshank-print-default-rtdb.firebaseio.com/orders.json";
+
+    // हर 5 सेकंड में नए ऑर्डर चेक करना
+    setInterval(fetchOrders, 5000);
+    fetchOrders();
+
+    async function fetchOrders() {
+      try {
+        const res = await fetch(FIREBASE_ORDER_URL);
+        const data = await res.json();
+        const container = document.getElementById('orders-container');
+
+        if (!data) {
+          container.innerHTML = '<div class="text-center text-slate-500 py-12"><i class="fa-solid fa-inbox text-4xl mb-2"></i><p>अभी कोई पेंडिंग प्रिंट नहीं है</p></div>';
+          return;
+        }
+
+        container.innerHTML = '';
+        const orderIds = Object.keys(data).reverse();
+
+        orderIds.forEach(id => {
+          const item = data[id];
+          if (item.status === 'DONE') return; // जो प्रिंट हो चुके हैं उन्हें छुपाएं
+
+          const card = document.createElement('div');
+          card.className = "bg-slate-800 border border-slate-700 p-4 rounded-2xl shadow-lg space-y-3";
+          card.innerHTML = `
+            <div class="flex items-center justify-between">
+              <span class="text-xs bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-2.5 py-0.5 rounded-full font-bold">
+                ${item.doc_type || 'दस्तावेज़'}
+              </span>
+              <span class="text-xs font-black text-emerald-400">₹${item.amount || '0'} (पेड)</span>
+            </div>
+
+            <div class="flex gap-3 items-center">
+              <img src="${item.image_data}" class="w-16 h-20 object-cover rounded-lg border border-slate-600 bg-white">
+              <div class="text-xs space-y-1">
+                <p class="font-bold text-slate-200">${item.copies || 1} कॉपी • ${item.color_mode || 'B&W'}</p>
+                <p class="text-slate-400 text-[11px]">समय: ${item.time || 'अभी'}</p>
+                <p class="text-[10px] font-mono text-amber-300">ID: ${item.ref_id || id.slice(-6)}</p>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 pt-1">
+              <button onclick="mobileDirectPrint('${id}', '${item.image_data}')" class="bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-black py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow">
+                <i class="fa-solid fa-print"></i> मोबाइल से प्रिंट दें
+              </button>
+              <button onclick="markAsDone('${id}')" class="bg-slate-700 hover:bg-slate-600 active:scale-95 text-slate-300 font-bold py-2.5 rounded-xl text-xs">
+                पूर्ण (Done)
+              </button>
+            </div>
+          `;
+          container.appendChild(card);
+        });
+
+      } catch (err) {
+        console.error("Fetch error:", err);
+      }
+    }
+
+    // मोबाइल से सीधे प्रिंट निकालने का फंक्शन
+    function mobileDirectPrint(orderId, base64Image) {
+      const printWindow = window.open('', '_blank');
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>Print</title>
+            <style>
+              @page { size: A4 portrait; margin: 0; }
+              body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: flex-start; }
+              img { width: 100%; height: auto; max-height: 100vh; object-fit: contain; }
+            </style>
+          </head>
+          <body>
+            <img src="${base64Image}" onload="window.print(); window.close();" />
+          </body>
+        </html>
+      `);
+      printWindow.document.close();
+      markAsDone(orderId);
+    }
+
+    // प्रिंट होने के बाद ऑर्डर हटाना
+    async function markAsDone(orderId) {
+      try {
+        await fetch(`https://neelshank-print-default-rtdb.firebaseio.com/orders/${orderId}.json`, {
+          method: 'PATCH',
+          body: JSON.stringify({ status: 'DONE' })
+        });
+        fetchOrders();
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  </script>
+</body>
+</html>
