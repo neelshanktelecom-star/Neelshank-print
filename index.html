@@ -37,10 +37,10 @@
       user-select: none !important;
       -webkit-user-select: none !important;
       width: 100%;
-      min-height: 420px;
+      min-height: 400px;
       background: #0b0f19;
-      border-radius: 12px;
-      padding: 10px;
+      border-radius: 14px;
+      padding: 8px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -107,15 +107,19 @@
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans pb-24">
 
-  <!-- हेडर -->
-  <header class="bg-indigo-700 text-white py-3.5 px-4 shadow-md sticky top-0 z-40">
+  <!-- हेडर (होम बटन के साथ) -->
+  <header class="bg-indigo-700 text-white py-3 px-4 shadow-md sticky top-0 z-40">
     <div class="max-w-2xl mx-auto flex items-center justify-between">
-      <div>
-        <h1 class="text-base sm:text-lg font-bold flex items-center gap-2">
-          <i class="fa-solid fa-print"></i> NEELSHANK TELECOM
-        </h1>
-        <p class="text-[11px] text-indigo-200">मोबाइल सेल्फ प्रिंटिंग सर्विस</p>
+      <div class="flex items-center gap-2.5">
+        <button type="button" onclick="goToHomePage()" title="होम पेज" class="w-8 h-8 bg-indigo-600 hover:bg-indigo-500 rounded-lg flex items-center justify-center border border-indigo-400/40 shadow-sm active:scale-90 transition cursor-pointer">
+          <i class="fa-solid fa-house text-sm text-white"></i>
+        </button>
+        <div>
+          <h1 class="text-base sm:text-lg font-bold leading-tight">NEELSHANK TELECOM</h1>
+          <p class="text-[10px] text-indigo-200">मोबाइल सेल्फ प्रिंटिंग सर्विस</p>
+        </div>
       </div>
+
       <div class="flex items-center gap-2">
         <button id="btn-header-install" onclick="triggerPwaInstall()" class="hidden animate-blink-btn bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs px-2.5 py-1 rounded-full shadow flex items-center gap-1.5 cursor-pointer">
           <i class="fa-solid fa-download"></i> <span>ऐप इंस्टॉल</span>
@@ -155,7 +159,7 @@
       <div id="step-nav-3" class="flex-1 text-center text-slate-400 pb-1">3. Pay & Print</div>
     </div>
 
-    <!-- ================= स्टेप 1: अपलोड / सीधा कैमरा ================= -->
+    <!-- ================= स्टेप 1: अपलोड ================= -->
     <section id="step-1" class="space-y-4">
       <div class="grid grid-cols-3 gap-2 bg-slate-200 p-1 rounded-xl text-xs font-semibold">
         <button id="tab-id" type="button" onclick="selectMode('id')" class="py-2.5 rounded-lg bg-white shadow text-indigo-700 font-bold flex flex-col items-center">
@@ -223,7 +227,7 @@
           </div>
         </div>
 
-        <!-- 📑 एडवांस पेज सेलेक्शन बॉक्स (जैसे प्रिंटर में होता है) -->
+        <!-- एडवांस पेज सेलेक्शन बॉक्स -->
         <div id="pdf-page-selector-box" class="hidden bg-white p-4 rounded-xl border border-indigo-200 shadow-sm space-y-3">
           <div class="flex items-center justify-between border-b pb-2">
             <span class="font-bold text-xs text-slate-800 flex items-center gap-1.5">
@@ -234,7 +238,6 @@
             </span>
           </div>
 
-          <!-- रेडियो विकल्प: सभी पेज vs मनचाहे पेज -->
           <div class="grid grid-cols-2 gap-2 text-xs font-bold">
             <label class="flex items-center gap-2 p-2.5 rounded-lg border border-slate-200 bg-slate-50 cursor-pointer has-[:checked]:border-indigo-600 has-[:checked]:bg-indigo-50">
               <input type="radio" name="pdf-range-type" value="all" checked onchange="togglePdfRangeMode('all')" class="text-indigo-600">
@@ -246,7 +249,6 @@
             </label>
           </div>
 
-          <!-- मैनुअल पेज नंबर इनपुट -->
           <div id="custom-range-input-wrapper" class="hidden space-y-1.5 pt-1">
             <label class="text-[11px] font-bold text-slate-600 flex items-center justify-between">
               <span>पेज संख्या दर्ज करें (जैसे: 1-5 या 10,15 या 8):</span>
@@ -270,6 +272,13 @@
 
     <!-- ================= स्टेप 2: 8-डॉट क्रॉप & प्रो-एडिटिंग ================= -->
     <section id="step-2" class="hidden space-y-4">
+      <div class="flex items-center justify-between bg-white p-2 rounded-xl border border-slate-200 shadow-sm">
+        <button type="button" onclick="goToHomePage()" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-xs font-bold py-1.5 px-3 rounded-lg flex items-center gap-1.5 transition active:scale-95 cursor-pointer">
+          <i class="fa-solid fa-house"></i> Home
+        </button>
+        <span class="text-xs font-bold text-slate-700">8-डॉट क्रॉप व अलाइन</span>
+      </div>
+
       <div id="editor-box" class="bg-white p-3 rounded-xl shadow-sm border border-slate-200">
         
         <div id="crop-toggle-group" class="flex gap-2 mb-3">
@@ -334,12 +343,12 @@
         </div>
       </div>
 
-      <!-- नीचे का एक्शन बार: वापस जाएं + सेव और पे -->
+      <!-- नीचे का एक्शन बार -->
       <div class="flex items-center gap-3 pt-1">
-        <button type="button" onclick="goToStep(1)" class="w-1/3 bg-slate-200 hover:bg-slate-300 text-slate-800 font-black py-3.5 rounded-xl border border-slate-300 shadow text-xs flex items-center justify-center gap-1.5">
+        <button type="button" onclick="goToStep(1)" class="w-1/3 bg-slate-200 hover:bg-slate-300 text-slate-800 font-black py-3.5 rounded-xl border border-slate-300 shadow text-xs flex items-center justify-center gap-1.5 cursor-pointer">
           <i class="fa-solid fa-arrow-left"></i> वापस जाएं
         </button>
-        <button type="button" onclick="saveCropAndProceed()" class="w-2/3 bg-indigo-600 hover:bg-indigo-700 text-white font-black py-3.5 rounded-xl shadow-lg text-sm flex items-center justify-center gap-2">
+        <button type="button" onclick="saveCropAndProceed()" class="w-2/3 bg-indigo-600 hover:bg-indigo-700 text-white font-black py-3.5 rounded-xl shadow-lg text-sm flex items-center justify-center gap-2 cursor-pointer">
           <span>Save & Pay</span> <i class="fa-solid fa-arrow-right"></i>
         </button>
       </div>
@@ -348,15 +357,16 @@
     <!-- ================= स्टेप 3: कॉपी, साइज़ विकल्प, पेमेंट & प्रिंट ================= -->
     <section id="step-3" class="hidden space-y-4">
       
-      <!-- बैक बटन -->
       <div class="flex items-center justify-between bg-white p-2.5 rounded-xl border border-slate-200 shadow-sm">
-        <button type="button" onclick="goToStep(activeTab === 'pdf' ? 1 : 2)" class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-black py-2 px-3.5 rounded-xl flex items-center gap-1.5 shadow-sm transition">
-          <i class="fa-solid fa-arrow-left"></i> वापस जाएं (बदलाव करें)
+        <button type="button" onclick="goToStep(activeTab === 'pdf' ? 1 : 2)" class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-black py-2 px-3 rounded-xl flex items-center gap-1.5 shadow-sm transition cursor-pointer">
+          <i class="fa-solid fa-arrow-left"></i> वापस जाएं
         </button>
-        <span class="text-xs font-bold text-indigo-700">NEELSHANK TELECOM</span>
+        <button type="button" onclick="goToHomePage()" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-xs font-black py-2 px-3.5 rounded-xl flex items-center gap-1.5 shadow-sm transition cursor-pointer">
+          <i class="fa-solid fa-house"></i> Home
+        </button>
       </div>
 
-      <!-- मल्टीपल प्रिंट साइज़ विकल्प (केवल 1-पेज फोटो के लिए) -->
+      <!-- मल्टीपल प्रिंट साइज़ विकल्प -->
       <div id="size-options-panel" class="bg-white p-3.5 rounded-xl shadow-sm border border-slate-200">
         <span class="font-bold text-xs text-slate-700 block mb-2">
           <i class="fa-solid fa-expand text-indigo-600"></i> A4 पेपर पर दस्तावेज़ का साइज चुनें:
@@ -512,7 +522,7 @@
 
         <div class="flex gap-2">
           <input type="text" id="input-payment-ref" placeholder="12 अंकों का UTR नंबर दर्ज करें" class="flex-1 border-2 border-indigo-200 bg-white rounded-xl px-3 py-2 text-xs font-mono font-bold text-slate-800 outline-none focus:border-indigo-600">
-          <button type="button" id="btn-verify-ref" onclick="verifyPaymentRef()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-4 py-2 rounded-xl shadow">
+          <button type="button" id="btn-verify-ref" onclick="verifyPaymentRef()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-4 py-2 rounded-xl shadow cursor-pointer">
             सत्यापित करें
           </button>
         </div>
@@ -529,13 +539,13 @@
           <span id="preview-size-badge" class="text-[10px] bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded font-bold border border-indigo-200">(A4)</span>
         </div>
 
-        <!-- PDF पेज स्विचर (यदि मल्टिपल पेज हों) -->
+        <!-- PDF पेज स्विचर -->
         <div id="pdf-preview-nav" class="hidden flex items-center justify-between bg-slate-50 p-2 rounded-lg border mb-2 text-xs font-bold">
-          <button type="button" onclick="navigatePdfPreview(-1)" class="px-2.5 py-1 bg-white border rounded shadow-sm hover:bg-slate-100">
+          <button type="button" onclick="navigatePdfPreview(-1)" class="px-2.5 py-1 bg-white border rounded shadow-sm hover:bg-slate-100 cursor-pointer">
             ◀ पिछला पेज
           </button>
           <span id="pdf-current-page-preview-txt" class="text-indigo-800 font-mono">पेज 1 / 1</span>
-          <button type="button" onclick="navigatePdfPreview(1)" class="px-2.5 py-1 bg-white border rounded shadow-sm hover:bg-slate-100">
+          <button type="button" onclick="navigatePdfPreview(1)" class="px-2.5 py-1 bg-white border rounded shadow-sm hover:bg-slate-100 cursor-pointer">
             अगला पेज ▶
           </button>
         </div>
@@ -560,10 +570,10 @@
 
       <!-- नीचे का फाइनल एक्शन बार -->
       <div class="flex items-center gap-3 pt-2">
-        <button type="button" onclick="goToStep(activeTab === 'pdf' ? 1 : 2)" class="w-1/3 bg-slate-200 hover:bg-slate-300 text-slate-800 font-black py-3.5 rounded-xl border border-slate-300 shadow text-xs flex items-center justify-center gap-1.5">
+        <button type="button" onclick="goToStep(activeTab === 'pdf' ? 1 : 2)" class="w-1/3 bg-slate-200 hover:bg-slate-300 text-slate-800 font-black py-3.5 rounded-xl border border-slate-300 shadow text-xs flex items-center justify-center gap-1.5 cursor-pointer">
           <i class="fa-solid fa-arrow-left"></i> वापस जाएं
         </button>
-        <button type="button" id="btn-execute-print" disabled onclick="executePrintSheet()" class="w-2/3 bg-slate-400 cursor-not-allowed text-white font-black py-3.5 rounded-xl shadow-lg transition flex items-center justify-center gap-2">
+        <button type="button" id="btn-execute-print" disabled onclick="executePrintSheet()" class="w-2/3 bg-slate-400 cursor-not-allowed text-white font-black py-3.5 rounded-xl shadow-lg transition flex items-center justify-center gap-2 cursor-pointer">
           <i class="fa-solid fa-lock" id="icon-lock"></i> <span>प्रिंट अनुरोध भेजें</span>
         </button>
       </div>
@@ -571,7 +581,7 @@
     </section>
   </main>
 
-  <!-- ================= 4. सुपर-प्रोफेशनल 3D सक्सेस मोडल पॉपअप ================= -->
+  <!-- ================= 4. 3D सक्सेस मोडल पॉपअप ================= -->
   <div id="modal-success-screen" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4">
     <div class="bg-white rounded-3xl max-w-sm w-full p-6 text-center shadow-2xl border border-emerald-100 animate-pop relative">
       <div class="w-24 h-24 bg-gradient-to-tr from-emerald-500 to-green-400 rounded-full flex items-center justify-center mx-auto mb-4 shadow-xl pulse-ring">
@@ -651,12 +661,12 @@
     const loadedImages = { front: null, back: null, single: null };
     const finalizedCanvases = { front: null, back: null, single: null };
 
-    // ================= PDF मल्टी-पेज स्टेट वेरिएबल्स =================
+    // PDF स्टेट्स
     let pdfDocGlobal = null;
     let pdfTotalPagesCount = 0;
     let pdfSelectedPagesList = [1];
-    let pdfPageMode = 'all'; // 'all' या 'custom'
-    let pdfRenderedImagesCache = {}; // { pageNum: ImageElement }
+    let pdfPageMode = 'all';
+    let pdfRenderedImagesCache = {};
     let pdfCurrentPreviewIndex = 0;
 
     const cornersStore = {
@@ -678,6 +688,11 @@
     const CORNER_HANDLE_RADIUS = 13;
     const MID_HANDLE_RADIUS = 9;
     const TOUCH_DETECT_RADIUS = 34;
+
+    function goToHomePage() {
+      goToStep(1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
 
     // PWA Engine
     let deferredPrompt = null;
@@ -712,7 +727,6 @@
       document.getElementById('pwa-install-banner').classList.add('hidden');
     }
 
-    // ऑटो-स्टोरेज और सेशन रीस्टोर
     function persistCurrentState() {
       try {
         const stateData = {
@@ -818,11 +832,6 @@
       }, 2500);
     });
 
-    function triggerFileInput(id) {
-      const el = document.getElementById(id);
-      if (el) el.click();
-    }
-
     function selectMode(mode) {
       activeTab = mode;
       ['id', 'single', 'pdf'].forEach(m => {
@@ -837,7 +846,6 @@
       document.getElementById('section-pdf-upload').classList.toggle('hidden', mode !== 'pdf');
     }
 
-    // फ़ाइल या कैमरा से फ़ोटो सेलेक्ट होने पर
     function onImageSelected(e, type) {
       const file = e.target.files && e.target.files[0];
       if (!file) return;
@@ -872,7 +880,7 @@
             }
             const lbl = document.getElementById(`label-${type}`);
             if (lbl) {
-              lbl.innerText = "फ़ोटो अपलोड हो गई ✔ (बदलने के लिए फिर टैप करें)";
+              lbl.innerText = "फ़ोटो लोड हो गई ✔ (बदलने के लिए फिर टैप करें)";
             }
 
             if (activeTab === 'single') {
@@ -888,7 +896,6 @@
       reader.readAsDataURL(file);
     }
 
-    // ================= 📑 एडवांस्ड PDF लोडर और पेज सेलेक्शन हैंडलर =================
     function onPdfSelected(e) {
       const file = e.target.files && e.target.files[0];
       if (!file) return;
@@ -909,12 +916,10 @@
             document.getElementById('pdf-preview-indicator').classList.remove('hidden');
             document.getElementById('pdf-page-selector-box').classList.remove('hidden');
 
-            // डिफ़ॉल्ट रूप से सभी पेज चुनना
             setPdfAllPagesRange();
 
-            // पहला पेज प्री-रेंडर करना
             renderSinglePdfPage(1).then(() => {
-              console.log("Page 1 cached for preview");
+              console.log("Page 1 cached");
             });
 
           }).catch(function(err) {
@@ -948,7 +953,6 @@
       }
     }
 
-    // पार्सिंग: "1-5, 8, 11-14" जैसी स्ट्रिंग को [1,2,3,4,5,8,11,12,13,14] में बदलना
     function parsePageRangeString(str, maxPages) {
       const pages = new Set();
       if (!str || !str.trim()) return [];
@@ -999,7 +1003,6 @@
       onCustomPageRangeInput();
     }
 
-    // किसी भी पेज को कैनवास से इमेज में बदलना
     function renderSinglePdfPage(pageNum) {
       return new Promise((resolve, reject) => {
         if (pdfRenderedImagesCache[pageNum]) {
@@ -1028,7 +1031,6 @@
       });
     }
 
-    // ================= स्टेप्स नेविगेशन & वैलिडेशन =================
     function validateAndGoToStep(step) {
       if(step === 2 || step === 3) {
         if(activeTab === 'id' && (!loadedImages.front || !loadedImages.back)) {
@@ -1048,7 +1050,6 @@
             alert('कृपया कम से कम 1 पेज नंबर चुनें जिसे प्रिंट करना है!');
             return;
           }
-          // PDF के लिए स्टेप 2 (क्रॉप) की ज़रूरत नहीं, सीधे स्टेप 3 (प्रिंट/पे) पर जाएँ
           goToStep(3);
           return;
         }
@@ -1482,10 +1483,35 @@
       const img = loadedImages[type];
       if(!img) return;
 
-      const curCorners = cornersStore[type];
-      if(!curCorners) return;
+      let curCorners = cornersStore[type];
+      if(!curCorners) {
+        if(activeTab === 'id') {
+          const ratio = 8.5 / 5.5;
+          let boxW = img.width * 0.88;
+          let boxH = boxW / ratio;
+          if(boxH > img.height * 0.88) { boxH = img.height * 0.88; boxW = boxH * ratio; }
+          const sx = (img.width - boxW) / 2;
+          const sy = (img.height - boxH) / 2;
+          curCorners = {
+            tl: { x: sx, y: sy },
+            tr: { x: sx + boxW, y: sy },
+            br: { x: sx + boxW, y: sy + boxH },
+            bl: { x: sx, y: sy + boxH }
+          };
+        } else {
+          curCorners = {
+            tl: { x: img.width * 0.08, y: img.height * 0.06 },
+            tr: { x: img.width * 0.92, y: img.height * 0.06 },
+            br: { x: img.width * 0.92, y: img.height * 0.94 },
+            bl: { x: img.width * 0.08, y: img.height * 0.94 }
+          };
+        }
+      }
 
-      const scale = img.width / cropCanvas.width;
+      let scale = 1;
+      if (currentTargetSide === type && cropCanvas.width > 0) {
+        scale = img.width / cropCanvas.width;
+      }
 
       const realCorners = {
         tl: { x: curCorners.tl.x * scale, y: curCorners.tl.y * scale },
@@ -1555,10 +1581,10 @@
 
     function saveCropAndProceed() {
       if(activeTab === 'id') {
-        commitCropToCanvas('front');
-        if(loadedImages.back) {
-          if(!cornersStore.back) initCropCanvas('back');
-          commitCropToCanvas('back');
+        commitCropToCanvas(currentTargetSide);
+        const otherSide = (currentTargetSide === 'front') ? 'back' : 'front';
+        if(loadedImages[otherSide]) {
+          commitCropToCanvas(otherSide);
         }
       } else if(activeTab === 'single') {
         commitCropToCanvas('single');
@@ -1664,7 +1690,6 @@
       recalculateBilling();
     }
 
-    // कुल पेजों और कॉपियों के अनुसार ऑटो-बिलिंग
     function recalculateBilling() {
       const sheetsPerSet = (activeTab === 'pdf') ? Math.max(1, pdfSelectedPagesList.length) : 1;
       const totalSheets = sheetsPerSet * copiesCount;
@@ -1728,7 +1753,6 @@
       rzp.open();
     }
 
-    // PDF प्रीव्यू नेविगेशन (आगे-पीछे करना)
     function navigatePdfPreview(delta) {
       if (pdfSelectedPagesList.length <= 1) return;
       pdfCurrentPreviewIndex = (pdfCurrentPreviewIndex + delta + pdfSelectedPagesList.length) % pdfSelectedPagesList.length;
@@ -1848,7 +1872,6 @@
       badge.classList.remove('hidden');
     }
 
-    // A4 कैनवास इमेज जनरेटर (सिंगल इमेज या PDF पेज के लिए)
     function generateA4PrintImageFromSource(sourceImg) {
       const a4Canvas = document.createElement('canvas');
       a4Canvas.width = 1240;
@@ -2009,7 +2032,6 @@
       }
     }
 
-    // ================= 🚀 फाइनल प्रिंट अनुरोध सबमिट =================
     async function executePrintSheet() {
       if (!isVerified) {
         alert("कृपया पहले भुगतान सत्यापित करें!");
