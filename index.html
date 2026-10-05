@@ -2,14 +2,35 @@
 <html lang="hi">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>NEELSHANK TELECOM - स्मार्ट प्रिंट पोर्टल</title>
+  
+  <!-- PWA & Apple Meta Tags -->
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#4338ca">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="NEELSHANK">
+  <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2874/2874780.png">
+
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- PDF.js CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <!-- jsPDF लाइब्रेरी -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <!-- Razorpay Checkout SDK -->
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
   <style>
+    html, body {
+      width: 100%;
+      min-height: 100%;
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
+    }
     .crop-wrapper-box {
       position: relative;
       touch-action: none !important;
@@ -60,7 +81,6 @@
       size: A4 portrait;
       margin: 0;
     }
-    /* पॉपअप एनिमेशन */
     @keyframes popIn {
       0% { transform: scale(0.7); opacity: 0; }
       100% { transform: scale(1); opacity: 1; }
@@ -76,35 +96,47 @@
     .pulse-ring {
       animation: pulseRing 2s infinite;
     }
+    @keyframes blinkGlow {
+      0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 15px rgba(245, 158, 11, 0.8); }
+      50% { opacity: 0.85; transform: scale(0.98); box-shadow: 0 0 4px rgba(245, 158, 11, 0.3); }
+    }
+    .animate-blink-btn {
+      animation: blinkGlow 1.8s infinite ease-in-out;
+    }
   </style>
 </head>
-<body class="bg-slate-100 text-slate-800 font-sans pb-16">
+<body class="bg-slate-100 text-slate-800 font-sans pb-24">
 
   <!-- हेडर -->
-  <header class="bg-indigo-700 text-white py-3.5 px-4 shadow-md sticky top-0 z-50">
-    <div class="max-w-xl mx-auto flex items-center justify-between">
+  <header class="bg-indigo-700 text-white py-3.5 px-4 shadow-md sticky top-0 z-40">
+    <div class="max-w-2xl mx-auto flex items-center justify-between">
       <div>
-        <h1 class="text-lg font-bold flex items-center gap-2">
+        <h1 class="text-base sm:text-lg font-bold flex items-center gap-2">
           <i class="fa-solid fa-print"></i> NEELSHANK TELECOM
         </h1>
         <p class="text-[11px] text-indigo-200">मोबाइल सेल्फ प्रिंटिंग सर्विस</p>
       </div>
-      <span class="bg-emerald-500 text-xs px-2.5 py-0.5 rounded-full font-bold shadow-sm">
-        <i class="fa-solid fa-circle-check"></i> सर्विस चालू
-      </span>
+      <div class="flex items-center gap-2">
+        <button id="btn-header-install" onclick="triggerPwaInstall()" class="hidden animate-blink-btn bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs px-2.5 py-1 rounded-full shadow flex items-center gap-1.5 cursor-pointer">
+          <i class="fa-solid fa-download"></i> <span>ऐप इंस्टॉल</span>
+        </button>
+        <span class="bg-emerald-500 text-xs px-2.5 py-0.5 rounded-full font-bold shadow-sm whitespace-nowrap">
+          <i class="fa-solid fa-circle-check"></i> सर्विस चालू
+        </span>
+      </div>
     </div>
   </header>
 
-  <main class="max-w-xl mx-auto px-3.5 mt-3">
+  <main class="max-w-2xl mx-auto px-3.5 mt-3">
 
     <!-- वेलकम नोट -->
     <div class="bg-indigo-50 border border-indigo-200 p-3.5 rounded-xl mb-4 text-xs text-indigo-950 shadow-sm">
       <div class="flex items-center gap-2 mb-1">
         <i class="fa-solid fa-store text-indigo-600 text-base"></i>
-        <h2 class="font-bold text-sm">NEELSHANK TELECOM में आपका स्वागत है!🙏🏼🙏🏼</h2>
+        <h2 class="font-bold text-sm">NEELSHANK TELECOM में आपका स्वागत है! 🙏🏼</h2>
       </div>
       <p class="text-slate-700 leading-relaxed">
-        आधार कार्ड, पहचान पत्र, रसीद, पासबुक या PDF अपलोड करें। पेमेंट पूरा होते ही 1 मिनट में काउंटर से प्रिंट प्राप्त करें।
+        पहचान पत्र, रसीद, पासबुक या PDF अपलोड करें या लाइव HD कैमरे से सीधे स्कैन करें।
       </p>
       <div class="mt-2.5 pt-2 border-t border-indigo-200 flex items-center justify-between font-bold">
         <span class="text-emerald-700 flex items-center gap-1.5">
@@ -118,19 +150,19 @@
 
     <!-- स्टेप्स नेविगेशन बार -->
     <div class="flex justify-between items-center mb-4 bg-white p-2.5 rounded-xl shadow-sm border border-slate-200 text-xs font-bold">
-      <div id="step-nav-1" class="flex-1 text-center text-indigo-600 border-b-2 border-indigo-600 pb-1">1. अपलोड</div>
+      <div id="step-nav-1" class="flex-1 text-center text-indigo-600 border-b-2 border-indigo-600 pb-1">1. अपलोड / स्कैन</div>
       <div id="step-nav-2" class="flex-1 text-center text-slate-400 pb-1">2. Adjust</div>
       <div id="step-nav-3" class="flex-1 text-center text-slate-400 pb-1">3. Pay & Print</div>
     </div>
 
-    <!-- ================= स्टेप 1: अपलोड ================= -->
+    <!-- ================= स्टेप 1: अपलोड / लाइव कैमरा ================= -->
     <section id="step-1" class="space-y-4">
       <div class="grid grid-cols-3 gap-2 bg-slate-200 p-1 rounded-xl text-xs font-semibold">
         <button id="tab-id" type="button" onclick="selectMode('id')" class="py-2.5 rounded-lg bg-white shadow text-indigo-700 font-bold flex flex-col items-center">
           <i class="fa-solid fa-id-card text-base mb-0.5"></i> ID कार्ड (2-साइड)
         </button>
         <button id="tab-single" type="button" onclick="selectMode('single')" class="py-2.5 rounded-lg text-slate-600 flex flex-col items-center">
-          <i class="fa-solid fa-file-invoice text-base mb-0.5"></i> 1-साइड (1- Page)
+          <i class="fa-solid fa-file-invoice text-base mb-0.5"></i> 1-साइड (1-Page)
         </button>
         <button id="tab-pdf" type="button" onclick="selectMode('pdf')" class="py-2.5 rounded-lg text-slate-600 flex flex-col items-center">
           <i class="fa-solid fa-file-pdf text-base mb-0.5"></i> PDF दस्तावेज़
@@ -139,36 +171,56 @@
 
       <!-- 1. आईडी कार्ड अपलोड एरिया -->
       <div id="section-id-upload" class="space-y-3">
+        <!-- फ्रंट साइड -->
         <div class="bg-white p-4 rounded-xl border-2 border-dashed border-indigo-300 text-center">
           <p class="font-bold text-xs text-slate-700 mb-2">आईडी कार्ड - सामने का भाग (Front Side)</p>
+          <div class="grid grid-cols-2 gap-2">
+            <button type="button" onclick="openLiveCamera('front')" class="py-3.5 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-lg font-bold text-xs shadow flex flex-col items-center justify-center gap-1 active:scale-95 transition">
+              <i class="fa-solid fa-camera text-xl text-amber-300"></i>
+              <span>लाइव कैमरा स्कैन</span>
+            </button>
+            <button type="button" onclick="triggerFileInput('file-front')" class="py-3.5 bg-indigo-50 border border-indigo-200 text-indigo-800 rounded-lg font-bold text-xs flex flex-col items-center justify-center gap-1 active:scale-95 transition">
+              <i class="fa-solid fa-image text-xl text-indigo-500"></i>
+              <span id="label-front">गैलरी से चुनें</span>
+            </button>
+          </div>
           <input type="file" id="file-front" accept="image/*" class="hidden" onchange="onImageSelected(event, 'front')">
-          <button type="button" onclick="triggerFileInput('file-front')" class="w-full py-4 bg-indigo-50 hover:bg-indigo-100 rounded-lg text-indigo-700 flex flex-col items-center border border-indigo-200 cursor-pointer">
-            <i class="fa-solid fa-camera text-3xl mb-1 text-indigo-500"></i>
-            <span id="label-front" class="text-xs font-bold">सामने की फोटो चुनें</span>
-          </button>
           <img id="thumb-front" class="hidden mt-2 max-h-24 mx-auto rounded border shadow-sm">
         </div>
 
+        <!-- बैक साइड -->
         <div class="bg-white p-4 rounded-xl border-2 border-dashed border-indigo-300 text-center">
           <p class="font-bold text-xs text-slate-700 mb-2">आईडी कार्ड - पीछे का भाग (Back Side)</p>
+          <div class="grid grid-cols-2 gap-2">
+            <button type="button" onclick="openLiveCamera('back')" class="py-3.5 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-lg font-bold text-xs shadow flex flex-col items-center justify-center gap-1 active:scale-95 transition">
+              <i class="fa-solid fa-camera text-xl text-amber-300"></i>
+              <span>लाइव कैमरा स्कैन</span>
+            </button>
+            <button type="button" onclick="triggerFileInput('file-back')" class="py-3.5 bg-indigo-50 border border-indigo-200 text-indigo-800 rounded-lg font-bold text-xs flex flex-col items-center justify-center gap-1 active:scale-95 transition">
+              <i class="fa-solid fa-image text-xl text-indigo-500"></i>
+              <span id="label-back">गैलरी से चुनें</span>
+            </button>
+          </div>
           <input type="file" id="file-back" accept="image/*" class="hidden" onchange="onImageSelected(event, 'back')">
-          <button type="button" onclick="triggerFileInput('file-back')" class="w-full py-4 bg-indigo-50 hover:bg-indigo-100 rounded-lg text-indigo-700 flex flex-col items-center border border-indigo-200 cursor-pointer">
-            <i class="fa-solid fa-camera text-3xl mb-1 text-indigo-500"></i>
-            <span id="label-back" class="text-xs font-bold">पीछे की फोटो चुनें</span>
-          </button>
           <img id="thumb-back" class="hidden mt-2 max-h-24 mx-auto rounded border shadow-sm">
         </div>
       </div>
 
       <!-- 2. सिंगल रसीद / डॉक्यूमेंट अपलोड एरिया -->
-      <div id="section-single-upload" class="hidden bg-white p-5 rounded-xl border-2 border-dashed border-indigo-300 text-center">
-        <p class="font-bold text-xs text-slate-700 mb-2">कॉलेज रसीद, चालान, पासबुक या किसी भी पेज की फोटो</p>
+      <div id="section-single-upload" class="hidden bg-white p-4 rounded-xl border-2 border-dashed border-indigo-300 text-center space-y-3">
+        <p class="font-bold text-xs text-slate-700">कॉलेज रसीद, चालान, पासबुक या किसी भी पेज की फोटो</p>
+        <div class="grid grid-cols-2 gap-2">
+          <button type="button" onclick="openLiveCamera('single')" class="py-4 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-lg font-bold text-xs shadow flex flex-col items-center justify-center gap-1.5 active:scale-95 transition">
+            <i class="fa-solid fa-camera text-2xl text-amber-300"></i>
+            <span>लाइव HD कैमरा स्कैन</span>
+          </button>
+          <button type="button" onclick="triggerFileInput('file-single')" class="py-4 bg-indigo-50 border border-indigo-200 text-indigo-800 rounded-lg font-bold text-xs flex flex-col items-center justify-center gap-1.5 active:scale-95 transition">
+            <i class="fa-solid fa-images text-2xl text-indigo-500"></i>
+            <span id="label-single">गैलरी / फ़ाइल से चुनें</span>
+          </button>
+        </div>
         <input type="file" id="file-single" accept="image/*" class="hidden" onchange="onImageSelected(event, 'single')">
-        <button type="button" onclick="triggerFileInput('file-single')" class="w-full py-6 bg-indigo-50 hover:bg-indigo-100 rounded-lg text-indigo-700 flex flex-col items-center border border-indigo-200 cursor-pointer">
-          <i class="fa-solid fa-file-circle-plus text-4xl mb-2 text-indigo-500"></i>
-          <span id="label-single" class="text-xs font-bold">रसीद या डॉक्यूमेंट की फोटो चुनें</span>
-        </button>
-        <img id="thumb-single" class="hidden mt-3 max-h-40 mx-auto rounded border shadow-sm">
+        <img id="thumb-single" class="hidden mt-2 max-h-36 mx-auto rounded border shadow-sm">
       </div>
 
       <!-- 3. PDF अपलोड एरिया -->
@@ -308,7 +360,7 @@
             <i class="fa-solid fa-file"></i> (Portrait)
           </button>
           <button type="button" id="btn-pdf-landscape" onclick="setPdfOrientation('landscape')" class="p-2.5 rounded-xl border-2 border-slate-200 bg-white text-slate-700 hover:border-indigo-400 flex items-center justify-center gap-1.5">
-            <i class="fa-solid fa-file rotate-90"></i>  (Landscape)
+            <i class="fa-solid fa-file rotate-90"></i> (Landscape)
           </button>
           <button type="button" onclick="rotatePdfLive()" class="p-2.5 rounded-xl border-2 border-amber-300 bg-amber-50 text-amber-800 flex items-center justify-center gap-1.5">
             <i class="fa-solid fa-rotate-right"></i> 90° घुमाएँ
@@ -468,7 +520,7 @@
         </div>
       </div>
 
-      <!-- नीचे का फाइनल एक्शन बार: वापस जाएं + काउंटर प्रिंट -->
+      <!-- नीचे का फाइनल एक्शन बार -->
       <div class="flex items-center gap-3 pt-2">
         <button type="button" onclick="goToStep(2)" class="w-1/3 bg-slate-200 hover:bg-slate-300 text-slate-800 font-black py-3.5 rounded-xl border border-slate-300 shadow text-xs flex items-center justify-center gap-1.5">
           <i class="fa-solid fa-arrow-left"></i> वापस जाएं
@@ -481,16 +533,12 @@
     </section>
   </main>
 
-  <!-- ================= 4. सुपर-प्रोफेशनल सक्सेस मोडल पॉपअप (No Alert Box) ================= -->
+  <!-- ================= 4. सुपर-प्रोफेशनल 3D सक्सेस मोडल पॉपअप ================= -->
   <div id="modal-success-screen" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4">
     <div class="bg-white rounded-3xl max-w-sm w-full p-6 text-center shadow-2xl border border-emerald-100 animate-pop relative">
-      
-      <!-- बड़ा 3D ग्रीन सर्कल + टिकमार्क -->
       <div class="w-24 h-24 bg-gradient-to-tr from-emerald-500 to-green-400 rounded-full flex items-center justify-center mx-auto mb-4 shadow-xl pulse-ring">
         <i class="fa-solid fa-check text-white text-5xl font-black drop-shadow-md"></i>
       </div>
-
-      <!-- मुख्य टेक्स्ट -->
       <h3 class="text-2xl font-black text-slate-800 tracking-tight">ऑर्डर भेजा गया!</h3>
       <p class="text-xs font-bold text-emerald-600 uppercase tracking-wider mt-1">✔ भुगतान और दस्तावेज़ प्राप्त हुए</p>
 
@@ -513,11 +561,76 @@
         कृपया काउंटर पर जाएँ और अपना प्रिंटआउट प्राप्त करें। धन्यवाद!
       </p>
 
-      <!-- समापन बटन -->
       <button type="button" onclick="closeSuccessModalAndReset()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-3.5 px-4 rounded-xl shadow-lg text-sm transition transform active:scale-95 cursor-pointer">
         प्रिंटआउट प्राप्त करें (Done)
       </button>
+    </div>
+  </div>
 
+  <!-- ================= 5. ब्लिंकिंग 'Add to Home Screen' PWA बॉटम बैनर ================= -->
+  <div id="pwa-install-banner" class="hidden fixed bottom-3 left-3 right-3 max-w-xl mx-auto bg-gradient-to-r from-indigo-950 via-indigo-900 to-purple-950 text-white p-3.5 rounded-2xl shadow-2xl border-2 border-amber-400 z-50 flex items-center justify-between gap-3 animate-pop">
+    <div class="flex items-center gap-3">
+      <div class="w-12 h-12 bg-amber-400 text-slate-950 rounded-2xl flex items-center justify-center text-2xl shadow-md animate-bounce">
+        <i class="fa-solid fa-mobile-screen-button"></i>
+      </div>
+      <div>
+        <h4 class="font-black text-xs text-amber-300 flex items-center gap-1.5">
+          <span>NEELSHANK ऐप इंस्टॉल करें</span>
+          <span class="bg-emerald-500 text-[9px] text-white px-1.5 py-0.2 rounded font-bold">Free</span>
+        </h4>
+        <p class="text-[10px] text-slate-300 mt-0.5">होम स्क्रीन पर जोड़ें — बिना सर्च किए 1-क्लिक में खोलें</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-1.5">
+      <button type="button" onclick="triggerPwaInstall()" class="animate-blink-btn bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs px-3.5 py-2 rounded-xl shadow cursor-pointer whitespace-nowrap">
+        इंस्टॉल करें
+      </button>
+      <button type="button" onclick="dismissPwaBanner()" class="text-slate-400 hover:text-white p-1 text-sm">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- ================= 6. लाइव HD कैमरा स्कैनर मोडल (Full Screen Modal) ================= -->
+  <div id="modal-camera-screen" class="hidden fixed inset-0 z-50 bg-black flex flex-col justify-between items-center p-4">
+    <!-- कैमरा टॉप बार -->
+    <div class="w-full flex items-center justify-between text-white z-10 pt-2 px-2">
+      <button type="button" onclick="closeLiveCamera()" class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center text-lg active:scale-90 transition">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <span class="font-bold text-xs tracking-wider uppercase text-amber-300 bg-black/40 px-3 py-1 rounded-full border border-amber-400/30">
+        <i class="fa-solid fa-expand mr-1"></i> HD दस्तावेज़ स्कैनर
+      </span>
+      <button type="button" onclick="toggleCameraFacing()" class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center text-base active:scale-90 transition">
+        <i class="fa-solid fa-camera-rotate"></i>
+      </button>
+    </div>
+
+    <!-- कैमरा व्यूफाइंडर व अलाइनमेंट गाइड -->
+    <div class="relative w-full flex-1 flex items-center justify-center overflow-hidden my-3 rounded-2xl border-2 border-indigo-500/50 bg-slate-900">
+      <video id="camera-stream-video" autoplay playsinline class="w-full h-full object-cover"></video>
+      
+      <!-- दस्तावेज़ अलाइनमेंट फ़्रेम (गाइडलाइन बॉक्स) -->
+      <div class="absolute inset-x-6 inset-y-12 border-2 border-dashed border-emerald-400/90 rounded-2xl pointer-events-none flex flex-col justify-between p-3 shadow-[0_0_0_9999px_rgba(0,0,0,0.5)]">
+        <div class="flex justify-between text-emerald-400 text-xs font-bold">
+          <span>┌</span><span>┐</span>
+        </div>
+        <p class="text-[11px] text-center font-bold text-white bg-black/60 py-1 px-2.5 rounded-full mx-auto self-center">
+          दस्तावेज़ को इस बॉक्स के अंदर रखें
+        </p>
+        <div class="flex justify-between text-emerald-400 text-xs font-bold">
+          <span>└</span><span>┘</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- कैमरा कंट्रोल बॉटम बार -->
+    <div class="w-full flex items-center justify-center pb-6 z-10">
+      <button type="button" onclick="capturePhotoFromCamera()" class="w-20 h-20 bg-white rounded-full border-4 border-emerald-500 flex items-center justify-center shadow-2xl active:scale-90 transition transform cursor-pointer">
+        <div class="w-16 h-16 bg-emerald-500 rounded-full flex items-center justify-center text-white text-2xl shadow-inner">
+          <i class="fa-solid fa-camera"></i>
+        </div>
+      </button>
     </div>
   </div>
 
@@ -564,6 +677,126 @@
     const MID_HANDLE_RADIUS = 9;
     const TOUCH_DETECT_RADIUS = 34;
 
+    // ================= लाइव कैमरा स्कैनर इंजन =================
+    let currentVideoStream = null;
+    let activeCameraSide = 'single';
+    let cameraFacingMode = 'environment'; // 'environment' (बैक) या 'user' (फ्रंट)
+
+    async function openLiveCamera(side) {
+      activeCameraSide = side;
+      const modal = document.getElementById('modal-camera-screen');
+      modal.classList.remove('hidden');
+
+      try {
+        if (currentVideoStream) {
+          currentVideoStream.getTracks().forEach(t => t.stop());
+        }
+
+        const constraints = {
+          video: {
+            facingMode: { ideal: cameraFacingMode },
+            width: { ideal: 1920 },
+            height: { ideal: 1080 }
+          },
+          audio: false
+        };
+
+        currentVideoStream = await navigator.mediaDevices.getUserMedia(constraints);
+        const videoEl = document.getElementById('camera-stream-video');
+        videoEl.srcObject = currentVideoStream;
+        await videoEl.play();
+      } catch (err) {
+        console.error("Camera access error:", err);
+        alert("कैमरा चालू करने में समस्या हुई। कृपया कैमरा परमिशन 'Allow' करें या गैलरी से फोटो चुनें।");
+        closeLiveCamera();
+      }
+    }
+
+    function closeLiveCamera() {
+      if (currentVideoStream) {
+        currentVideoStream.getTracks().forEach(t => t.stop());
+        currentVideoStream = null;
+      }
+      document.getElementById('modal-camera-screen').classList.add('hidden');
+    }
+
+    async function toggleCameraFacing() {
+      cameraFacingMode = (cameraFacingMode === 'environment') ? 'user' : 'environment';
+      await openLiveCamera(activeCameraSide);
+    }
+
+    function capturePhotoFromCamera() {
+      const videoEl = document.getElementById('camera-stream-video');
+      if (!videoEl || !videoEl.videoWidth) return;
+
+      const snapCanvas = document.createElement('canvas');
+      snapCanvas.width = videoEl.videoWidth;
+      snapCanvas.height = videoEl.videoHeight;
+      const snapCtx = snapCanvas.getContext('2d');
+      snapCtx.drawImage(videoEl, 0, 0, snapCanvas.width, snapCanvas.height);
+
+      const capturedDataUrl = snapCanvas.toDataURL('image/jpeg', 0.94);
+      
+      const img = new Image();
+      img.onload = function() {
+        loadedImages[activeCameraSide] = img;
+        cornersStore[activeCameraSide] = null;
+        finalizedCanvases[activeCameraSide] = null;
+
+        const thumb = document.getElementById(`thumb-${activeCameraSide}`);
+        if (thumb) {
+          thumb.src = capturedDataUrl;
+          thumb.classList.remove('hidden');
+        }
+        const lbl = document.getElementById(`label-${activeCameraSide}`);
+        if (lbl) lbl.innerText = "कैमरा फोटो ✔";
+
+        closeLiveCamera();
+
+        // यदि आईडी कार्ड मोड में दोनों फोटो तैयार हो जाएं या सिंगल मोड हो, तो सीधे स्टेप 2 पर ले जाएँ
+        if (activeTab === 'single') {
+          validateAndGoToStep(2);
+        } else if (activeTab === 'id' && loadedImages.front && loadedImages.back) {
+          validateAndGoToStep(2);
+        }
+      };
+      img.src = capturedDataUrl;
+    }
+
+    // PWA Engine
+    let deferredPrompt = null;
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      document.getElementById('pwa-install-banner').classList.remove('hidden');
+      document.getElementById('btn-header-install').classList.remove('hidden');
+    });
+
+    function triggerPwaInstall() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            dismissPwaBanner();
+          }
+          deferredPrompt = null;
+        });
+      } else {
+        const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        if (isIos) {
+          alert("📱 iPhone में ऐप इंस्टॉल करने के लिए:\n\n1. सफारी के नीचे 'Share' बटन दबाएँ।\n2. 'Add to Home Screen' चुनें।");
+        } else {
+          alert("📱 अपने ब्राउज़र के 3 डॉट्स (⋮) मेनू पर क्लिक करें और 'Install App' या 'Add to Home screen' चुनें।");
+        }
+      }
+    }
+
+    function dismissPwaBanner() {
+      document.getElementById('pwa-install-banner').classList.add('hidden');
+    }
+
+    // ऑटो-स्टोरेज और सेशन रीस्टोर
     function persistCurrentState() {
       try {
         const stateData = {
@@ -659,7 +892,15 @@
       }
     });
 
-    window.addEventListener('DOMContentLoaded', tryRestoreStateOnLoad);
+    window.addEventListener('DOMContentLoaded', () => {
+      tryRestoreStateOnLoad();
+      setTimeout(() => {
+        if (!window.matchMedia('(display-mode: standalone)').matches) {
+          document.getElementById('pwa-install-banner').classList.remove('hidden');
+          document.getElementById('btn-header-install').classList.remove('hidden');
+        }
+      }, 2500);
+    });
 
     function triggerFileInput(id) {
       const el = document.getElementById(id);
@@ -758,11 +999,11 @@
     function validateAndGoToStep(step) {
       if(step === 2) {
         if(activeTab === 'id' && (!loadedImages.front || !loadedImages.back)) {
-          alert('कृपया आईडी कार्ड के दोनों साइड (Front और Back) की फोटो चुनें!');
+          alert('कृपया आईडी कार्ड के दोनों साइड (Front और Back) की फोटो चुनें या स्कैन करें!');
           return;
         }
         if(activeTab === 'single' && !loadedImages.single) {
-          alert('कृपया रसीद या दस्तावेज़ की फोटो चुनें!');
+          alert('कृपया रसीद या दस्तावेज़ की फोटो चुनें या स्कैन करें!');
           return;
         }
         if(activeTab === 'pdf' && !pdfImageBlob) {
@@ -969,7 +1210,7 @@
         ctx.stroke();
 
         ctx.beginPath();
-        ctx.arc(pt = p, 3, 0, Math.PI * 2);
+        ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
         ctx.fillStyle = '#ffffff';
         ctx.fill();
       });
@@ -1726,7 +1967,6 @@
       }
     }
 
-    // ================= 5. प्रिंट अनुरोध और कस्टम 3D मोडल ट्रिगर =================
     function executePrintSheet() {
       if (!isVerified) {
         alert("कृपया पहले भुगतान सत्यापित करें!");
@@ -1741,7 +1981,7 @@
       const currentTxnId = document.getElementById('input-payment-ref').value.trim() || 'RZP_' + Date.now().toString().slice(-6);
 
       const orderData = {
-        doc_type: activeTab === 'id' ? 'ID Card (8.5x5.5 CM)' : (activeTab === 'single' ? `Single Doc (${docPrintSize.toUpperCase()})` : `PDF Document (${pdfOrientation.toUpperCase()})`),
+        doc_type: activeTab === 'id' ? 'ID Card (8.5x5.5 CM)' : (activeTab === 'single' ? `Single Doc (${docPrintSize.toUpperCase()})` : 'PDF Document'),
         color_mode: isBwSelected ? 'Black & White' : 'Color Print',
         copies: copiesCount,
         amount: totalCalculatedAmount,
@@ -1761,7 +2001,6 @@
         return res.json();
       })
       .then(data => {
-        // पुराने alert() को हटाकर नया शानदार 3D सक्सेस मोडल दिखाना
         document.getElementById('modal-ref-id').innerText = currentTxnId;
         document.getElementById('modal-success-screen').classList.remove('hidden');
         printBtn.innerText = "अनुरोध भेजा जा चुका है ✔";
@@ -1774,7 +2013,6 @@
       });
     }
 
-    // पॉपअप बंद करके नए ग्राहक के लिए रीसेट करना
     function closeSuccessModalAndReset() {
       document.getElementById('modal-success-screen').classList.add('hidden');
       clearPersistentState();
