@@ -136,7 +136,7 @@
         <h2 class="font-bold text-sm">NEELSHANK TELECOM में आपका स्वागत है! 🙏🏼</h2>
       </div>
       <p class="text-slate-700 leading-relaxed">
-        पहचान पत्र, रसीद, पासबुक या PDF अपलोड करें या लाइव HD कैमरे से सीधे स्कैन करें।
+        पहचान पत्र, रसीद, पासबुक या बड़ी PDF अपलोड करें। मनचाहे पेज चुनकर तुरंत प्रिंट प्राप्त करें।
       </p>
       <div class="mt-2.5 pt-2 border-t border-indigo-200 flex items-center justify-between font-bold">
         <span class="text-emerald-700 flex items-center gap-1.5">
@@ -150,12 +150,12 @@
 
     <!-- स्टेप्स नेविगेशन बार -->
     <div class="flex justify-between items-center mb-4 bg-white p-2.5 rounded-xl shadow-sm border border-slate-200 text-xs font-bold">
-      <div id="step-nav-1" class="flex-1 text-center text-indigo-600 border-b-2 border-indigo-600 pb-1">1. अपलोड / स्कैन</div>
+      <div id="step-nav-1" class="flex-1 text-center text-indigo-600 border-b-2 border-indigo-600 pb-1">1. अपलोड / पेज चयन</div>
       <div id="step-nav-2" class="flex-1 text-center text-slate-400 pb-1">2. Adjust</div>
       <div id="step-nav-3" class="flex-1 text-center text-slate-400 pb-1">3. Pay & Print</div>
     </div>
 
-    <!-- ================= स्टेप 1: अपलोड / लाइव कैमरा ================= -->
+    <!-- ================= स्टेप 1: अपलोड / सीधा कैमरा ================= -->
     <section id="step-1" class="space-y-4">
       <div class="grid grid-cols-3 gap-2 bg-slate-200 p-1 rounded-xl text-xs font-semibold">
         <button id="tab-id" type="button" onclick="selectMode('id')" class="py-2.5 rounded-lg bg-white shadow text-indigo-700 font-bold flex flex-col items-center">
@@ -174,74 +174,97 @@
         <!-- फ्रंट साइड -->
         <div class="bg-white p-4 rounded-xl border-2 border-dashed border-indigo-300 text-center">
           <p class="font-bold text-xs text-slate-700 mb-2">आईडी कार्ड - सामने का भाग (Front Side)</p>
-          <div class="grid grid-cols-2 gap-2">
-            <button type="button" onclick="startCameraCapture('front')" class="py-3.5 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-lg font-bold text-xs shadow flex flex-col items-center justify-center gap-1 active:scale-95 transition cursor-pointer">
-              <i class="fa-solid fa-camera text-xl text-amber-300"></i>
-              <span>कैमरा से स्कैन करें</span>
-            </button>
-            <button type="button" onclick="triggerFileInput('file-front')" class="py-3.5 bg-indigo-50 border border-indigo-200 text-indigo-800 rounded-lg font-bold text-xs flex flex-col items-center justify-center gap-1 active:scale-95 transition cursor-pointer">
-              <i class="fa-solid fa-image text-xl text-indigo-500"></i>
-              <span id="label-front">गैलरी से चुनें</span>
-            </button>
-          </div>
-          <!-- हिडन नेटिव कैमरा और गैलरी इनपुट्स -->
-          <input type="file" id="cam-native-front" accept="image/*" capture="environment" class="hidden" onchange="onImageSelected(event, 'front')">
           <input type="file" id="file-front" accept="image/*" class="hidden" onchange="onImageSelected(event, 'front')">
-          <img id="thumb-front" class="hidden mt-2 max-h-24 mx-auto rounded border shadow-sm">
+          <label for="file-front" class="w-full py-4 bg-gradient-to-r from-indigo-50 to-indigo-100 hover:bg-indigo-200 border-2 border-indigo-400 rounded-xl text-indigo-800 font-bold text-xs flex flex-col items-center justify-center gap-1.5 active:scale-95 transition cursor-pointer">
+            <i class="fa-solid fa-camera text-3xl text-indigo-600"></i>
+            <span id="label-front" class="text-sm font-black text-indigo-900">यहाँ दबाएँ: कैमरा या गैलरी से फ़ोटो लें</span>
+            <span class="text-[10px] text-slate-500 font-normal">कैमरा खोलकर फ़ोटो खींचें या फ़ाइल चुनें</span>
+          </label>
+          <img id="thumb-front" class="hidden mt-3 max-h-24 mx-auto rounded border shadow-sm">
         </div>
 
         <!-- बैक साइड -->
         <div class="bg-white p-4 rounded-xl border-2 border-dashed border-indigo-300 text-center">
           <p class="font-bold text-xs text-slate-700 mb-2">आईडी कार्ड - पीछे का भाग (Back Side)</p>
-          <div class="grid grid-cols-2 gap-2">
-            <button type="button" onclick="startCameraCapture('back')" class="py-3.5 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-lg font-bold text-xs shadow flex flex-col items-center justify-center gap-1 active:scale-95 transition cursor-pointer">
-              <i class="fa-solid fa-camera text-xl text-amber-300"></i>
-              <span>कैमरा से स्कैन करें</span>
-            </button>
-            <button type="button" onclick="triggerFileInput('file-back')" class="py-3.5 bg-indigo-50 border border-indigo-200 text-indigo-800 rounded-lg font-bold text-xs flex flex-col items-center justify-center gap-1 active:scale-95 transition cursor-pointer">
-              <i class="fa-solid fa-image text-xl text-indigo-500"></i>
-              <span id="label-back">गैलरी से चुनें</span>
-            </button>
-          </div>
-          <input type="file" id="cam-native-back" accept="image/*" capture="environment" class="hidden" onchange="onImageSelected(event, 'back')">
           <input type="file" id="file-back" accept="image/*" class="hidden" onchange="onImageSelected(event, 'back')">
-          <img id="thumb-back" class="hidden mt-2 max-h-24 mx-auto rounded border shadow-sm">
+          <label for="file-back" class="w-full py-4 bg-gradient-to-r from-indigo-50 to-indigo-100 hover:bg-indigo-200 border-2 border-indigo-400 rounded-xl text-indigo-800 font-bold text-xs flex flex-col items-center justify-center gap-1.5 active:scale-95 transition cursor-pointer">
+            <i class="fa-solid fa-camera text-3xl text-indigo-600"></i>
+            <span id="label-back" class="text-sm font-black text-indigo-900">यहाँ दबाएँ: कैमरा या गैलरी से फ़ोटो लें</span>
+            <span class="text-[10px] text-slate-500 font-normal">कैमरा खोलकर फ़ोटो खींचें या फ़ाइल चुनें</span>
+          </label>
+          <img id="thumb-back" class="hidden mt-3 max-h-24 mx-auto rounded border shadow-sm">
         </div>
       </div>
 
       <!-- 2. सिंगल रसीद / 1-पेज अपलोड एरिया -->
       <div id="section-single-upload" class="hidden bg-white p-4 rounded-xl border-2 border-dashed border-indigo-300 text-center space-y-3">
-        <p class="font-bold text-xs text-slate-700">कॉलेज रसीद, चालान, पासबुक या किसी भी पेज की फोटो</p>
-        <div class="grid grid-cols-2 gap-2">
-          <button type="button" onclick="startCameraCapture('single')" class="py-4 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-lg font-bold text-xs shadow flex flex-col items-center justify-center gap-1.5 active:scale-95 transition cursor-pointer">
-            <i class="fa-solid fa-camera text-2xl text-amber-300"></i>
-            <span>लाइव HD कैमरा स्कैन</span>
-          </button>
-          <button type="button" onclick="triggerFileInput('file-single')" class="py-4 bg-indigo-50 border border-indigo-200 text-indigo-800 rounded-lg font-bold text-xs flex flex-col items-center justify-center gap-1.5 active:scale-95 transition cursor-pointer">
-            <i class="fa-solid fa-images text-2xl text-indigo-500"></i>
-            <span id="label-single">गैलरी / फ़ाइल से चुनें</span>
-          </button>
-        </div>
-        <input type="file" id="cam-native-single" accept="image/*" capture="environment" class="hidden" onchange="onImageSelected(event, 'single')">
+        <p class="font-bold text-xs text-slate-700">कॉलेज रसीद, चालान, पासबुक या किसी भी 1 पेज की फोटो</p>
         <input type="file" id="file-single" accept="image/*" class="hidden" onchange="onImageSelected(event, 'single')">
-        <img id="thumb-single" class="hidden mt-2 max-h-36 mx-auto rounded border shadow-sm">
+        <label for="file-single" class="w-full py-6 bg-gradient-to-r from-indigo-50 to-indigo-100 hover:bg-indigo-200 border-2 border-indigo-400 rounded-xl text-indigo-800 font-bold text-xs flex flex-col items-center justify-center gap-2 active:scale-95 transition cursor-pointer">
+          <i class="fa-solid fa-camera text-4xl text-indigo-600"></i>
+          <span id="label-single" class="text-base font-black text-indigo-900">यहाँ दबाएँ: कैमरा या गैलरी से फ़ोटो लें</span>
+          <span class="text-[11px] text-slate-500 font-normal">कैमरा खोलकर साफ़ फ़ोटो खींचें</span>
+        </label>
+        <img id="thumb-single" class="hidden mt-3 max-h-40 mx-auto rounded border shadow-sm">
       </div>
 
-      <!-- 3. PDF अपलोड एरिया -->
-      <div id="section-pdf-upload" class="hidden bg-white p-5 rounded-xl border-2 border-dashed border-rose-300 text-center space-y-3">
-        <p class="font-bold text-xs text-slate-700">PDF फ़ाइल चुनें</p>
-        <input type="file" id="file-pdf" accept="application/pdf" class="hidden" onchange="onPdfSelected(event)">
-        <button type="button" onclick="triggerFileInput('file-pdf')" class="w-full py-5 bg-rose-50 hover:bg-rose-100 rounded-lg text-rose-700 flex flex-col items-center border border-rose-200 cursor-pointer">
-          <i class="fa-solid fa-file-pdf text-4xl mb-1 text-rose-500"></i>
-          <span id="label-pdf" class="text-xs font-bold">यहाँ क्लिक करके PDF फ़ाइल चुनें</span>
-        </button>
-        <div id="pdf-preview-indicator" class="hidden text-xs font-bold text-emerald-600 bg-emerald-50 py-2 rounded border border-emerald-200">
-          <i class="fa-solid fa-circle-check"></i> PDF लोड हो चुकी है
+      <!-- 3. PDF अपलोड और एडवांस पेज सेलेक्शन एरिया -->
+      <div id="section-pdf-upload" class="hidden space-y-3">
+        <div class="bg-white p-5 rounded-xl border-2 border-dashed border-rose-300 text-center space-y-3">
+          <p class="font-bold text-xs text-slate-700">PDF दस्तावेज़ चुनें (कितने भी पेज की हो)</p>
+          <input type="file" id="file-pdf" accept="application/pdf" class="hidden" onchange="onPdfSelected(event)">
+          <label for="file-pdf" class="w-full py-5 bg-rose-50 hover:bg-rose-100 rounded-lg text-rose-700 flex flex-col items-center border border-rose-200 cursor-pointer">
+            <i class="fa-solid fa-file-pdf text-4xl mb-1 text-rose-500"></i>
+            <span id="label-pdf" class="text-xs font-bold">यहाँ क्लिक करके PDF फ़ाइल चुनें</span>
+            <span class="text-[10px] text-slate-500 mt-0.5">1 से 500+ पेज तक की कोई भी PDF फ़ाइल</span>
+          </label>
+          <div id="pdf-preview-indicator" class="hidden text-xs font-bold text-emerald-600 bg-emerald-50 py-2 rounded border border-emerald-200">
+            <i class="fa-solid fa-circle-check"></i> <span id="pdf-info-text">PDF लोड हो चुकी है</span>
+          </div>
+        </div>
+
+        <!-- 📑 एडवांस पेज सेलेक्शन बॉक्स (जैसे प्रिंटर में होता है) -->
+        <div id="pdf-page-selector-box" class="hidden bg-white p-4 rounded-xl border border-indigo-200 shadow-sm space-y-3">
+          <div class="flex items-center justify-between border-b pb-2">
+            <span class="font-bold text-xs text-slate-800 flex items-center gap-1.5">
+              <i class="fa-solid fa-copy text-indigo-600"></i> कौन-कौन सा पेज प्रिंट करना है?
+            </span>
+            <span class="text-[11px] font-black bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded-full" id="pdf-total-pages-badge">
+              कुल: 0 पेज
+            </span>
+          </div>
+
+          <!-- रेडियो विकल्प: सभी पेज vs मनचाहे पेज -->
+          <div class="grid grid-cols-2 gap-2 text-xs font-bold">
+            <label class="flex items-center gap-2 p-2.5 rounded-lg border border-slate-200 bg-slate-50 cursor-pointer has-[:checked]:border-indigo-600 has-[:checked]:bg-indigo-50">
+              <input type="radio" name="pdf-range-type" value="all" checked onchange="togglePdfRangeMode('all')" class="text-indigo-600">
+              <span>सभी पेज (All Pages)</span>
+            </label>
+            <label class="flex items-center gap-2 p-2.5 rounded-lg border border-slate-200 bg-slate-50 cursor-pointer has-[:checked]:border-indigo-600 has-[:checked]:bg-indigo-50">
+              <input type="radio" name="pdf-range-type" value="custom" onchange="togglePdfRangeMode('custom')" class="text-indigo-600">
+              <span>पेज नंबर चुनें (Range)</span>
+            </label>
+          </div>
+
+          <!-- मैनुअल पेज नंबर इनपुट -->
+          <div id="custom-range-input-wrapper" class="hidden space-y-1.5 pt-1">
+            <label class="text-[11px] font-bold text-slate-600 flex items-center justify-between">
+              <span>पेज संख्या दर्ज करें (जैसे: 1-5 या 10,15 या 8):</span>
+              <span class="text-indigo-600" id="selected-pages-count-txt">0 पेज चुने गए</span>
+            </label>
+            <input type="text" id="input-pdf-pages" placeholder="उदा: 1-5, 8, 11-14" oninput="onCustomPageRangeInput()" class="w-full border-2 border-indigo-300 rounded-lg px-3 py-2 text-xs font-mono font-bold text-slate-800 outline-none focus:border-indigo-600">
+            <div class="flex flex-wrap gap-1.5 text-[10px] text-slate-500 font-semibold pt-1">
+              <span class="bg-slate-100 px-2 py-0.5 rounded cursor-pointer hover:bg-indigo-100" onclick="setQuickPdfRange('first')">केवल 1st पेज</span>
+              <span class="bg-slate-100 px-2 py-0.5 rounded cursor-pointer hover:bg-indigo-100" onclick="setQuickPdfRange('1-5')">1 से 5</span>
+              <span class="bg-slate-100 px-2 py-0.5 rounded cursor-pointer hover:bg-indigo-100" onclick="setQuickPdfRange('1-10')">1 से 10</span>
+              <span class="bg-slate-100 px-2 py-0.5 rounded cursor-pointer hover:bg-indigo-100" onclick="setQuickPdfRange('last')">अंतिम पेज</span>
+            </div>
+          </div>
         </div>
       </div>
 
-      <button type="button" onclick="validateAndGoToStep(2)" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl shadow transition">
-        एडजस्ट करें <i class="fa-solid fa-arrow-right"></i>
+      <button type="button" onclick="validateAndGoToStep(2)" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl shadow transition cursor-pointer">
+        एडजस्ट और आगे बढ़ें <i class="fa-solid fa-arrow-right"></i>
       </button>
     </section>
 
@@ -327,13 +350,13 @@
       
       <!-- बैक बटन -->
       <div class="flex items-center justify-between bg-white p-2.5 rounded-xl border border-slate-200 shadow-sm">
-        <button type="button" onclick="goToStep(2)" class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-black py-2 px-3.5 rounded-xl flex items-center gap-1.5 shadow-sm transition">
-          <i class="fa-solid fa-arrow-left"></i> वापस जाएं (क्रॉप बदलें)
+        <button type="button" onclick="goToStep(activeTab === 'pdf' ? 1 : 2)" class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-black py-2 px-3.5 rounded-xl flex items-center gap-1.5 shadow-sm transition">
+          <i class="fa-solid fa-arrow-left"></i> वापस जाएं (बदलाव करें)
         </button>
         <span class="text-xs font-bold text-indigo-700">NEELSHANK TELECOM</span>
       </div>
 
-      <!-- मल्टीपल प्रिंट साइज़ विकल्प -->
+      <!-- मल्टीपल प्रिंट साइज़ विकल्प (केवल 1-पेज फोटो के लिए) -->
       <div id="size-options-panel" class="bg-white p-3.5 rounded-xl shadow-sm border border-slate-200">
         <span class="font-bold text-xs text-slate-700 block mb-2">
           <i class="fa-solid fa-expand text-indigo-600"></i> A4 पेपर पर दस्तावेज़ का साइज चुनें:
@@ -376,9 +399,9 @@
       <div class="bg-white p-3.5 rounded-xl shadow-sm border border-slate-200">
         <div class="flex items-center justify-between mb-2">
           <span class="font-bold text-xs text-slate-700 flex items-center gap-1.5">
-            <i class="fa-solid fa-copy text-indigo-600"></i> कितने प्रिंट चाहिए (कॉपियों की संख्या)?
+            <i class="fa-solid fa-copy text-indigo-600"></i> कितने सेट प्रिंट चाहिए (कॉपियों की संख्या)?
           </span>
-          <span class="text-xs font-bold text-indigo-700" id="copies-badge">1 कॉपी</span>
+          <span class="text-xs font-bold text-indigo-700" id="copies-badge">1 सेट</span>
         </div>
         <div class="flex items-center gap-3">
           <button type="button" onclick="adjustCopies(-1)" class="w-10 h-10 bg-slate-200 hover:bg-slate-300 rounded-lg font-black text-lg text-slate-700">-</button>
@@ -405,7 +428,7 @@
             </span>
             <i class="fa-solid fa-file-lines text-slate-700 text-xl mb-1"></i>
             <p class="font-bold text-xs text-slate-800">Black & White</p>
-            <p id="price-bw" class="text-xs text-indigo-700 font-black mt-0.5">₹10 प्रति कॉपी</p>
+            <p id="price-bw" class="text-xs text-indigo-700 font-black mt-0.5">₹10 प्रति शीट</p>
           </div>
 
           <div id="card-color" onclick="setPrintColor('color')" class="border-2 border-slate-200 bg-white p-3 rounded-xl cursor-pointer text-center transition-all relative">
@@ -414,7 +437,7 @@
             </span>
             <i class="fa-solid fa-wand-magic-sparkles text-amber-500 text-xl mb-1"></i>
             <p class="font-bold text-xs text-slate-800">Color Print (रंगीन)</p>
-            <p id="price-color" class="text-xs text-slate-500 font-semibold mt-0.5">₹20 प्रति कॉपी</p>
+            <p id="price-color" class="text-xs text-slate-500 font-semibold mt-0.5">₹20 प्रति शीट</p>
           </div>
         </div>
       </div>
@@ -422,7 +445,7 @@
       <!-- सिक्योर पेमेंट हब -->
       <div class="bg-gradient-to-br from-indigo-900 via-indigo-800 to-indigo-950 text-white p-4.5 rounded-2xl shadow-xl text-center space-y-3.5 border border-indigo-700/50">
         <div class="bg-white/10 backdrop-blur-sm p-3 rounded-xl border border-white/10">
-          <p class="text-xs text-indigo-200">कुल देय राशि (<span id="calc-breakdown">1 कॉपी × ₹10</span>):</p>
+          <p class="text-xs text-indigo-200">कुल देय राशि (<span id="calc-breakdown">1 शीट × ₹10</span>):</p>
           <p id="txt-total-amt" class="text-3xl font-black text-emerald-300 mt-0.5 tracking-tight">₹10</p>
         </div>
 
@@ -432,7 +455,7 @@
             <span>Pay with UPI / Card (ऑटो-वेरिफाई)</span>
           </button>
           <p class="text-[11px] text-emerald-300 mt-1.5 font-semibold">
-            ⚡ PhonePe / GPay / Paytm से तुरंत पेमेंट — UTR डालने की बिल्कुल ज़रूरत नहीं!
+            ⚡ PhonePe / GPay / Paytm से सीधे पेमेंट — UTR डालने की बिल्कुल ज़रूरत नहीं!
           </p>
         </div>
 
@@ -505,6 +528,17 @@
           </p>
           <span id="preview-size-badge" class="text-[10px] bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded font-bold border border-indigo-200">(A4)</span>
         </div>
+
+        <!-- PDF पेज स्विचर (यदि मल्टिपल पेज हों) -->
+        <div id="pdf-preview-nav" class="hidden flex items-center justify-between bg-slate-50 p-2 rounded-lg border mb-2 text-xs font-bold">
+          <button type="button" onclick="navigatePdfPreview(-1)" class="px-2.5 py-1 bg-white border rounded shadow-sm hover:bg-slate-100">
+            ◀ पिछला पेज
+          </button>
+          <span id="pdf-current-page-preview-txt" class="text-indigo-800 font-mono">पेज 1 / 1</span>
+          <button type="button" onclick="navigatePdfPreview(1)" class="px-2.5 py-1 bg-white border rounded shadow-sm hover:bg-slate-100">
+            अगला पेज ▶
+          </button>
+        </div>
         
         <div class="a4-preview-box">
           <div id="printable-sheet" class="w-full flex flex-col items-center justify-start gap-2.5"></div>
@@ -526,7 +560,7 @@
 
       <!-- नीचे का फाइनल एक्शन बार -->
       <div class="flex items-center gap-3 pt-2">
-        <button type="button" onclick="goToStep(2)" class="w-1/3 bg-slate-200 hover:bg-slate-300 text-slate-800 font-black py-3.5 rounded-xl border border-slate-300 shadow text-xs flex items-center justify-center gap-1.5">
+        <button type="button" onclick="goToStep(activeTab === 'pdf' ? 1 : 2)" class="w-1/3 bg-slate-200 hover:bg-slate-300 text-slate-800 font-black py-3.5 rounded-xl border border-slate-300 shadow text-xs flex items-center justify-center gap-1.5">
           <i class="fa-solid fa-arrow-left"></i> वापस जाएं
         </button>
         <button type="button" id="btn-execute-print" disabled onclick="executePrintSheet()" class="w-2/3 bg-slate-400 cursor-not-allowed text-white font-black py-3.5 rounded-xl shadow-lg transition flex items-center justify-center gap-2">
@@ -595,49 +629,6 @@
     </div>
   </div>
 
-  <!-- ================= 6. लाइव HD कैमरा स्कैनर मोडल (Full Screen Modal) ================= -->
-  <div id="modal-camera-screen" class="hidden fixed inset-0 z-50 bg-black flex flex-col justify-between items-center p-4">
-    <!-- कैमरा टॉप बार -->
-    <div class="w-full flex items-center justify-between text-white z-10 pt-2 px-2">
-      <button type="button" onclick="closeLiveCamera()" class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center text-lg active:scale-90 transition">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
-      <span class="font-bold text-xs tracking-wider uppercase text-amber-300 bg-black/40 px-3 py-1 rounded-full border border-amber-400/30">
-        <i class="fa-solid fa-expand mr-1"></i> HD दस्तावेज़ स्कैनर
-      </span>
-      <button type="button" onclick="toggleCameraFacing()" class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center text-base active:scale-90 transition">
-        <i class="fa-solid fa-camera-rotate"></i>
-      </button>
-    </div>
-
-    <!-- कैमरा व्यूफाइंडर व अलाइनमेंट गाइड -->
-    <div class="relative w-full flex-1 flex items-center justify-center overflow-hidden my-3 rounded-2xl border-2 border-indigo-500/50 bg-slate-900">
-      <video id="camera-stream-video" autoplay playsinline class="w-full h-full object-cover"></video>
-      
-      <!-- दस्तावेज़ अलाइनमेंट फ़्रेम (गाइडलाइन बॉक्स) -->
-      <div class="absolute inset-x-6 inset-y-12 border-2 border-dashed border-emerald-400/90 rounded-2xl pointer-events-none flex flex-col justify-between p-3 shadow-[0_0_0_9999px_rgba(0,0,0,0.5)]">
-        <div class="flex justify-between text-emerald-400 text-xs font-bold">
-          <span>┌</span><span>┐</span>
-        </div>
-        <p class="text-[11px] text-center font-bold text-white bg-black/60 py-1 px-2.5 rounded-full mx-auto self-center">
-          दस्तावेज़ को इस बॉक्स के अंदर रखें
-        </p>
-        <div class="flex justify-between text-emerald-400 text-xs font-bold">
-          <span>└</span><span>┘</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- कैमरा कंट्रोल बॉटम बार -->
-    <div class="w-full flex items-center justify-center pb-6 z-10">
-      <button type="button" onclick="capturePhotoFromCamera()" class="w-20 h-20 bg-white rounded-full border-4 border-emerald-500 flex items-center justify-center shadow-2xl active:scale-90 transition transform cursor-pointer">
-        <div class="w-16 h-16 bg-emerald-500 rounded-full flex items-center justify-center text-white text-2xl shadow-inner">
-          <i class="fa-solid fa-camera"></i>
-        </div>
-      </button>
-    </div>
-  </div>
-
   <script>
     const RAZORPAY_KEY_ID = "rzp_live_TiMC4cNvjUy88L";
     const FIREBASE_ORDER_URL = "https://neelshank-print-default-rtdb.firebaseio.com/orders.json";
@@ -659,7 +650,14 @@
 
     const loadedImages = { front: null, back: null, single: null };
     const finalizedCanvases = { front: null, back: null, single: null };
-    let pdfImageBlob = null;
+
+    // ================= PDF मल्टी-पेज स्टेट वेरिएबल्स =================
+    let pdfDocGlobal = null;
+    let pdfTotalPagesCount = 0;
+    let pdfSelectedPagesList = [1];
+    let pdfPageMode = 'all'; // 'all' या 'custom'
+    let pdfRenderedImagesCache = {}; // { pageNum: ImageElement }
+    let pdfCurrentPreviewIndex = 0;
 
     const cornersStore = {
       front: null,
@@ -680,116 +678,6 @@
     const CORNER_HANDLE_RADIUS = 13;
     const MID_HANDLE_RADIUS = 9;
     const TOUCH_DETECT_RADIUS = 34;
-
-    // ================= स्मार्ट ड्यूल-मोड कैमरा इंजन (APK + Browser Fix) =================
-    let currentVideoStream = null;
-    let activeCameraSide = 'single';
-    let cameraFacingMode = 'environment';
-
-    // यह फ़ंक्शन दोनों रास्तों (लाइव स्ट्रीम + फ़ोन का नेटिव कैमरा) को सुरक्षित चलाएगा
-    function startCameraCapture(side) {
-      activeCameraSide = side;
-
-      // अगर डिवाइस या WebView में getUserMedia सपोर्टेड नहीं है, सीधे फ़ोन का मूल कैमरा खोलें
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        openNativeCameraFallback(side);
-        return;
-      }
-
-      openLiveCamera(side);
-    }
-
-    // फ़ोन का ओरिजिनल कैमरा ट्रिगर
-    function openNativeCameraFallback(side) {
-      const nativeInput = document.getElementById(`cam-native-${side}`);
-      if (nativeInput) {
-        nativeInput.click();
-      } else {
-        triggerFileInput(`file-${side}`);
-      }
-    }
-
-    async function openLiveCamera(side) {
-      activeCameraSide = side;
-      const modal = document.getElementById('modal-camera-screen');
-
-      try {
-        if (currentVideoStream) {
-          currentVideoStream.getTracks().forEach(t => t.stop());
-        }
-
-        const constraints = {
-          video: {
-            facingMode: { ideal: cameraFacingMode },
-            width: { ideal: 1920 },
-            height: { ideal: 1080 }
-          },
-          audio: false
-        };
-
-        currentVideoStream = await navigator.mediaDevices.getUserMedia(constraints);
-        const videoEl = document.getElementById('camera-stream-video');
-        videoEl.srcObject = currentVideoStream;
-        await videoEl.play();
-
-        modal.classList.remove('hidden');
-      } catch (err) {
-        console.warn("Live stream not permitted by WebView, switching to native camera:", err);
-        closeLiveCamera();
-        // अगर WebView या परमिशन से लाइव स्ट्रीम ब्लॉक हो, तो सीधे फ़ोन का कैमरा खोलें
-        openNativeCameraFallback(side);
-      }
-    }
-
-    function closeLiveCamera() {
-      if (currentVideoStream) {
-        currentVideoStream.getTracks().forEach(t => t.stop());
-        currentVideoStream = null;
-      }
-      document.getElementById('modal-camera-screen').classList.add('hidden');
-    }
-
-    async function toggleCameraFacing() {
-      cameraFacingMode = (cameraFacingMode === 'environment') ? 'user' : 'environment';
-      await openLiveCamera(activeCameraSide);
-    }
-
-    function capturePhotoFromCamera() {
-      const videoEl = document.getElementById('camera-stream-video');
-      if (!videoEl || !videoEl.videoWidth) return;
-
-      const snapCanvas = document.createElement('canvas');
-      snapCanvas.width = videoEl.videoWidth;
-      snapCanvas.height = videoEl.videoHeight;
-      const snapCtx = snapCanvas.getContext('2d');
-      snapCtx.drawImage(videoEl, 0, 0, snapCanvas.width, snapCanvas.height);
-
-      const capturedDataUrl = snapCanvas.toDataURL('image/jpeg', 0.94);
-      
-      const img = new Image();
-      img.onload = function() {
-        loadedImages[activeCameraSide] = img;
-        cornersStore[activeCameraSide] = null;
-        finalizedCanvases[activeCameraSide] = null;
-
-        const thumb = document.getElementById(`thumb-${activeCameraSide}`);
-        if (thumb) {
-          thumb.src = capturedDataUrl;
-          thumb.classList.remove('hidden');
-        }
-        const lbl = document.getElementById(`label-${activeCameraSide}`);
-        if (lbl) lbl.innerText = "कैमरा फोटो ✔";
-
-        closeLiveCamera();
-
-        if (activeTab === 'single') {
-          validateAndGoToStep(2);
-        } else if (activeTab === 'id' && loadedImages.front && loadedImages.back) {
-          validateAndGoToStep(2);
-        }
-      };
-      img.src = capturedDataUrl;
-    }
 
     // PWA Engine
     let deferredPrompt = null;
@@ -949,6 +837,7 @@
       document.getElementById('section-pdf-upload').classList.toggle('hidden', mode !== 'pdf');
     }
 
+    // फ़ाइल या कैमरा से फ़ोटो सेलेक्ट होने पर
     function onImageSelected(e, type) {
       const file = e.target.files && e.target.files[0];
       if (!file) return;
@@ -975,10 +864,22 @@
             loadedImages[type] = optimizedImg;
             cornersStore[type] = null;
             finalizedCanvases[type] = null;
+            
             const thumb = document.getElementById(`thumb-${type}`);
-            thumb.src = optimizedImg.src;
-            thumb.classList.remove('hidden');
-            document.getElementById(`label-${type}`).innerText = file.name || "फ़ोटो लोड हो गई";
+            if (thumb) {
+              thumb.src = optimizedImg.src;
+              thumb.classList.remove('hidden');
+            }
+            const lbl = document.getElementById(`label-${type}`);
+            if (lbl) {
+              lbl.innerText = "फ़ोटो अपलोड हो गई ✔ (बदलने के लिए फिर टैप करें)";
+            }
+
+            if (activeTab === 'single') {
+              setTimeout(() => validateAndGoToStep(2), 300);
+            } else if (activeTab === 'id' && loadedImages.front && loadedImages.back) {
+              setTimeout(() => validateAndGoToStep(2), 300);
+            }
           };
           optimizedImg.src = scaleCanvas.toDataURL('image/jpeg', 0.92);
         };
@@ -987,6 +888,7 @@
       reader.readAsDataURL(file);
     }
 
+    // ================= 📑 एडवांस्ड PDF लोडर और पेज सेलेक्शन हैंडलर =================
     function onPdfSelected(e) {
       const file = e.target.files && e.target.files[0];
       if (!file) return;
@@ -998,44 +900,156 @@
         if (window.pdfjsLib) {
           pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
           pdfjsLib.getDocument(typedarray).promise.then(function(pdf) {
-            pdf.getPage(1).then(function(page) {
-              const viewport = page.getViewport({ scale: 2.0 });
-              const tempCanvas = document.createElement('canvas');
-              tempCanvas.width = viewport.width;
-              tempCanvas.height = viewport.height;
-              const ctx = tempCanvas.getContext('2d');
-              page.render({ canvasContext: ctx, viewport: viewport }).promise.then(function() {
-                const img = new Image();
-                img.onload = function() {
-                  pdfImageBlob = img;
-                  pdfRotationAngle = 0;
-                  pdfOrientation = (img.width > img.height) ? 'landscape' : 'portrait';
-                  document.getElementById('pdf-preview-indicator').classList.remove('hidden');
-                };
-                img.src = tempCanvas.toDataURL('image/jpeg', 0.90);
-              });
+            pdfDocGlobal = pdf;
+            pdfTotalPagesCount = pdf.numPages;
+            pdfRenderedImagesCache = {};
+
+            document.getElementById('pdf-total-pages-badge').innerText = `कुल: ${pdfTotalPagesCount} पेज`;
+            document.getElementById('pdf-info-text').innerText = `PDF लोड सफल! (कुल ${pdfTotalPagesCount} पेज मिले)`;
+            document.getElementById('pdf-preview-indicator').classList.remove('hidden');
+            document.getElementById('pdf-page-selector-box').classList.remove('hidden');
+
+            // डिफ़ॉल्ट रूप से सभी पेज चुनना
+            setPdfAllPagesRange();
+
+            // पहला पेज प्री-रेंडर करना
+            renderSinglePdfPage(1).then(() => {
+              console.log("Page 1 cached for preview");
             });
+
           }).catch(function(err) {
-            console.error(err);
-            alert("PDF लोड करने में समस्या हुई। कृपया वैध PDF चुनें।");
+            console.error("PDF Parsing Error:", err);
+            alert("PDF लोड करने में समस्या हुई। कृपया वैध PDF फ़ाइल चुनें।");
           });
         }
       };
       fileReader.readAsArrayBuffer(file);
     }
 
+    function setPdfAllPagesRange() {
+      pdfSelectedPagesList = [];
+      for (let i = 1; i <= pdfTotalPagesCount; i++) {
+        pdfSelectedPagesList.push(i);
+      }
+      document.getElementById('input-pdf-pages').value = (pdfTotalPagesCount > 1) ? `1-${pdfTotalPagesCount}` : "1";
+      document.getElementById('selected-pages-count-txt').innerText = `${pdfSelectedPagesList.length} शीट चुनी गईं`;
+      pdfCurrentPreviewIndex = 0;
+    }
+
+    function togglePdfRangeMode(mode) {
+      pdfPageMode = mode;
+      const customWrapper = document.getElementById('custom-range-input-wrapper');
+      if (mode === 'all') {
+        customWrapper.classList.add('hidden');
+        setPdfAllPagesRange();
+      } else {
+        customWrapper.classList.remove('hidden');
+        onCustomPageRangeInput();
+      }
+    }
+
+    // पार्सिंग: "1-5, 8, 11-14" जैसी स्ट्रिंग को [1,2,3,4,5,8,11,12,13,14] में बदलना
+    function parsePageRangeString(str, maxPages) {
+      const pages = new Set();
+      if (!str || !str.trim()) return [];
+
+      const parts = str.split(',');
+      for (let part of parts) {
+        part = part.trim();
+        if (part.includes('-')) {
+          const [startStr, endStr] = part.split('-');
+          const start = parseInt(startStr);
+          const end = parseInt(endStr);
+          if (!isNaN(start) && !isNaN(end)) {
+            const min = Math.max(1, Math.min(start, end));
+            const max = Math.min(maxPages, Math.max(start, end));
+            for (let i = min; i <= max; i++) {
+              pages.add(i);
+            }
+          }
+        } else {
+          const p = parseInt(part);
+          if (!isNaN(p) && p >= 1 && p <= maxPages) {
+            pages.add(p);
+          }
+        }
+      }
+      return Array.from(pages).sort((a, b) => a - b);
+    }
+
+    function onCustomPageRangeInput() {
+      const val = document.getElementById('input-pdf-pages').value;
+      const parsed = parsePageRangeString(val, pdfTotalPagesCount);
+      pdfSelectedPagesList = parsed;
+      document.getElementById('selected-pages-count-txt').innerText = `${pdfSelectedPagesList.length} शीट चुनी गईं`;
+      pdfCurrentPreviewIndex = 0;
+    }
+
+    function setQuickPdfRange(type) {
+      const input = document.getElementById('input-pdf-pages');
+      if (type === 'first') {
+        input.value = "1";
+      } else if (type === '1-5') {
+        input.value = `1-${Math.min(5, pdfTotalPagesCount)}`;
+      } else if (type === '1-10') {
+        input.value = `1-${Math.min(10, pdfTotalPagesCount)}`;
+      } else if (type === 'last') {
+        input.value = `${pdfTotalPagesCount}`;
+      }
+      onCustomPageRangeInput();
+    }
+
+    // किसी भी पेज को कैनवास से इमेज में बदलना
+    function renderSinglePdfPage(pageNum) {
+      return new Promise((resolve, reject) => {
+        if (pdfRenderedImagesCache[pageNum]) {
+          resolve(pdfRenderedImagesCache[pageNum]);
+          return;
+        }
+        if (!pdfDocGlobal) return reject("No PDF loaded");
+
+        pdfDocGlobal.getPage(pageNum).then(page => {
+          const viewport = page.getViewport({ scale: 2.0 });
+          const tempCanvas = document.createElement('canvas');
+          tempCanvas.width = viewport.width;
+          tempCanvas.height = viewport.height;
+          const ctx = tempCanvas.getContext('2d');
+
+          page.render({ canvasContext: ctx, viewport: viewport }).promise.then(() => {
+            const img = new Image();
+            img.onload = () => {
+              pdfRenderedImagesCache[pageNum] = img;
+              pdfOrientation = (img.width > img.height) ? 'landscape' : 'portrait';
+              resolve(img);
+            };
+            img.src = tempCanvas.toDataURL('image/jpeg', 0.90);
+          }).catch(reject);
+        }).catch(reject);
+      });
+    }
+
+    // ================= स्टेप्स नेविगेशन & वैलिडेशन =================
     function validateAndGoToStep(step) {
-      if(step === 2) {
+      if(step === 2 || step === 3) {
         if(activeTab === 'id' && (!loadedImages.front || !loadedImages.back)) {
-          alert('कृपया आईडी कार्ड के दोनों साइड (Front और Back) की फोटो चुनें या स्कैन करें!');
+          alert('कृपया आईडी कार्ड के दोनों साइड (Front और Back) की फ़ोटो लें!');
           return;
         }
         if(activeTab === 'single' && !loadedImages.single) {
-          alert('कृपया रसीद या दस्तावेज़ की फोटो चुनें या स्कैन करें!');
+          alert('कृपया रसीद या दस्तावेज़ की फ़ोटो लें!');
           return;
         }
-        if(activeTab === 'pdf' && !pdfImageBlob) {
-          alert('कृपया पहले एक वैध PDF दस्तावेज़ चुनें!');
+        if(activeTab === 'pdf') {
+          if (!pdfDocGlobal) {
+            alert('कृपया पहले एक वैध PDF दस्तावेज़ चुनें!');
+            return;
+          }
+          if (pdfSelectedPagesList.length === 0) {
+            alert('कृपया कम से कम 1 पेज नंबर चुनें जिसे प्रिंट करना है!');
+            return;
+          }
+          // PDF के लिए स्टेप 2 (क्रॉप) की ज़रूरत नहीं, सीधे स्टेप 3 (प्रिंट/पे) पर जाएँ
+          goToStep(3);
           return;
         }
       }
@@ -1058,10 +1072,6 @@
     }
 
     function setupStep2() {
-      if (activeTab === 'pdf') {
-        goToStep(3);
-        return;
-      }
       if(activeTab === 'id') {
         currentTargetSide = 'front';
         document.getElementById('crop-toggle-group').classList.remove('hidden');
@@ -1593,35 +1603,14 @@
     }
 
     function rotatePdfLive() {
-      if(!pdfImageBlob) return;
       pdfRotationAngle = (pdfRotationAngle + 90) % 360;
-
-      const rCanvas = document.createElement('canvas');
-      const img = pdfImageBlob;
-      if (pdfRotationAngle === 90 || pdfRotationAngle === 270) {
-        rCanvas.width = img.height;
-        rCanvas.height = img.width;
-      } else {
-        rCanvas.width = img.width;
-        rCanvas.height = img.height;
-      }
-      const rCtx = rCanvas.getContext('2d');
-      rCtx.translate(rCanvas.width / 2, rCanvas.height / 2);
-      rCtx.rotate((90 * Math.PI) / 180);
-      rCtx.drawImage(img, -img.width / 2, -img.height / 2);
-
-      const rotatedImg = new Image();
-      rotatedImg.onload = function() {
-        pdfImageBlob = rotatedImg;
-        pdfOrientation = (pdfImageBlob.width > pdfImageBlob.height) ? 'landscape' : 'portrait';
-        setPdfOrientation(pdfOrientation);
-      };
-      rotatedImg.src = rCanvas.toDataURL('image/jpeg', 0.90);
+      renderA4SheetLayout();
     }
 
     function setupStep3() {
       document.getElementById('size-options-panel').classList.toggle('hidden', activeTab !== 'single');
       document.getElementById('pdf-tools-panel').classList.toggle('hidden', activeTab !== 'pdf');
+      document.getElementById('pdf-preview-nav').classList.toggle('hidden', activeTab !== 'pdf' || pdfSelectedPagesList.length <= 1);
       recalculateBilling();
     }
 
@@ -1675,8 +1664,11 @@
       recalculateBilling();
     }
 
+    // कुल पेजों और कॉपियों के अनुसार ऑटो-बिलिंग
     function recalculateBilling() {
-      totalCalculatedAmount = copiesCount * unitRate;
+      const sheetsPerSet = (activeTab === 'pdf') ? Math.max(1, pdfSelectedPagesList.length) : 1;
+      const totalSheets = sheetsPerSet * copiesCount;
+      totalCalculatedAmount = totalSheets * unitRate;
 
       if (!isVerified) {
         document.getElementById('btn-execute-print').disabled = true;
@@ -1685,8 +1677,8 @@
         document.getElementById('payment-status-badge').classList.add('hidden');
       }
 
-      document.getElementById('copies-badge').innerText = `${copiesCount} कॉपी`;
-      document.getElementById('calc-breakdown').innerText = `${copiesCount} कॉपी × ₹${unitRate} (${isBwSelected ? 'B&W' : 'कलर'})`;
+      document.getElementById('copies-badge').innerText = `${copiesCount} सेट (${totalSheets} कुल शीट)`;
+      document.getElementById('calc-breakdown').innerText = `${totalSheets} शीट × ₹${unitRate} (${isBwSelected ? 'B&W' : 'कलर'})`;
       document.getElementById('txt-total-amt').innerText = `₹${totalCalculatedAmount}`;
       document.getElementById('qr-amount-txt').innerText = `${totalCalculatedAmount}`;
 
@@ -1715,7 +1707,7 @@
         amount: totalCalculatedAmount * 100,
         currency: "INR",
         name: "NEELSHANK TELECOM",
-        description: `प्रिंटिंग ऑर्डर (${copiesCount} कॉपियां - ${isBwSelected ? 'B&W' : 'Color'})`,
+        description: `प्रिंटिंग ऑर्डर (${copiesCount} सेट - ${isBwSelected ? 'B&W' : 'Color'})`,
         image: "https://cdn-icons-png.flaticon.com/512/2874/2874780.png",
         handler: function (response) {
           unlockPrintNow(`ऑनलाइन भुगतान सफल! Txn ID: ${response.razorpay_payment_id}`);
@@ -1736,7 +1728,14 @@
       rzp.open();
     }
 
-    function renderA4SheetLayout() {
+    // PDF प्रीव्यू नेविगेशन (आगे-पीछे करना)
+    function navigatePdfPreview(delta) {
+      if (pdfSelectedPagesList.length <= 1) return;
+      pdfCurrentPreviewIndex = (pdfCurrentPreviewIndex + delta + pdfSelectedPagesList.length) % pdfSelectedPagesList.length;
+      renderA4SheetLayout();
+    }
+
+    async function renderA4SheetLayout() {
       const container = document.getElementById('printable-sheet');
       container.innerHTML = '';
       const filterCss = isBwSelected ? 'grayscale(100%)' : 'none';
@@ -1769,13 +1768,20 @@
           container.appendChild(im);
         }
       } else if(activeTab === 'pdf') {
-        if(pdfImageBlob) {
-          const im = new Image();
-          im.src = pdfImageBlob.src;
-          im.style.filter = filterCss;
-          const wClass = (pdfOrientation === 'landscape') ? "w-[96%]" : "w-[85%]";
-          im.className = `${wClass} h-auto rounded border shadow-sm object-contain`;
-          container.appendChild(im);
+        if (pdfSelectedPagesList.length > 0) {
+          const targetPageNum = pdfSelectedPagesList[pdfCurrentPreviewIndex];
+          document.getElementById('pdf-current-page-preview-txt').innerText = `पेज ${targetPageNum} (${pdfCurrentPreviewIndex + 1}/${pdfSelectedPagesList.length})`;
+
+          const pageImg = await renderSinglePdfPage(targetPageNum);
+          if (pageImg) {
+            const im = new Image();
+            im.src = pageImg.src;
+            im.style.filter = filterCss;
+            im.style.transform = `rotate(${pdfRotationAngle}deg)`;
+            const wClass = (pdfOrientation === 'landscape') ? "w-[96%]" : "w-[85%]";
+            im.className = `${wClass} h-auto rounded border shadow-sm object-contain transition-transform`;
+            container.appendChild(im);
+          }
         }
       }
     }
@@ -1814,7 +1820,7 @@
       }
 
       saveToVault(refVal, totalCalculatedAmount);
-      unlockPrintNow(`भुगतान सत्यापित! ₹${totalCalculatedAmount} (${copiesCount} कॉपियां - ${isBwSelected ? 'B&W' : 'Color'})`);
+      unlockPrintNow(`भुगतान सत्यापित! ₹${totalCalculatedAmount} (${copiesCount} सेट - ${isBwSelected ? 'B&W' : 'Color'})`);
     }
 
     function shopkeeperBypass() {
@@ -1842,7 +1848,8 @@
       badge.classList.remove('hidden');
     }
 
-    function generateA4PrintImage() {
+    // A4 कैनवास इमेज जनरेटर (सिंगल इमेज या PDF पेज के लिए)
+    function generateA4PrintImageFromSource(sourceImg) {
       const a4Canvas = document.createElement('canvas');
       a4Canvas.width = 1240;
       a4Canvas.height = 1754;
@@ -1877,26 +1884,19 @@
         let targetW, targetH;
 
         if(docPrintSize === 'id') {
-          targetW = 502;
-          targetH = 325;
+          targetW = 502; targetH = 325;
         } else if(docPrintSize === 'postcard') {
-          const maxW = 620;
-          const maxH = 870;
+          const maxW = 620; const maxH = 870;
           const scale = Math.min(maxW / doc.width, maxH / doc.height);
-          targetW = Math.round(doc.width * scale);
-          targetH = Math.round(doc.height * scale);
+          targetW = Math.round(doc.width * scale); targetH = Math.round(doc.height * scale);
         } else if(docPrintSize === 'half') {
-          const maxW = 850;
-          const maxH = 1100;
+          const maxW = 850; const maxH = 1100;
           const scale = Math.min(maxW / doc.width, maxH / doc.height);
-          targetW = Math.round(doc.width * scale);
-          targetH = Math.round(doc.height * scale);
+          targetW = Math.round(doc.width * scale); targetH = Math.round(doc.height * scale);
         } else {
-          const maxW = 1100;
-          const maxH = 1550;
+          const maxW = 1100; const maxH = 1550;
           const scale = Math.min(maxW / doc.width, maxH / doc.height);
-          targetW = Math.round(doc.width * scale);
-          targetH = Math.round(doc.height * scale);
+          targetW = Math.round(doc.width * scale); targetH = Math.round(doc.height * scale);
         }
 
         const startX = (a4Canvas.width - targetW) / 2;
@@ -1904,19 +1904,24 @@
         ctx.strokeStyle = '#cbd5e1';
         ctx.lineWidth = 1;
         ctx.strokeRect(startX, topMargin, targetW, targetH);
-      } else if (activeTab === 'pdf' && pdfImageBlob) {
-        const doc = pdfImageBlob;
-        let maxW = 1100;
+      } else if (activeTab === 'pdf' && sourceImg) {
+        const doc = sourceImg;
+        let maxW = (pdfOrientation === 'landscape') ? 1180 : 1100;
         let maxH = 1550;
-        if(pdfOrientation === 'landscape') {
-          maxW = 1180;
-          maxH = 1550;
-        }
         const scale = Math.min(maxW / doc.width, maxH / doc.height);
-        const docW = Math.round(pdfImageBlob.width * scale);
-        const docH = Math.round(pdfImageBlob.height * scale);
+        const docW = Math.round(doc.width * scale);
+        const docH = Math.round(doc.height * scale);
         const startX = (a4Canvas.width - docW) / 2;
-        ctx.drawImage(doc, startX, topMargin, docW, docH);
+
+        ctx.save();
+        if (pdfRotationAngle !== 0) {
+          ctx.translate(a4Canvas.width / 2, a4Canvas.height / 2);
+          ctx.rotate((pdfRotationAngle * Math.PI) / 180);
+          ctx.drawImage(doc, -docW / 2, -docH / 2, docW, docH);
+        } else {
+          ctx.drawImage(doc, startX, topMargin, docW, docH);
+        }
+        ctx.restore();
       }
 
       if (isBwSelected) {
@@ -1925,9 +1930,7 @@
           const d = imgData.data;
           for (let i = 0; i < d.length; i += 4) {
             const gray = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
-            d[i] = gray;
-            d[i + 1] = gray;
-            d[i + 2] = gray;
+            d[i] = gray; d[i + 1] = gray; d[i + 2] = gray;
           }
           ctx.putImageData(imgData, 0, 0);
         } catch (e) {
@@ -1938,7 +1941,7 @@
       return a4Canvas.toDataURL('image/jpeg', 0.90);
     }
 
-    function createA4PDFBlob() {
+    async function createA4PDFBlob() {
       if (!window.jspdf) {
         alert("PDF इंजन लोड हो रहा है, कृपया 2 सेकंड बाद पुनः प्रयास करें।");
         return null;
@@ -1950,18 +1953,29 @@
         format: 'a4'
       });
 
-      const imgData = generateA4PrintImage();
-      if(activeTab === 'pdf' && pdfOrientation === 'landscape') {
-        doc.addImage(imgData, 'JPEG', 0, 0, 297, 210, undefined, 'FAST');
+      if (activeTab === 'pdf') {
+        for (let i = 0; i < pdfSelectedPagesList.length; i++) {
+          if (i > 0) doc.addPage('a4', pdfOrientation);
+          const pageNum = pdfSelectedPagesList[i];
+          const pageImg = await renderSinglePdfPage(pageNum);
+          const imgData = generateA4PrintImageFromSource(pageImg);
+          if (pdfOrientation === 'landscape') {
+            doc.addImage(imgData, 'JPEG', 0, 0, 297, 210, undefined, 'FAST');
+          } else {
+            doc.addImage(imgData, 'JPEG', 0, 0, 210, 297, undefined, 'FAST');
+          }
+        }
       } else {
+        const imgData = generateA4PrintImageFromSource(null);
         doc.addImage(imgData, 'JPEG', 0, 0, 210, 297, undefined, 'FAST');
       }
+
       return doc;
     }
 
-    function downloadA4PDF() {
+    async function downloadA4PDF() {
       try {
-        const doc = createA4PDFBlob();
+        const doc = await createA4PDFBlob();
         if (!doc) return;
         doc.save("NEELSHANK_Print_A4.pdf");
       } catch (err) {
@@ -1972,7 +1986,7 @@
 
     async function shareA4PDF() {
       try {
-        const doc = createA4PDFBlob();
+        const doc = await createA4PDFBlob();
         if (!doc) return;
         const pdfBlob = doc.output('blob');
         const file = new File([pdfBlob], "NEELSHANK_Print_A4.pdf", { type: "application/pdf" });
@@ -1980,7 +1994,7 @@
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
           await navigator.share({
             title: "NEELSHANK TELECOM प्रिंट डॉक्यूमेंट",
-            text: "यहाँ आपका A4 साइज़ में प्रिंट के लिए तैयार PDF डॉक्यूमेंट है।",
+            text: "यहाँ आपका प्रिंट के लिए तैयार PDF डॉक्यूमेंट है।",
             files: [file]
           });
         } else {
@@ -1995,7 +2009,8 @@
       }
     }
 
-    function executePrintSheet() {
+    // ================= 🚀 फाइनल प्रिंट अनुरोध सबमिट =================
+    async function executePrintSheet() {
       if (!isVerified) {
         alert("कृपया पहले भुगतान सत्यापित करें!");
         return;
@@ -2005,40 +2020,55 @@
       printBtn.innerText = "डॉक्यूमेंट भेजा जा रहा है...";
       printBtn.disabled = true;
 
-      const printImageData = generateA4PrintImage();
-      const currentTxnId = document.getElementById('input-payment-ref').value.trim() || 'RZP_' + Date.now().toString().slice(-6);
+      try {
+        let printPayloadImage = "";
+        let docDescription = "";
 
-      const orderData = {
-        doc_type: activeTab === 'id' ? 'ID Card (8.5x5.5 CM)' : (activeTab === 'single' ? `Single Doc (${docPrintSize.toUpperCase()})` : 'PDF Document'),
-        color_mode: isBwSelected ? 'Black & White' : 'Color Print',
-        copies: copiesCount,
-        amount: totalCalculatedAmount,
-        ref_id: currentTxnId,
-        status: "PENDING",
-        time: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }),
-        image_data: printImageData
-      };
+        if (activeTab === 'id') {
+          docDescription = 'ID Card (8.5x5.5 CM)';
+          printPayloadImage = generateA4PrintImageFromSource(null);
+        } else if (activeTab === 'single') {
+          docDescription = `Single Doc (${docPrintSize.toUpperCase()})`;
+          printPayloadImage = generateA4PrintImageFromSource(null);
+        } else if (activeTab === 'pdf') {
+          docDescription = `PDF (${pdfSelectedPagesList.length} Sheets: Pgs ${pdfSelectedPagesList.join(',')})`;
+          const firstSelectedImg = await renderSinglePdfPage(pdfSelectedPagesList[0]);
+          printPayloadImage = generateA4PrintImageFromSource(firstSelectedImg);
+        }
 
-      fetch(FIREBASE_ORDER_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(orderData)
-      })
-      .then(res => {
+        const currentTxnId = document.getElementById('input-payment-ref').value.trim() || 'RZP_' + Date.now().toString().slice(-6);
+
+        const orderData = {
+          doc_type: docDescription,
+          color_mode: isBwSelected ? 'Black & White' : 'Color Print',
+          copies: copiesCount,
+          total_sheets: (activeTab === 'pdf') ? (pdfSelectedPagesList.length * copiesCount) : copiesCount,
+          selected_pages: (activeTab === 'pdf') ? pdfSelectedPagesList : [1],
+          amount: totalCalculatedAmount,
+          ref_id: currentTxnId,
+          status: "PENDING",
+          time: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }),
+          image_data: printPayloadImage
+        };
+
+        const res = await fetch(FIREBASE_ORDER_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(orderData)
+        });
+
         if (!res.ok) throw new Error("Firebase Request Failed");
-        return res.json();
-      })
-      .then(data => {
+
         document.getElementById('modal-ref-id').innerText = currentTxnId;
         document.getElementById('modal-success-screen').classList.remove('hidden');
         printBtn.innerText = "अनुरोध भेजा जा चुका है ✔";
-      })
-      .catch(err => {
-        console.error("Firebase Error:", err);
+
+      } catch (err) {
+        console.error("Submit Error:", err);
         alert("ऑर्डर भेजने में समस्या हुई। कृपया इंटरनेट कनेक्शन जांचें।");
         printBtn.disabled = false;
         printBtn.innerText = "पुनः प्रयास करें";
-      });
+      }
     }
 
     function closeSuccessModalAndReset() {
