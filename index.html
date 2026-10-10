@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>NEELSHANK TELECOM - स्मार्ट प्रिंट कैफ़े</title>
+  <title>NEELSHANK TELECOM - डिजिटल प्रिंट स्टूडियो</title>
   
   <!-- PWA & Apple Meta Tags -->
   <link rel="manifest" href="./manifest.json">
-  <meta name="theme-color" content="#0f172a">
+  <meta name="theme-color" content="#080c14">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="NEELSHANK">
@@ -30,75 +30,71 @@
     html, body {
       width: 100%;
       min-height: 100%;
-      background-color: #0b0f19;
-      color: #f1f5f9;
+      background-color: #080c14;
+      color: #f8fafc;
       font-family: 'Hind', sans-serif;
       overflow-x: hidden;
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* चमकदार नियॉन टाइटल */
-    .brand-title {
+    /* चमकदार गोल्डन-नियॉन ब्रांडिंग */
+    .brand-glow {
       font-family: 'Orbitron', 'Rajdhani', sans-serif;
-      letter-spacing: 1.5px;
-      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #fef08a 100%);
+      background: linear-gradient(135deg, #fef08a 0%, #f59e0b 50%, #d97706 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      text-shadow: 0 0 20px rgba(245, 158, 11, 0.45), 0 0 35px rgba(245, 158, 11, 0.2);
+      text-shadow: 0 0 20px rgba(245, 158, 11, 0.6), 0 0 35px rgba(245, 158, 11, 0.3);
     }
 
-    /* साइबर कैफे ग्लास कार्ड */
-    .cyber-card {
-      background: rgba(17, 24, 39, 0.85);
+    /* साइबर ग्लास कार्ड */
+    .cyber-panel {
+      background: rgba(15, 23, 42, 0.85);
       backdrop-filter: blur(12px);
       border: 1px solid rgba(59, 130, 246, 0.25);
-      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
-    }
-    .cyber-card-glow {
-      border: 1px solid rgba(16, 185, 129, 0.4);
-      box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.25);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
     }
 
-    /* वास्तविक A4 रेशियो (1 : 1.414) प्रिंटेबल कंटेनर */
-    .a4-sheet-container {
+    /* वास्तविक A4 रेशियो (1 : 1.414) शीट कंटेनर */
+    .a4-page-frame {
       width: 100%;
       max-width: 380px;
       aspect-ratio: 1 / 1.414;
       background: #ffffff;
-      border-radius: 8px;
-      box-shadow: 0 0 30px rgba(0, 0, 0, 0.8), 0 0 10px rgba(59, 130, 246, 0.3);
-      padding: 12px;
+      border-radius: 6px;
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.9), 0 0 10px rgba(56, 189, 248, 0.35);
       margin: 0 auto;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
+      justify-content: center;
       position: relative;
       box-sizing: border-box;
+      padding: 10px;
       border: 2px dashed #94a3b8;
     }
 
-    /* Fit to Printable Area - 100% पूरा पेज भरेगा */
-    .fit-printable-full {
+    /* 100% Fit to Printable Area */
+    .printable-content-full {
       width: 100% !important;
       height: 100% !important;
       object-fit: contain !important;
+      display: block;
     }
 
-    .crop-wrapper-box {
+    .crop-canvas-box {
       position: relative;
       touch-action: none !important;
       user-select: none !important;
       width: 100%;
       min-height: 380px;
-      background: #030712;
+      background: #020617;
       border-radius: 14px;
       padding: 6px;
       display: flex;
       justify-content: center;
       align-items: center;
       overflow: hidden;
-      border: 1px solid #1f2937;
+      border: 1px solid #1e293b;
     }
 
     canvas#canvas-crop {
@@ -106,62 +102,59 @@
       max-width: 100%;
       height: auto;
       border-radius: 6px;
-      box-shadow: 0 0 25px rgba(0, 0, 0, 0.9);
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.9);
       display: block;
     }
 
-    .id-card-item-fit {
+    .id-card-view-fit {
       width: 48% !important;
       max-width: 165px !important;
       aspect-ratio: 85 / 55;
       object-fit: fill;
     }
 
-    /* एनिमेशन्स */
-    @keyframes neonPulse {
-      0%, 100% { box-shadow: 0 0 15px rgba(245, 158, 11, 0.8); }
-      50% { box-shadow: 0 0 30px rgba(245, 158, 11, 1), 0 0 45px rgba(234, 88, 12, 0.6); }
+    @keyframes neonGlowPulse {
+      0%, 100% { box-shadow: 0 0 15px rgba(245, 158, 11, 0.7); }
+      50% { box-shadow: 0 0 30px rgba(245, 158, 11, 1), 0 0 40px rgba(234, 88, 12, 0.5); }
     }
-    .neon-btn-glow {
-      animation: neonPulse 2s infinite;
+    .neon-pulse {
+      animation: neonGlowPulse 2s infinite ease-in-out;
     }
 
-    @keyframes popIn {
+    @keyframes popModal {
       0% { transform: scale(0.85); opacity: 0; }
       100% { transform: scale(1); opacity: 1; }
     }
-    .animate-pop {
-      animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    .animate-pop-modal {
+      animation: popModal 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
     }
   </style>
 </head>
 <body class="pb-24">
 
-  <!-- ================= 🌟 साइबर कैफ़े नियॉन हेडर ================= -->
+  <!-- ================= शीर्ष हेडर ================= -->
   <header class="sticky top-0 z-50 bg-slate-900/95 backdrop-blur-md border-b border-indigo-500/30 px-3.5 py-3 shadow-2xl">
     <div class="max-w-2xl mx-auto flex items-center justify-between">
       <div class="flex items-center gap-2.5">
-        <!-- 1-टैप होम बटन -->
         <button type="button" onclick="goToHomePage()" title="होम पेज" class="w-10 h-10 bg-indigo-950 hover:bg-indigo-900 border border-indigo-400/50 rounded-xl flex items-center justify-center shadow-lg active:scale-90 transition cursor-pointer">
           <i class="fa-solid fa-house text-base text-amber-400"></i>
         </button>
         <div>
-          <!-- बड़ा, बोल्ड और चमकदार नाम -->
-          <h1 class="brand-title text-lg sm:text-2xl font-black tracking-wide leading-none">
+          <h1 class="brand-glow text-xl sm:text-2xl font-black tracking-wider leading-none">
             NEELSHANK TELECOM
           </h1>
-          <p class="text-[10px] sm:text-xs font-semibold text-cyan-400 tracking-wider flex items-center gap-1 mt-0.5">
-            <i class="fa-solid fa-bolt text-amber-400"></i> ऑटोमैटिक डिजिटल प्रिंट कियोस्क
+          <p class="text-[10px] sm:text-xs font-bold text-cyan-400 tracking-wider flex items-center gap-1 mt-0.5">
+            <i class="fa-solid fa-bolt text-amber-400"></i> स्मार्ट डिजिटल प्रिंट स्टूडियो
           </p>
         </div>
       </div>
 
       <div class="flex items-center gap-2">
-        <button id="btn-header-install" onclick="triggerPwaInstall()" class="hidden neon-btn-glow bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs px-2.5 py-1.5 rounded-full shadow flex items-center gap-1.5 cursor-pointer">
+        <button id="btn-header-install" onclick="triggerPwaInstall()" class="hidden neon-pulse bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs px-3 py-1.5 rounded-full shadow flex items-center gap-1.5 cursor-pointer">
           <i class="fa-solid fa-download"></i> <span>ऐप लें</span>
         </button>
         <span class="bg-emerald-500/20 border border-emerald-400/60 text-emerald-300 text-[11px] px-2.5 py-1 rounded-full font-bold shadow-sm whitespace-nowrap flex items-center gap-1.5">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> प्रिंटर लाइव
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> प्रिंटर चालू
         </span>
       </div>
     </div>
@@ -169,8 +162,8 @@
 
   <main class="max-w-2xl mx-auto px-3.5 mt-3 space-y-3.5">
 
-    <!-- साइबर कैफे वेलकम बैज -->
-    <div class="cyber-card p-3.5 rounded-2xl text-xs space-y-2 border-l-4 border-l-amber-400">
+    <!-- वेलकम साइबर कैफे नोट -->
+    <div class="cyber-panel p-3.5 rounded-2xl text-xs space-y-2 border-l-4 border-l-amber-400">
       <div class="flex items-center justify-between">
         <span class="text-amber-300 font-bold flex items-center gap-1.5 text-sm">
           <i class="fa-solid fa-print text-indigo-400"></i> सेल्फ-सर्विस प्रिंट काउंटर
@@ -180,7 +173,7 @@
         </a>
       </div>
       <p class="text-slate-300 text-[11px] leading-relaxed">
-        आईडी कार्ड, कॉलेज रसीद, पासबुक या 1 से 500+ पेज की PDF अपलोड करें। मनचाहे पेज चुनकर 1 मिनट में काउंटर से प्रिंट पाएँ!
+        आईडी कार्ड, रसीद, पासबुक या 1 से 500+ पेज की PDF अपलोड करें। कैमरा से फोटो खींचने पर पेज कभी रिफ्रेश नहीं होगा।
       </p>
     </div>
 
@@ -191,7 +184,7 @@
       <div id="step-nav-3" class="flex-1 text-center text-slate-500 pb-1">3. Pay & Print</div>
     </div>
 
-    <!-- ================= ⚡ स्टेप 1: अपलोड & पेज सेलेक्शन ================= -->
+    <!-- ================= स्टेप 1: अपलोड ================= -->
     <section id="step-1" class="space-y-4">
       <div class="grid grid-cols-3 gap-2 bg-slate-900 p-1 rounded-xl text-xs font-bold border border-slate-800">
         <button id="tab-id" type="button" onclick="selectMode('id')" class="py-2.5 rounded-lg bg-indigo-600 text-white shadow flex flex-col items-center">
@@ -208,45 +201,72 @@
       <!-- 1. आईडी कार्ड अपलोड एरिया -->
       <div id="section-id-upload" class="space-y-3">
         <!-- फ्रंट साइड -->
-        <div class="cyber-card p-4 rounded-2xl text-center space-y-2">
+        <div class="cyber-panel p-4 rounded-2xl text-center space-y-3">
           <p class="font-bold text-xs text-cyan-300 uppercase tracking-wider">आईडी कार्ड - सामने का भाग (Front Side)</p>
-          <input type="file" id="file-front" accept="image/*" class="hidden" onchange="onImageSelected(event, 'front')">
-          <label for="file-front" class="w-full py-5 bg-slate-900 hover:bg-slate-800 border-2 border-dashed border-indigo-500/50 rounded-xl flex flex-col items-center justify-center gap-2 cursor-pointer active:scale-95 transition">
-            <i class="fa-solid fa-camera text-3xl text-amber-400"></i>
-            <span id="label-front" class="text-xs font-black text-white">यहाँ टैप करें: कैमरा खोलें या फ़ोटो चुनें</span>
-            <span class="text-[10px] text-slate-400">साफ़ व सीधी फ़ोटो खींचें</span>
-          </label>
+          
+          <input type="file" id="cam-front" accept="image/*" capture="environment" class="hidden" onchange="onNativeFileSelected(event, 'front')">
+          <input type="file" id="gal-front" accept="image/*" class="hidden" onchange="onNativeFileSelected(event, 'front')">
+
+          <div class="grid grid-cols-2 gap-2.5">
+            <label for="cam-front" class="py-4 bg-indigo-950/70 hover:bg-indigo-900 border-2 border-amber-400/60 rounded-xl flex flex-col items-center justify-center gap-1.5 cursor-pointer active:scale-95 transition">
+              <i class="fa-solid fa-camera text-2xl text-amber-400"></i>
+              <span class="text-xs font-black text-amber-300">कैमरा से फोटो लें</span>
+            </label>
+            <label for="gal-front" class="py-4 bg-slate-900 hover:bg-slate-800 border-2 border-indigo-500/40 rounded-xl flex flex-col items-center justify-center gap-1.5 cursor-pointer active:scale-95 transition">
+              <i class="fa-solid fa-images text-2xl text-cyan-400"></i>
+              <span class="text-xs font-bold text-slate-200">गैलरी से चुनें</span>
+            </label>
+          </div>
+          <span id="label-front" class="text-[11px] text-slate-400 block">फोटो खींचें या गैलरी से लोड करें</span>
           <img id="thumb-front" class="hidden mt-2 max-h-24 mx-auto rounded-lg border border-slate-700 shadow-lg">
         </div>
 
         <!-- बैक साइड -->
-        <div class="cyber-card p-4 rounded-2xl text-center space-y-2">
+        <div class="cyber-panel p-4 rounded-2xl text-center space-y-3">
           <p class="font-bold text-xs text-cyan-300 uppercase tracking-wider">आईडी कार्ड - पीछे का भाग (Back Side)</p>
-          <input type="file" id="file-back" accept="image/*" class="hidden" onchange="onImageSelected(event, 'back')">
-          <label for="file-back" class="w-full py-5 bg-slate-900 hover:bg-slate-800 border-2 border-dashed border-indigo-500/50 rounded-xl flex flex-col items-center justify-center gap-2 cursor-pointer active:scale-95 transition">
-            <i class="fa-solid fa-camera text-3xl text-amber-400"></i>
-            <span id="label-back" class="text-xs font-black text-white">यहाँ टैप करें: कैमरा खोलें या फ़ोटो चुनें</span>
-            <span class="text-[10px] text-slate-400">साफ़ व सीधी फ़ोटो खींचें</span>
-          </label>
+          
+          <input type="file" id="cam-back" accept="image/*" capture="environment" class="hidden" onchange="onNativeFileSelected(event, 'back')">
+          <input type="file" id="gal-back" accept="image/*" class="hidden" onchange="onNativeFileSelected(event, 'back')">
+
+          <div class="grid grid-cols-2 gap-2.5">
+            <label for="cam-back" class="py-4 bg-indigo-950/70 hover:bg-indigo-900 border-2 border-amber-400/60 rounded-xl flex flex-col items-center justify-center gap-1.5 cursor-pointer active:scale-95 transition">
+              <i class="fa-solid fa-camera text-2xl text-amber-400"></i>
+              <span class="text-xs font-black text-amber-300">कैमरा से फोटो लें</span>
+            </label>
+            <label for="gal-back" class="py-4 bg-slate-900 hover:bg-slate-800 border-2 border-indigo-500/40 rounded-xl flex flex-col items-center justify-center gap-1.5 cursor-pointer active:scale-95 transition">
+              <i class="fa-solid fa-images text-2xl text-cyan-400"></i>
+              <span class="text-xs font-bold text-slate-200">गैलरी से चुनें</span>
+            </label>
+          </div>
+          <span id="label-back" class="text-[11px] text-slate-400 block">फोटो खींचें या गैलरी से लोड करें</span>
           <img id="thumb-back" class="hidden mt-2 max-h-24 mx-auto rounded-lg border border-slate-700 shadow-lg">
         </div>
       </div>
 
       <!-- 2. सिंगल रसीद / 1-पेज अपलोड एरिया -->
-      <div id="section-single-upload" class="hidden cyber-card p-4 rounded-2xl text-center space-y-3">
+      <div id="section-single-upload" class="hidden cyber-panel p-4 rounded-2xl text-center space-y-3">
         <p class="font-bold text-xs text-cyan-300 uppercase tracking-wider">कॉलेज रसीद, चालान, पासबुक या किसी भी 1 पेज की फोटो</p>
-        <input type="file" id="file-single" accept="image/*" class="hidden" onchange="onImageSelected(event, 'single')">
-        <label for="file-single" class="w-full py-7 bg-slate-900 hover:bg-slate-800 border-2 border-dashed border-indigo-500/50 rounded-xl flex flex-col items-center justify-center gap-2.5 cursor-pointer active:scale-95 transition">
-          <i class="fa-solid fa-camera text-4xl text-amber-400"></i>
-          <span id="label-single" class="text-sm font-black text-white">यहाँ टैप करें: कैमरा खोलें या फ़ोटो चुनें</span>
-          <span class="text-[11px] text-slate-400">दस्तावेज़ को समतल जगह पर रखकर फ़ोटो लें</span>
-        </label>
+        
+        <input type="file" id="cam-single" accept="image/*" capture="environment" class="hidden" onchange="onNativeFileSelected(event, 'single')">
+        <input type="file" id="gal-single" accept="image/*" class="hidden" onchange="onNativeFileSelected(event, 'single')">
+
+        <div class="grid grid-cols-2 gap-2.5">
+          <label for="cam-single" class="py-6 bg-indigo-950/70 hover:bg-indigo-900 border-2 border-amber-400/70 rounded-xl flex flex-col items-center justify-center gap-2 cursor-pointer active:scale-95 transition">
+            <i class="fa-solid fa-camera text-3xl text-amber-400"></i>
+            <span class="text-xs font-black text-amber-300">कैमरा से फोटो लें</span>
+          </label>
+          <label for="gal-single" class="py-6 bg-slate-900 hover:bg-slate-800 border-2 border-indigo-500/40 rounded-xl flex flex-col items-center justify-center gap-2 cursor-pointer active:scale-95 transition">
+            <i class="fa-solid fa-images text-3xl text-cyan-400"></i>
+            <span class="text-xs font-bold text-slate-200">गैलरी से चुनें</span>
+          </label>
+        </div>
+        <span id="label-single" class="text-[11px] text-slate-400 block">फोटो खींचते ही ऐप कभी रीलोड नहीं होगा</span>
         <img id="thumb-single" class="hidden mt-2 max-h-36 mx-auto rounded-lg border border-slate-700 shadow-lg">
       </div>
 
       <!-- 3. PDF अपलोड और एडवांस पेज सेलेक्शन एरिया -->
       <div id="section-pdf-upload" class="hidden space-y-3">
-        <div class="cyber-card p-4 rounded-2xl text-center space-y-3">
+        <div class="cyber-panel p-4 rounded-2xl text-center space-y-3">
           <p class="font-bold text-xs text-rose-400 uppercase tracking-wider">PDF दस्तावेज़ चुनें (कितने भी पेज की हो)</p>
           <input type="file" id="file-pdf" accept="application/pdf" class="hidden" onchange="onPdfSelected(event)">
           <label for="file-pdf" class="w-full py-6 bg-slate-900 hover:bg-slate-800 border-2 border-dashed border-rose-500/50 rounded-xl flex flex-col items-center justify-center gap-2 cursor-pointer active:scale-95 transition">
@@ -259,8 +279,8 @@
           </div>
         </div>
 
-        <!-- एडवांस पेज सेलेक्शन बॉक्स (जैसे प्रिंटर में होता है) -->
-        <div id="pdf-page-selector-box" class="hidden cyber-card p-4 rounded-2xl space-y-3 border border-indigo-500/40">
+        <!-- एडवांस पेज सेलेक्शन बॉक्स -->
+        <div id="pdf-page-selector-box" class="hidden cyber-panel p-4 rounded-2xl space-y-3 border border-indigo-500/40">
           <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
             <span class="font-bold text-xs text-amber-300 flex items-center gap-1.5">
               <i class="fa-solid fa-copy text-indigo-400"></i> कौन-कौन सा पेज प्रिंट करना है?
@@ -286,7 +306,7 @@
               <span class="text-slate-400">पेज संख्या दर्ज करें:</span>
               <span class="text-amber-400 font-bold font-mono" id="selected-pages-count-txt">0 शीट चुनी गईं</span>
             </div>
-            <input type="text" id="input-pdf-pages" placeholder="उदा: 1-5, 8, 11-14" oninput="onCustomPageRangeInput()" class="w-full bg-slate-950 border-2 border-indigo-500/50 rounded-xl px-3 py-2 text-xs font-mono font-bold text-amber-300 outline-none focus:border-amber-400">
+            <input type="text" id="input-pdf-pages" placeholder="उदा: 1-5, 8, 11-14" oninput="onCustomPageRangeInput()" class="w-full bg-slate-950 border-2 border-indigo-500/50 rounded-xl px-3 py-2 text-xs font-mono font-bold text-amber-300 outline-none focus:border-cyan-400">
             <div class="flex flex-wrap gap-1.5 text-[10px] text-slate-300 font-bold pt-1">
               <span class="bg-slate-800 border border-slate-700 px-2 py-1 rounded-lg cursor-pointer hover:border-amber-400" onclick="setQuickPdfRange('first')">केवल 1st पेज</span>
               <span class="bg-slate-800 border border-slate-700 px-2 py-1 rounded-lg cursor-pointer hover:border-amber-400" onclick="setQuickPdfRange('1-5')">1 से 5</span>
@@ -302,16 +322,16 @@
       </button>
     </section>
 
-    <!-- ================= ⚡ स्टेप 2: 8-डॉट क्रॉप & प्रो-एडिटिंग ================= -->
+    <!-- ================= स्टेप 2: 8-डॉट क्रॉप & प्रो-एडिटिंग ================= -->
     <section id="step-2" class="hidden space-y-4">
-      <div class="flex items-center justify-between cyber-card p-2 rounded-xl">
+      <div class="flex items-center justify-between cyber-panel p-2 rounded-xl">
         <button type="button" onclick="goToHomePage()" class="bg-indigo-950 hover:bg-indigo-900 text-indigo-300 border border-indigo-500/40 text-xs font-bold py-1.5 px-3 rounded-lg flex items-center gap-1.5 active:scale-95 cursor-pointer">
           <i class="fa-solid fa-house"></i> Home
         </button>
         <span class="text-xs font-bold text-cyan-300">8-डॉट क्रॉप व अलाइन</span>
       </div>
 
-      <div class="cyber-card p-3 rounded-2xl space-y-3">
+      <div class="cyber-panel p-3 rounded-2xl space-y-3">
         <div id="crop-toggle-group" class="flex gap-2 mb-1">
           <button type="button" id="btn-side-front" onclick="switchSide('front')" class="flex-1 py-2 bg-indigo-600 text-white font-bold text-xs rounded-xl shadow">
             फ्रंट साइड
@@ -338,18 +358,18 @@
           </button>
         </div>
 
-        <div class="crop-wrapper-box">
+        <div class="crop-canvas-box">
           <canvas id="canvas-crop"></canvas>
         </div>
 
         <p class="text-[11px] text-center text-emerald-400 font-bold">
-          👉 8 नीले बिंदुओं से कोनों को पकड़कर दस्तावेज़ बिल्कुल सीधा करें
+          👉 8 नीले बिंदुओं से कोनों को पकड़कर दस्तावेज़ सीधा करें
         </p>
 
         <!-- Magic Color फ़िल्टर -->
         <div class="pt-2 border-t border-slate-800 space-y-2">
           <div class="flex justify-between items-center">
-            <span class="text-xs font-bold text-slate-300"><i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i> कलर फ़िल्टर मोड:</span>
+            <span class="text-xs font-bold text-slate-300"><i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i> कलर फ़िल्टर:</span>
             <div class="flex gap-1.5">
               <button type="button" onclick="applyMagicColor()" class="bg-gradient-to-r from-emerald-500 to-cyan-500 text-slate-950 font-black text-[11px] px-3 py-1 rounded-lg shadow">
                 ⚡ Magic Color (साफ़ करें)
@@ -372,7 +392,7 @@
         </div>
       </div>
 
-      <!-- नीचे का एक्शन बार -->
+      <!-- एक्शन बार -->
       <div class="flex items-center gap-3 pt-1">
         <button type="button" onclick="goToStep(1)" class="w-1/3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-black py-3.5 rounded-xl border border-slate-700 shadow text-xs flex items-center justify-center gap-1.5 cursor-pointer">
           <i class="fa-solid fa-arrow-left"></i> वापस जाएं
@@ -383,10 +403,10 @@
       </div>
     </section>
 
-    <!-- ================= ⚡ स्टेप 3: A4 Fit-to-Printable, बिलिंग, पेमेंट & प्रिंट ================= -->
+    <!-- ================= स्टेप 3: A4 Fit-to-Printable, बिलिंग, पेमेंट & प्रिंट ================= -->
     <section id="step-3" class="hidden space-y-4">
       
-      <div class="flex items-center justify-between cyber-card p-2 rounded-xl">
+      <div class="flex items-center justify-between cyber-panel p-2 rounded-xl">
         <button type="button" onclick="goToStep(activeTab === 'pdf' ? 1 : 2)" class="bg-rose-950/60 hover:bg-rose-900 text-rose-300 border border-rose-500/40 text-xs font-bold py-1.5 px-3 rounded-lg flex items-center gap-1.5 active:scale-95 cursor-pointer">
           <i class="fa-solid fa-arrow-left"></i> वापस जाएं
         </button>
@@ -396,7 +416,7 @@
       </div>
 
       <!-- मल्टीपल प्रिंट साइज़ विकल्प (सिंगल फोटो के लिए) -->
-      <div id="size-options-panel" class="cyber-card p-3.5 rounded-2xl space-y-2">
+      <div id="size-options-panel" class="cyber-panel p-3.5 rounded-2xl space-y-2">
         <span class="font-bold text-xs text-amber-300 block">
           <i class="fa-solid fa-expand text-indigo-400"></i> A4 शीट पर प्रिंट का साइज़ चुनें:
         </span>
@@ -417,7 +437,7 @@
       </div>
 
       <!-- PDF ओरिएंटेशन टूलबार -->
-      <div id="pdf-tools-panel" class="hidden cyber-card p-3.5 rounded-2xl space-y-2">
+      <div id="pdf-tools-panel" class="hidden cyber-panel p-3.5 rounded-2xl space-y-2">
         <span class="font-bold text-xs text-amber-300 block">
           <i class="fa-solid fa-arrows-rotate text-indigo-400"></i> PDF ओरिएंटेशन सेटिंग्स:
         </span>
@@ -435,7 +455,7 @@
       </div>
 
       <!-- कॉपियों की संख्या -->
-      <div class="cyber-card p-3.5 rounded-2xl space-y-2">
+      <div class="cyber-panel p-3.5 rounded-2xl space-y-2">
         <div class="flex items-center justify-between">
           <span class="font-bold text-xs text-slate-200 flex items-center gap-1.5">
             <i class="fa-solid fa-copy text-amber-400"></i> कितने सेट प्रिंट चाहिए (कॉपियों की संख्या)?
@@ -456,7 +476,7 @@
       </div>
 
       <!-- कलर vs ब्लैक & व्हाइट -->
-      <div class="cyber-card p-3.5 rounded-2xl space-y-2">
+      <div class="cyber-panel p-3.5 rounded-2xl space-y-2">
         <span class="font-bold text-xs text-slate-200 block">
           <i class="fa-solid fa-palette text-indigo-400"></i> प्रिंट का प्रकार चुनें:
         </span>
@@ -482,14 +502,14 @@
       </div>
 
       <!-- सिक्योर पेमेंट हब -->
-      <div class="cyber-card p-4.5 rounded-2xl text-center space-y-3.5 border-2 border-indigo-500/40">
+      <div class="cyber-panel p-4.5 rounded-2xl text-center space-y-3.5 border-2 border-indigo-500/40">
         <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-800">
           <p class="text-xs text-slate-400">कुल देय राशि (<span id="calc-breakdown">1 शीट × ₹10</span>):</p>
           <p id="txt-total-amt" class="text-3xl font-black text-amber-300 mt-0.5 tracking-tight font-mono">₹10</p>
         </div>
 
         <div>
-          <button type="button" onclick="payWithRazorpayPopup()" class="w-full neon-btn-glow bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black py-4 px-4 rounded-xl shadow-xl flex items-center justify-center gap-2 text-base transition active:scale-[0.98] cursor-pointer">
+          <button type="button" onclick="payWithRazorpayPopup()" class="w-full neon-pulse bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black py-4 px-4 rounded-xl shadow-xl flex items-center justify-center gap-2 text-base transition active:scale-[0.98] cursor-pointer">
             <i class="fa-solid fa-bolt text-slate-950 text-lg"></i>
             <span>Pay with UPI / Card (ऑटो-वेरिफाई)</span>
           </button>
@@ -524,8 +544,8 @@
         </div>
       </div>
 
-      <!-- दुकानदार पिन & UTR वेरिफिकेशन बॉक्स -->
-      <div id="box-verification" class="cyber-card p-4 rounded-2xl space-y-3 border-l-4 border-l-cyan-400">
+      <!-- दुकानदार पिन & UTR बॉक्स -->
+      <div id="box-verification" class="cyber-panel p-4 rounded-2xl space-y-3 border-l-4 border-l-cyan-400">
         <div class="flex items-center justify-between">
           <div>
             <h4 class="font-bold text-xs text-slate-200">मैन्युअल UTR या नकद भुगतान</h4>
@@ -546,8 +566,8 @@
         <div id="payment-status-badge" class="hidden text-xs font-bold py-2 px-3 rounded-xl text-center"></div>
       </div>
 
-      <!-- ================= 📄 A4 वास्तविक प्रिंट प्रीव्यू (Fit to Page / Printable Area) ================= -->
-      <div class="cyber-card p-3.5 rounded-2xl space-y-2.5">
+      <!-- A4 प्रिंटेबल प्रीव्यू (Fit to Page) -->
+      <div class="cyber-panel p-3.5 rounded-2xl space-y-2.5">
         <div class="flex items-center justify-between">
           <p class="font-bold text-xs text-amber-300 flex items-center gap-1.5">
             <i class="fa-solid fa-file-lines text-cyan-400"></i> A4 शीट वास्तविक प्रिंट प्रीव्यू (Fit to Printable):
@@ -566,8 +586,8 @@
           </button>
         </div>
         
-        <!-- A4 शीट बॉक्स -->
-        <div class="a4-sheet-container" id="a4-target-box">
+        <!-- A4 शीट बॉक्स (100% Fit to Printable Area) -->
+        <div class="a4-page-frame">
           <div id="printable-sheet" class="w-full h-full flex flex-col items-center justify-center overflow-hidden"></div>
         </div>
 
@@ -598,7 +618,7 @@
 
   <!-- ================= 3D सक्सेस मोडल पॉपअप ================= -->
   <div id="modal-success-screen" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4">
-    <div class="cyber-card rounded-3xl max-w-sm w-full p-6 text-center shadow-2xl border-2 border-emerald-400 animate-pop relative">
+    <div class="cyber-panel rounded-3xl max-w-sm w-full p-6 text-center shadow-2xl border-2 border-emerald-400 animate-pop-modal relative">
       <div class="w-20 h-20 bg-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-xl shadow-emerald-500/40">
         <i class="fa-solid fa-check text-slate-950 text-4xl font-black"></i>
       </div>
@@ -631,7 +651,7 @@
   </div>
 
   <!-- ================= PWA ऐप इंस्टॉल बैनर ================= -->
-  <div id="pwa-install-banner" class="hidden fixed bottom-3 left-3 right-3 max-w-xl mx-auto cyber-card text-white p-3.5 rounded-2xl shadow-2xl border border-amber-400 z-50 flex items-center justify-between gap-3 animate-pop">
+  <div id="pwa-install-banner" class="hidden fixed bottom-3 left-3 right-3 max-w-xl mx-auto cyber-panel text-white p-3.5 rounded-2xl shadow-2xl border border-amber-400 z-50 flex items-center justify-between gap-3 animate-pop-modal">
     <div class="flex items-center gap-3">
       <div class="w-11 h-11 bg-amber-400 text-slate-950 rounded-xl flex items-center justify-center text-xl shadow-md">
         <i class="fa-solid fa-mobile-screen-button"></i>
@@ -645,7 +665,7 @@
       </div>
     </div>
     <div class="flex items-center gap-1.5">
-      <button type="button" onclick="triggerPwaInstall()" class="neon-btn-glow bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs px-3.5 py-2 rounded-xl shadow cursor-pointer whitespace-nowrap">
+      <button type="button" onclick="triggerPwaInstall()" class="neon-pulse bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs px-3.5 py-2 rounded-xl shadow cursor-pointer whitespace-nowrap">
         इंस्टॉल करें
       </button>
       <button type="button" onclick="dismissPwaBanner()" class="text-slate-500 hover:text-white p-1 text-sm">
@@ -684,12 +704,7 @@
     let pdfRenderedImagesCache = {};
     let pdfCurrentPreviewIndex = 0;
 
-    const cornersStore = {
-      front: null,
-      back: null,
-      single: null
-    };
-
+    const cornersStore = { front: null, back: null, single: null };
     const filtersStore = {
       front: { bright: 112, contrast: 122 },
       back: { bright: 112, contrast: 122 },
@@ -739,111 +754,104 @@
       document.getElementById('pwa-install-banner').classList.add('hidden');
     }
 
-    function persistCurrentState() {
-      try {
-        const stateData = {
-          activeTab,
-          docPrintSize,
-          copiesCount,
-          isBwSelected,
-          isVerified,
-          timestamp: Date.now()
-        };
-        localStorage.setItem('neelshank_current_order_state', JSON.stringify(stateData));
-      } catch (e) {
-        console.warn("Storage persist limit reached", e);
-      }
-    }
+    // ================= 🛡️ मेमोरी-सेफ इंस्टेंट इमेज हैंडलर (No Reload / No Crash) =================
+    function onNativeFileSelected(e, type) {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
 
-    function cacheRawCapturedImage(type, dataUrl) {
-      try {
-        sessionStorage.setItem(`neelshank_raw_${type}`, dataUrl);
-      } catch (e) {
-        console.warn("Session cache error", e);
-      }
+      const lbl = document.getElementById(`label-${type}`);
+      if (lbl) lbl.innerText = "प्रोसेसिंग हो रही है...";
+
+      // URL.createObjectURL से मेमोरी सुरक्षित रहती है और RAM क्रैश नहीं होता
+      const blobUrl = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = function() {
+        URL.revokeObjectURL(blobUrl);
+
+        // तुरंत 1280px में सुरक्षित री-स्केल
+        const maxDim = 1280;
+        let w = img.naturalWidth || img.width;
+        let h = img.naturalHeight || img.height;
+        if (w > maxDim || h > maxDim) {
+          if (w > h) {
+            h = Math.round((h * maxDim) / w);
+            w = maxDim;
+          } else {
+            w = Math.round((w * maxDim) / h);
+            h = maxDim;
+          }
+        }
+
+        const scaleCanvas = document.createElement('canvas');
+        scaleCanvas.width = w;
+        scaleCanvas.height = h;
+        const ctx = scaleCanvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+
+        const compressedDataUrl = scaleCanvas.toDataURL('image/jpeg', 0.84);
+
+        const safeImg = new Image();
+        safeImg.onload = function() {
+          loadedImages[type] = safeImg;
+          cornersStore[type] = null;
+          finalizedCanvases[type] = null;
+
+          const thumb = document.getElementById(`thumb-${type}`);
+          if (thumb) {
+            thumb.src = compressedDataUrl;
+            thumb.classList.remove('hidden');
+          }
+          if (lbl) lbl.innerText = "फोटो सुरक्षित लोड हो गई ✔";
+
+          // क्रैश बैकअप
+          try {
+            sessionStorage.setItem(`saved_img_${type}`, compressedDataUrl);
+          } catch(err) {
+            console.warn("Storage full", err);
+          }
+
+          if (activeTab === 'single') {
+            setTimeout(() => goToStep(2), 200);
+          } else if (activeTab === 'id' && loadedImages.front && loadedImages.back) {
+            setTimeout(() => goToStep(2), 200);
+          }
+        };
+        safeImg.src = compressedDataUrl;
+      };
+
+      img.onerror = function() {
+        URL.revokeObjectURL(blobUrl);
+        alert("फ़ोटो लोड करने में त्रुटि हुई। कृपया दोबारा प्रयास करें।");
+      };
+
+      img.src = blobUrl;
     }
 
     function tryRestoreStateOnLoad() {
       try {
         ['front', 'back', 'single'].forEach(side => {
-          const cachedRaw = sessionStorage.getItem(`neelshank_raw_${side}`);
-          if (cachedRaw) {
-            const img = new Image();
-            img.onload = function() {
-              loadedImages[side] = img;
+          const cached = sessionStorage.getItem(`saved_img_${side}`);
+          if (cached) {
+            const im = new Image();
+            im.onload = function() {
+              loadedImages[side] = im;
               const thumb = document.getElementById(`thumb-${side}`);
               if (thumb) {
-                thumb.src = cachedRaw;
+                thumb.src = cached;
                 thumb.classList.remove('hidden');
               }
               const lbl = document.getElementById(`label-${side}`);
-              if (lbl) lbl.innerText = "फ़ोटो सुरक्षित लोड हो गई ✔";
+              if (lbl) lbl.innerText = "फोटो सुरक्षित लोड हो गई ✔";
             };
-            img.src = cachedRaw;
+            im.src = cached;
           }
         });
-
-        const saved = localStorage.getItem('neelshank_current_order_state');
-        if (!saved) return;
-        const state = JSON.parse(saved);
-        
-        if (Date.now() - state.timestamp > 30 * 60 * 1000) {
-          clearPersistentState();
-          return;
-        }
-
-        activeTab = state.activeTab || 'id';
-        docPrintSize = state.docPrintSize || 'half';
-        copiesCount = state.copiesCount || 1;
-        isBwSelected = state.isBwSelected !== undefined ? state.isBwSelected : true;
-        isVerified = state.isVerified || false;
-
-        setTimeout(() => {
-          if (activeTab === 'single' && loadedImages.single) {
-            goToStep(2);
-          } else if (activeTab === 'id' && loadedImages.front && loadedImages.back) {
-            goToStep(2);
-          }
-        }, 350);
-      } catch (err) {
-        console.warn("Restore error", err);
+      } catch(e) {
+        console.warn("Restore error", e);
       }
     }
 
-    function clearPersistentState() {
-      localStorage.removeItem('neelshank_current_order_state');
-      localStorage.removeItem('neelshank_pending_app_pay');
-      sessionStorage.removeItem('neelshank_raw_front');
-      sessionStorage.removeItem('neelshank_raw_back');
-      sessionStorage.removeItem('neelshank_raw_single');
-    }
-
-    function recordPendingPaymentApp(appName) {
-      persistCurrentState();
-      localStorage.setItem('neelshank_pending_app_pay', JSON.stringify({ app: appName, time: Date.now() }));
-    }
-
-    window.addEventListener('focus', function() {
-      const pending = localStorage.getItem('neelshank_pending_app_pay');
-      if (pending) {
-        const pData = JSON.parse(pending);
-        if (Date.now() - pData.time < 5 * 60 * 1000) {
-          localStorage.removeItem('neelshank_pending_app_pay');
-          const didPay = confirm(`क्या आपका ${pData.app} पर ₹${totalCalculatedAmount} का भुगतान सफल रहा?`);
-          if (didPay) unlockPrintNow(`${pData.app} से भुगतान सफल!`);
-        }
-      }
-    });
-
-    window.addEventListener('DOMContentLoaded', () => {
-      tryRestoreStateOnLoad();
-      setTimeout(() => {
-        if (!window.matchMedia('(display-mode: standalone)').matches) {
-          document.getElementById('pwa-install-banner').classList.remove('hidden');
-          document.getElementById('btn-header-install').classList.remove('hidden');
-        }
-      }, 2500);
-    });
+    window.addEventListener('DOMContentLoaded', tryRestoreStateOnLoad);
 
     function selectMode(mode) {
       activeTab = mode;
@@ -859,61 +867,7 @@
       document.getElementById('section-pdf-upload').classList.toggle('hidden', mode !== 'pdf');
     }
 
-    // ================= 📸 क्रैश-फ्री इमेज लोडर =================
-    function onImageSelected(e, type) {
-      const file = e.target.files && e.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        const img = new Image();
-        img.onload = function() {
-          const maxDim = 1200;
-          let w = img.width;
-          let h = img.height;
-          if (w > maxDim || h > maxDim) {
-            if (w > h) { h = Math.round((h * maxDim) / w); w = maxDim; }
-            else { w = Math.round((w * maxDim) / h); h = maxDim; }
-          }
-          const scaleCanvas = document.createElement('canvas');
-          scaleCanvas.width = w;
-          scaleCanvas.height = h;
-          const ctx = scaleCanvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, w, h);
-
-          const compressedDataUrl = scaleCanvas.toDataURL('image/jpeg', 0.85);
-          cacheRawCapturedImage(type, compressedDataUrl);
-
-          const optimizedImg = new Image();
-          optimizedImg.onload = function() {
-            loadedImages[type] = optimizedImg;
-            cornersStore[type] = null;
-            finalizedCanvases[type] = null;
-            
-            const thumb = document.getElementById(`thumb-${type}`);
-            if (thumb) {
-              thumb.src = compressedDataUrl;
-              thumb.classList.remove('hidden');
-            }
-            const lbl = document.getElementById(`label-${type}`);
-            if (lbl) lbl.innerText = "फ़ोटो सुरक्षित लोड हो गई ✔";
-
-            persistCurrentState();
-
-            if (activeTab === 'single') {
-              setTimeout(() => validateAndGoToStep(2), 250);
-            } else if (activeTab === 'id' && loadedImages.front && loadedImages.back) {
-              setTimeout(() => validateAndGoToStep(2), 250);
-            }
-          };
-          optimizedImg.src = compressedDataUrl;
-        };
-        img.src = evt.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
-
-    // ================= PDF लोडर =================
+    // ================= PDF लोडर & रेंज =================
     function onPdfSelected(e) {
       const file = e.target.files && e.target.files[0];
       if (!file) return;
@@ -937,7 +891,7 @@
             setPdfAllPagesRange();
 
             renderSinglePdfPage(1).then(() => {
-              console.log("Page 1 ready");
+              console.log("PDF page 1 cached");
             });
 
           }).catch(function(err) {
@@ -1597,7 +1551,6 @@
       } else if(activeTab === 'single') {
         commitCropToCanvas('single');
       }
-      persistCurrentState();
       goToStep(3);
     }
 
@@ -1618,7 +1571,6 @@
       else if(sz === 'half') badge.innerText = "हाफ पेज (A5 आधा A4)";
       else if(sz === 'full') badge.innerText = "फुल पेज (100% Fit to Printable)";
 
-      persistCurrentState();
       renderA4SheetLayout();
     }
 
@@ -1694,7 +1646,6 @@
         priceColor.className = "text-xs text-amber-300 font-black mt-0.5";
       }
 
-      persistCurrentState();
       recalculateBilling();
     }
 
@@ -1732,8 +1683,6 @@
         return;
       }
 
-      persistCurrentState();
-
       const options = {
         key: RAZORPAY_KEY_ID,
         amount: totalCalculatedAmount * 100,
@@ -1762,7 +1711,7 @@
       renderA4SheetLayout();
     }
 
-    // ================= 🎯 A4 शीट पर 100% Fit-to-Printable रेंडरर =================
+    // ================= 🎯 A4 100% Fit-to-Printable रेंडरर =================
     async function renderA4SheetLayout() {
       const container = document.getElementById('printable-sheet');
       container.innerHTML = '';
@@ -1770,13 +1719,13 @@
 
       if(activeTab === 'id') {
         const row = document.createElement('div');
-        row.className = "flex flex-row items-center justify-center gap-2 w-full pt-4";
+        row.className = "flex flex-row items-center justify-center gap-2 w-full";
         ['front', 'back'].forEach(s => {
           if(finalizedCanvases[s]) {
             const im = new Image();
             im.src = finalizedCanvases[s].toDataURL();
             im.style.filter = filterCss;
-            im.className = "id-card-item-fit rounded border border-dashed border-slate-400 shadow-sm";
+            im.className = "id-card-view-fit rounded border border-dashed border-slate-400 shadow-sm";
             row.appendChild(im);
           }
         });
@@ -1788,14 +1737,14 @@
           im.style.filter = filterCss;
           
           if(docPrintSize === 'id') {
-            im.className = "id-card-item-fit h-auto rounded border border-slate-300 shadow-sm";
+            im.className = "id-card-view-fit h-auto rounded border border-slate-300 shadow-sm";
           } else if(docPrintSize === 'postcard') {
             im.className = "w-[60%] h-auto rounded border border-slate-300 shadow-sm object-contain";
           } else if(docPrintSize === 'half') {
             im.className = "w-[80%] h-auto rounded border border-slate-300 shadow-sm object-contain";
           } else {
-            // Full Page (Fit to Printable)
-            im.className = "fit-printable-full rounded border border-slate-200 shadow-sm";
+            // Full Page (100% Fit to Printable Area)
+            im.className = "printable-content-full rounded border border-slate-200 shadow-sm";
           }
           container.appendChild(im);
         }
@@ -1811,7 +1760,7 @@
             im.style.filter = filterCss;
             im.style.transform = `rotate(${pdfRotationAngle}deg)`;
             // 100% Fit to Printable Area
-            im.className = "fit-printable-full rounded shadow-sm transition-transform";
+            im.className = "printable-content-full rounded shadow-sm transition-transform";
             container.appendChild(im);
           }
         }
@@ -1862,8 +1811,6 @@
 
     function unlockPrintNow(msg) {
       isVerified = true;
-      persistCurrentState();
-
       const printBtn = document.getElementById('btn-execute-print');
       printBtn.disabled = false;
       printBtn.className = "w-2/3 bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 text-slate-950 font-black py-3.5 rounded-xl shadow-xl transition flex items-center justify-center gap-2 cursor-pointer";
@@ -1876,11 +1823,10 @@
       badge.classList.remove('hidden');
     }
 
-    // A4 प्रिंटेबल कैनवास जनरेटर
     function generateA4PrintImageFromSource(sourceImg) {
       const a4Canvas = document.createElement('canvas');
       a4Canvas.width = 1240;
-      a4Canvas.height = 1754; // A4 standard 150 DPI
+      a4Canvas.height = 1754; // A4 standard
       const ctx = a4Canvas.getContext('2d');
 
       ctx.fillStyle = '#ffffff';
@@ -2030,7 +1976,7 @@
           });
         } else {
           doc.save("NEELSHANK_Print_A4.pdf");
-          alert("सीधा शेयर उपलब्ध नहीं होने के कारण PDF डाउनलोड हो गई है! अब आप इसे सीधे WhatsApp पर भेज सकते हैं।");
+          alert("PDF डाउनलोड हो गई है! अब आप इसे सीधे WhatsApp पर भेज सकते हैं।");
         }
       } catch (err) {
         if (err.name !== 'AbortError') {
@@ -2103,7 +2049,7 @@
 
     function closeSuccessModalAndReset() {
       document.getElementById('modal-success-screen').classList.add('hidden');
-      clearPersistentState();
+      sessionStorage.clear();
       window.location.reload();
     }
   </script>
