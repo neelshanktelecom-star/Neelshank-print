@@ -54,7 +54,7 @@
       box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
     }
 
-    /* वास्तविक A4 रेशियो (1 : 1.414) शीट कंटेनर */
+    /* वास्तविक A4 शीट (1 : 1.414) - दस्तावेज़ हमेशा ऊपर (Top) से शुरू होगा */
     .a4-page-frame {
       width: 100%;
       max-width: 380px;
@@ -66,10 +66,10 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start !important; /* ऊपर से स्टार्ट (Top-Aligned) */
       position: relative;
       box-sizing: border-box;
-      padding: 10px;
+      padding: 14px 10px; /* कम टॉप मार्जिन */
       border: 2px dashed #94a3b8;
     }
 
@@ -81,20 +81,20 @@
       display: block;
     }
 
+    /* 8-डॉट क्रॉपिंग कैनवास बॉक्स (कैनवास कभी नहीं कटेगा) */
     .crop-canvas-box {
       position: relative;
       touch-action: none !important;
       user-select: none !important;
       width: 100%;
-      min-height: 380px;
       background: #020617;
       border-radius: 14px;
-      padding: 6px;
+      padding: 10px;
       display: flex;
       justify-content: center;
       align-items: center;
-      overflow: hidden;
       border: 1px solid #1e293b;
+      box-sizing: border-box;
     }
 
     canvas#canvas-crop {
@@ -102,7 +102,7 @@
       max-width: 100%;
       height: auto;
       border-radius: 6px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.9);
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.95);
       display: block;
     }
 
@@ -173,7 +173,7 @@
         </a>
       </div>
       <p class="text-slate-300 text-[11px] leading-relaxed">
-        आईडी कार्ड, रसीद, पासबुक या 1 से 500+ पेज की PDF अपलोड करें। कैमरा से फोटो खींचने पर पेज कभी रिफ्रेश नहीं होगा।
+        आईडी कार्ड, रसीद, पासबुक या 1 से 500+ पेज की PDF अपलोड करें। 8-डॉट से सीधा क्रॉप करें और प्रिंट लें।
       </p>
     </div>
 
@@ -358,21 +358,22 @@
           </button>
         </div>
 
+        <!-- 8-डॉट कैनवास कंटेनर (पूरा दिखाई देगा) -->
         <div class="crop-canvas-box">
           <canvas id="canvas-crop"></canvas>
         </div>
 
         <p class="text-[11px] text-center text-emerald-400 font-bold">
-          👉 8 नीले बिंदुओं से कोनों को पकड़कर दस्तावेज़ सीधा करें
+          👉 8 नीले/हरे बिंदुओं से कोनों को पकड़कर दस्तावेज़ सीधा करें (या बीच से पूरा बॉक्स खिसकाएँ)
         </p>
 
-        <!-- Magic Color फ़िल्टर -->
-        <div class="pt-2 border-t border-slate-800 space-y-2">
+        <!-- वास्तविक CamScanner स्टाइल फ़िल्टर (सफेदी vs अक्षर गहरे) -->
+        <div class="pt-2 border-t border-slate-800 space-y-2.5">
           <div class="flex justify-between items-center">
-            <span class="text-xs font-bold text-slate-300"><i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i> कलर फ़िल्टर:</span>
+            <span class="text-xs font-bold text-slate-300"><i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i> लिखावट सुधारें (एडवांस फ़िल्टर):</span>
             <div class="flex gap-1.5">
               <button type="button" onclick="applyMagicColor()" class="bg-gradient-to-r from-emerald-500 to-cyan-500 text-slate-950 font-black text-[11px] px-3 py-1 rounded-lg shadow">
-                ⚡ Magic Color (साफ़ करें)
+                ⚡ Magic Color (ऑटो साफ़)
               </button>
               <button type="button" onclick="resetFilters()" class="bg-slate-800 border border-slate-700 text-slate-300 text-[11px] px-2 py-1 rounded-lg font-bold">
                 ओरिजिनल
@@ -380,13 +381,19 @@
             </div>
           </div>
           <div class="grid grid-cols-2 gap-3 text-xs">
-            <div>
-              <span class="text-slate-400 text-[11px]">सफेदी (Brightness)</span>
-              <input type="range" id="filter-bright" min="80" max="140" value="112" class="w-full h-1 bg-slate-700 rounded-lg" oninput="updateLiveFilter()">
+            <div class="bg-slate-900/90 p-2 rounded-xl border border-slate-800">
+              <div class="flex justify-between text-[11px] mb-1">
+                <span class="text-cyan-300 font-bold">सफेदी (कागज़ साफ़)</span>
+                <span class="font-mono text-slate-400" id="val-bright-txt">115</span>
+              </div>
+              <input type="range" id="filter-bright" min="80" max="150" value="115" class="w-full h-1.5 bg-slate-700 rounded-lg accent-cyan-400" oninput="updateLiveFilter()">
             </div>
-            <div>
-              <span class="text-slate-400 text-[11px]">अक्षर गहरे (Contrast)</span>
-              <input type="range" id="filter-contrast" min="80" max="150" value="122" class="w-full h-1 bg-slate-700 rounded-lg" oninput="updateLiveFilter()">
+            <div class="bg-slate-900/90 p-2 rounded-xl border border-slate-800">
+              <div class="flex justify-between text-[11px] mb-1">
+                <span class="text-amber-300 font-bold">अक्षर गहरे (बोल्ड स्याही)</span>
+                <span class="font-mono text-slate-400" id="val-contrast-txt">130</span>
+              </div>
+              <input type="range" id="filter-contrast" min="90" max="180" value="130" class="w-full h-1.5 bg-slate-700 rounded-lg accent-amber-400" oninput="updateLiveFilter()">
             </div>
           </div>
         </div>
@@ -428,7 +435,7 @@
             पोस्टकार्ड (A6)
           </button>
           <button type="button" id="btn-size-half" onclick="setDocPrintSize('half')" class="p-2.5 rounded-xl border-2 border-cyan-400 bg-cyan-950/40 text-cyan-300">
-            हाफ पेज (A5)
+            हाफ पेज (A5 आधा A4)
           </button>
           <button type="button" id="btn-size-full" onclick="setDocPrintSize('full')" class="p-2.5 rounded-xl border border-slate-700 bg-slate-900 text-slate-300">
             फुल पेज (A4 Fit)
@@ -566,11 +573,11 @@
         <div id="payment-status-badge" class="hidden text-xs font-bold py-2 px-3 rounded-xl text-center"></div>
       </div>
 
-      <!-- A4 प्रिंटेबल प्रीव्यू (Fit to Page) -->
+      <!-- ================= 📄 A4 वास्तविक प्रिंट प्रीव्यू (TOP-ALIGNED, NO MIDDLE HOLE) ================= -->
       <div class="cyber-panel p-3.5 rounded-2xl space-y-2.5">
         <div class="flex items-center justify-between">
           <p class="font-bold text-xs text-amber-300 flex items-center gap-1.5">
-            <i class="fa-solid fa-file-lines text-cyan-400"></i> A4 शीट वास्तविक प्रिंट प्रीव्यू (Fit to Printable):
+            <i class="fa-solid fa-file-lines text-cyan-400"></i> A4 शीट वास्तविक प्रिंट प्रीव्यू (शीर्ष से शुरू):
           </p>
           <span id="preview-size-badge" class="text-[10px] bg-indigo-900/60 text-cyan-300 border border-indigo-500/40 px-2 py-0.5 rounded font-bold">100% Fit to Printable Area</span>
         </div>
@@ -586,9 +593,9 @@
           </button>
         </div>
         
-        <!-- A4 शीट बॉक्स (100% Fit to Printable Area) -->
+        <!-- A4 शीट बॉक्स: दस्तावेज़ ऊपर (Top) से शुरू होगा -->
         <div class="a4-page-frame">
-          <div id="printable-sheet" class="w-full h-full flex flex-col items-center justify-center overflow-hidden"></div>
+          <div id="printable-sheet" class="w-full flex flex-col items-center justify-start overflow-hidden"></div>
         </div>
 
         <!-- PDF डाउनलोड और शेयर विकल्प -->
@@ -706,9 +713,9 @@
 
     const cornersStore = { front: null, back: null, single: null };
     const filtersStore = {
-      front: { bright: 112, contrast: 122 },
-      back: { bright: 112, contrast: 122 },
-      single: { bright: 112, contrast: 122 }
+      front: { bright: 115, contrast: 130 },
+      back: { bright: 115, contrast: 130 },
+      single: { bright: 115, contrast: 130 }
     };
 
     let activeHandleKey = null;
@@ -762,14 +769,13 @@
       const lbl = document.getElementById(`label-${type}`);
       if (lbl) lbl.innerText = "प्रोसेसिंग हो रही है...";
 
-      // URL.createObjectURL से मेमोरी सुरक्षित रहती है और RAM क्रैश नहीं होता
       const blobUrl = URL.createObjectURL(file);
       const img = new Image();
       img.onload = function() {
         URL.revokeObjectURL(blobUrl);
 
-        // तुरंत 1280px में सुरक्षित री-स्केल
-        const maxDim = 1280;
+        // तुरंत 1200px में सुरक्षित री-स्केल
+        const maxDim = 1200;
         let w = img.naturalWidth || img.width;
         let h = img.naturalHeight || img.height;
         if (w > maxDim || h > maxDim) {
@@ -801,9 +807,8 @@
             thumb.src = compressedDataUrl;
             thumb.classList.remove('hidden');
           }
-          if (lbl) lbl.innerText = "फोटो सुरक्षित लोड हो गई ✔";
+          if (lbl) lbl.innerText = "फोटो लोड हो गई ✔";
 
-          // क्रैश बैकअप
           try {
             sessionStorage.setItem(`saved_img_${type}`, compressedDataUrl);
           } catch(err) {
@@ -841,7 +846,7 @@
                 thumb.classList.remove('hidden');
               }
               const lbl = document.getElementById(`label-${side}`);
-              if (lbl) lbl.innerText = "फोटो सुरक्षित लोड हो गई ✔";
+              if (lbl) lbl.innerText = "फोटो लोड हो गई ✔";
             };
             im.src = cached;
           }
@@ -1061,9 +1066,11 @@
     }
 
     function loadFiltersUI() {
-      const current = filtersStore[currentTargetSide] || { bright: 112, contrast: 122 };
+      const current = filtersStore[currentTargetSide] || { bright: 115, contrast: 130 };
       document.getElementById('filter-bright').value = current.bright;
       document.getElementById('filter-contrast').value = current.contrast;
+      document.getElementById('val-bright-txt').innerText = current.bright;
+      document.getElementById('val-contrast-txt').innerText = current.contrast;
       updateLiveFilter();
     }
 
@@ -1075,15 +1082,25 @@
       initCropCanvas(side);
     }
 
+    // ================= 🎯 8-डॉट कैनवास इनीशियलाइज़र (स्क्रीन में 100% फिट) =================
     function initCropCanvas(type) {
       const img = loadedImages[type];
       if(!img) return;
 
       const canvas = document.getElementById('canvas-crop');
-      const maxW = Math.min(window.innerWidth - 30, 480);
-      const scale = maxW / img.width;
-      canvas.width = maxW;
-      canvas.height = Math.round(img.height * scale);
+      const maxW = Math.min(window.innerWidth - 40, 480);
+      const maxH = Math.min(window.innerHeight * 0.55, 450); // कभी भी स्क्रीन से नीचे नहीं कटेगा
+
+      let displayW = maxW;
+      let displayH = Math.round((img.height * displayW) / img.width);
+
+      if (displayH > maxH) {
+        displayH = maxH;
+        displayW = Math.round((img.width * displayH) / img.height);
+      }
+
+      canvas.width = displayW;
+      canvas.height = displayH;
 
       if(!cornersStore[type]) {
         autoDetectEdges();
@@ -1122,6 +1139,7 @@
       drawCropCanvas();
     }
 
+    // 8 बिंदुओं की सटीक गणना: 4 कोने + 4 भुजाओं के मध्य बिंदु
     function getEightPoints(c) {
       return {
         tl: { x: c.tl.x, y: c.tl.y },
@@ -1135,6 +1153,7 @@
       };
     }
 
+    // ================= 🖌️ 8 डॉट्स व गाइडलाइन्स रेंडरर =================
     function drawCropCanvas() {
       const canvas = document.getElementById('canvas-crop');
       const ctx = canvas.getContext('2d');
@@ -1149,9 +1168,11 @@
       ctx.clearRect(0, 0, w, h);
       ctx.drawImage(img, 0, 0, w, h);
 
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
+      // डार्क विग्नेट ओवरले
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
       ctx.fillRect(0, 0, w, h);
 
+      // क्रॉप क्षेत्र को पारदर्शी बनाना
       ctx.save();
       ctx.beginPath();
       ctx.moveTo(c.tl.x, c.tl.y);
@@ -1162,7 +1183,8 @@
       ctx.clip();
       ctx.drawImage(img, 0, 0, w, h);
 
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+      // 3x3 ग्रिड लाइन्स
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
       ctx.lineWidth = 1;
       for (let i = 1; i <= 2; i++) {
         const u = i / 3;
@@ -1178,6 +1200,7 @@
       }
       ctx.restore();
 
+      // नियॉन बाउंड्री लाइन
       ctx.beginPath();
       ctx.moveTo(c.tl.x, c.tl.y);
       ctx.lineTo(c.tr.x, c.tr.y);
@@ -1190,17 +1213,19 @@
 
       const pts = getEightPoints(c);
 
+      // 4 मध्य बिंदु (Cyan Blue Dots)
       ['top', 'right', 'bottom', 'left'].forEach(k => {
         const p = pts[k];
         ctx.beginPath();
         ctx.arc(p.x, p.y, MID_HANDLE_RADIUS, 0, Math.PI * 2);
-        ctx.fillStyle = '#3b82f6';
+        ctx.fillStyle = '#06b6d4';
         ctx.fill();
         ctx.lineWidth = 2;
         ctx.strokeStyle = '#ffffff';
         ctx.stroke();
       });
 
+      // 4 कोने के बिंदु (Emerald Green Dots)
       ['tl', 'tr', 'br', 'bl'].forEach(k => {
         const p = pts[k];
         ctx.beginPath();
@@ -1212,7 +1237,7 @@
         ctx.stroke();
 
         ctx.beginPath();
-        ctx.arc(p.x, 3, 0, Math.PI * 2);
+        ctx.arc(p.x, p.y, 3.5, 0, Math.PI * 2);
         ctx.fillStyle = '#ffffff';
         ctx.fill();
       });
@@ -1232,6 +1257,14 @@
       };
     }
 
+    function isInsideBox(pos, c) {
+      const minX = Math.min(c.tl.x, c.bl.x);
+      const maxX = Math.max(c.tr.x, c.br.x);
+      const minY = Math.min(c.tl.y, c.tr.y);
+      const maxY = Math.max(c.bl.y, c.br.y);
+      return pos.x >= minX && pos.x <= maxX && pos.y >= minY && pos.y <= maxY;
+    }
+
     function onPointerDown(e) {
       const pos = getCanvasCoordinates(e);
       activeHandleKey = null;
@@ -1241,6 +1274,7 @@
       const pts = getEightPoints(c);
       let closestDist = TOUCH_DETECT_RADIUS;
 
+      // 8 डॉट्स में से निकटतम पहचानना
       for(let k of ['tl', 'tr', 'br', 'bl', 'top', 'right', 'bottom', 'left']) {
         const p = pts[k];
         const dist = Math.hypot(p.x - pos.x, p.y - pos.y);
@@ -1248,6 +1282,11 @@
           closestDist = dist;
           activeHandleKey = k;
         }
+      }
+
+      // अगर किसी डॉट पर नहीं छुआ, पर बॉक्स के अंदर है, तो पूरा बॉक्स खिसकाएं
+      if (!activeHandleKey && isInsideBox(pos, c)) {
+        activeHandleKey = 'center_move';
       }
 
       if(activeHandleKey) {
@@ -1266,31 +1305,39 @@
 
       const dx = pos.x - dragStartPos.x;
       const dy = pos.y - dragStartPos.y;
-      const clamp = (v, max) => Math.max(0, Math.min(max, v));
+      const clampX = v => Math.max(0, Math.min(cropCanvas.width, v));
+      const clampY = v => Math.max(0, Math.min(cropCanvas.height, v));
 
       if(['tl', 'tr', 'br', 'bl'].includes(activeHandleKey)) {
-        c[activeHandleKey].x = clamp(dragStartCorners[activeHandleKey].x + dx, cropCanvas.width);
-        c[activeHandleKey].y = clamp(dragStartCorners[activeHandleKey].y + dy, cropCanvas.height);
+        c[activeHandleKey].x = clampX(dragStartCorners[activeHandleKey].x + dx);
+        c[activeHandleKey].y = clampY(dragStartCorners[activeHandleKey].y + dy);
       } else if(activeHandleKey === 'top') {
-        c.tl.x = clamp(dragStartCorners.tl.x + dx, cropCanvas.width);
-        c.tl.y = clamp(dragStartCorners.tl.y + dy, cropCanvas.height);
-        c.tr.x = clamp(dragStartCorners.tr.x + dx, cropCanvas.width);
-        c.tr.y = clamp(dragStartCorners.tr.y + dy, cropCanvas.height);
+        c.tl.y = clampY(dragStartCorners.tl.y + dy);
+        c.tr.y = clampY(dragStartCorners.tr.y + dy);
       } else if(activeHandleKey === 'bottom') {
-        c.bl.x = clamp(dragStartCorners.bl.x + dx, cropCanvas.width);
-        c.bl.y = clamp(dragStartCorners.bl.y + dy, cropCanvas.height);
-        c.br.x = clamp(dragStartCorners.br.x + dx, cropCanvas.width);
-        c.br.y = clamp(dragStartCorners.br.y + dy, cropCanvas.height);
+        c.bl.y = clampY(dragStartCorners.bl.y + dy);
+        c.br.y = clampY(dragStartCorners.br.y + dy);
       } else if(activeHandleKey === 'left') {
-        c.tl.x = clamp(dragStartCorners.tl.x + dx, cropCanvas.width);
-        c.tl.y = clamp(dragStartCorners.tl.y + dy, cropCanvas.height);
-        c.bl.x = clamp(dragStartCorners.bl.x + dx, cropCanvas.width);
-        c.bl.y = clamp(dragStartCorners.bl.y + dy, cropCanvas.height);
+        c.tl.x = clampX(dragStartCorners.tl.x + dx);
+        c.bl.x = clampX(dragStartCorners.bl.x + dx);
       } else if(activeHandleKey === 'right') {
-        c.tr.x = clamp(dragStartCorners.tr.x + dx, cropCanvas.width);
-        c.tr.y = clamp(dragStartCorners.tr.y + dy, cropCanvas.height);
-        c.br.x = clamp(dragStartCorners.br.x + dx, cropCanvas.width);
-        c.br.y = clamp(dragStartCorners.br.y + dy, cropCanvas.height);
+        c.tr.x = clampX(dragStartCorners.tr.x + dx);
+        c.br.x = clampX(dragStartCorners.br.x + dx);
+      } else if(activeHandleKey === 'center_move') {
+        const canMoveX = (dragStartCorners.tl.x + dx >= 0) && (dragStartCorners.tr.x + dx <= cropCanvas.width);
+        const canMoveY = (dragStartCorners.tl.y + dy >= 0) && (dragStartCorners.bl.y + dy <= cropCanvas.height);
+        if (canMoveX) {
+          c.tl.x = dragStartCorners.tl.x + dx;
+          c.tr.x = dragStartCorners.tr.x + dx;
+          c.br.x = dragStartCorners.br.x + dx;
+          c.bl.x = dragStartCorners.bl.x + dx;
+        }
+        if (canMoveY) {
+          c.tl.y = dragStartCorners.tl.y + dy;
+          c.tr.y = dragStartCorners.tr.y + dy;
+          c.br.y = dragStartCorners.br.y + dy;
+          c.bl.y = dragStartCorners.bl.y + dy;
+        }
       }
 
       drawCropCanvas();
@@ -1365,9 +1412,10 @@
       drawCropCanvas();
     }
 
+    // ================= ⚡ CamScanner मैजिक कलर व फ़िल्टर इंजन =================
     function applyMagicColor() {
-      document.getElementById('filter-bright').value = 115;
-      document.getElementById('filter-contrast').value = 125;
+      document.getElementById('filter-bright').value = 120;
+      document.getElementById('filter-contrast').value = 135;
       updateLiveFilter();
     }
 
@@ -1380,6 +1428,8 @@
     function updateLiveFilter() {
       const b = parseInt(document.getElementById('filter-bright').value);
       const c = parseInt(document.getElementById('filter-contrast').value);
+      document.getElementById('val-bright-txt').innerText = b;
+      document.getElementById('val-contrast-txt').innerText = c;
       filtersStore[currentTargetSide] = { bright: b, contrast: c };
       cropCanvas.style.filter = `brightness(${b}%) contrast(${c}%)`;
     }
@@ -1514,18 +1564,21 @@
 
       const warpedCanvas = warpPerspective(tempSrcCanvas, realCorners, outW, outH);
 
-      const filterSettings = filtersStore[type] || { bright: 112, contrast: 122 };
+      // एडवांस CamScanner फ़िल्टर लॉजिक
+      const filterSettings = filtersStore[type] || { bright: 115, contrast: 130 };
       const wCtx = warpedCanvas.getContext('2d');
       const imgData = wCtx.getImageData(0, 0, outW, outH);
       const d = imgData.data;
+      
       const bMul = filterSettings.bright / 100;
-      const cFactor = (filterSettings.contrast - 100) * 1.15;
+      const cFactor = (filterSettings.contrast - 100) * 1.35;
 
       for (let i = 0; i < d.length; i += 4) {
         let r = d[i] * bMul;
         let g = d[i+1] * bMul;
         let b = d[i+2] * bMul;
 
+        // कंट्रास्ट और अक्षर गहरा करने का वक्र (S-Curve for bold text)
         if (cFactor !== 0) {
           r = r + (r - 128) * (cFactor / 100);
           g = g + (g - 128) * (cFactor / 100);
@@ -1711,7 +1764,7 @@
       renderA4SheetLayout();
     }
 
-    // ================= 🎯 A4 100% Fit-to-Printable रेंडरर =================
+    // ================= 🎯 A4 100% Fit-to-Printable (TOP-ALIGNED) रेंडरर =================
     async function renderA4SheetLayout() {
       const container = document.getElementById('printable-sheet');
       container.innerHTML = '';
@@ -1719,7 +1772,7 @@
 
       if(activeTab === 'id') {
         const row = document.createElement('div');
-        row.className = "flex flex-row items-center justify-center gap-2 w-full";
+        row.className = "flex flex-row items-center justify-center gap-2.5 w-full pt-1";
         ['front', 'back'].forEach(s => {
           if(finalizedCanvases[s]) {
             const im = new Image();
@@ -1737,13 +1790,13 @@
           im.style.filter = filterCss;
           
           if(docPrintSize === 'id') {
-            im.className = "id-card-view-fit h-auto rounded border border-slate-300 shadow-sm";
+            im.className = "id-card-view-fit h-auto rounded border border-slate-300 shadow-sm mt-1";
           } else if(docPrintSize === 'postcard') {
-            im.className = "w-[60%] h-auto rounded border border-slate-300 shadow-sm object-contain";
+            im.className = "w-[65%] h-auto rounded border border-slate-300 shadow-sm object-contain mt-1";
           } else if(docPrintSize === 'half') {
-            im.className = "w-[80%] h-auto rounded border border-slate-300 shadow-sm object-contain";
+            im.className = "w-[92%] h-auto rounded border border-slate-300 shadow-sm object-contain mt-1";
           } else {
-            // Full Page (100% Fit to Printable Area)
+            // Full Page (Top-to-Bottom Fit)
             im.className = "printable-content-full rounded border border-slate-200 shadow-sm";
           }
           container.appendChild(im);
@@ -1759,7 +1812,6 @@
             im.src = pageImg.src;
             im.style.filter = filterCss;
             im.style.transform = `rotate(${pdfRotationAngle}deg)`;
-            // 100% Fit to Printable Area
             im.className = "printable-content-full rounded shadow-sm transition-transform";
             container.appendChild(im);
           }
@@ -1823,6 +1875,7 @@
       badge.classList.remove('hidden');
     }
 
+    // ================= 🖨️ A4 शीट प्रिंटर कैनवास (TOP-ALIGNED, NO MIDDLE PLACEMENT) =================
     function generateA4PrintImageFromSource(sourceImg) {
       const a4Canvas = document.createElement('canvas');
       a4Canvas.width = 1240;
@@ -1832,13 +1885,15 @@
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, a4Canvas.width, a4Canvas.height);
 
+      // टॉप मार्जिन: 50px (लगभग 12-15mm)
+      const topMargin = 50;
+
       if (activeTab === 'id') {
         const cardW = 502;
         const cardH = 325;
         const gap = 50;
         const totalW = cardW * 2 + gap;
         const startX = (a4Canvas.width - totalW) / 2;
-        const topMargin = 120;
 
         if (finalizedCanvases.front) {
           ctx.drawImage(finalizedCanvases.front, startX, topMargin, cardW, cardH);
@@ -1854,41 +1909,39 @@
         }
       } else if (activeTab === 'single' && finalizedCanvases.single) {
         const doc = finalizedCanvases.single;
-        let targetW, targetH, startX, topMargin;
+        let targetW, targetH, startX;
 
         if(docPrintSize === 'id') {
           targetW = 502; targetH = 325;
-          startX = (a4Canvas.width - targetW) / 2; topMargin = 120;
+          startX = (a4Canvas.width - targetW) / 2;
         } else if(docPrintSize === 'postcard') {
-          targetW = 620; targetH = 870;
-          startX = (a4Canvas.width - targetW) / 2; topMargin = 100;
+          targetW = 680; targetH = 950;
+          startX = (a4Canvas.width - targetW) / 2;
         } else if(docPrintSize === 'half') {
-          targetW = 920; targetH = 1200;
-          startX = (a4Canvas.width - targetW) / 2; topMargin = 80;
+          targetW = 980; targetH = 1280;
+          startX = (a4Canvas.width - targetW) / 2;
         } else {
-          // 100% Fit to Printable Area (पूरा A4 पेज)
-          const margin = 50;
+          // 100% Fit to Printable Area
+          const margin = 40;
           const maxW = a4Canvas.width - (margin * 2);
           const maxH = a4Canvas.height - (margin * 2);
           const scale = Math.min(maxW / doc.width, maxH / doc.height);
           targetW = Math.round(doc.width * scale);
           targetH = Math.round(doc.height * scale);
           startX = (a4Canvas.width - targetW) / 2;
-          topMargin = (a4Canvas.height - targetH) / 2;
         }
 
+        // दस्तावेज़ हमेशा ऊपर (topMargin) से ही छपेगा
         ctx.drawImage(doc, startX, topMargin, targetW, targetH);
       } else if (activeTab === 'pdf' && sourceImg) {
-        // 100% Fit to Printable Area A4
         const doc = sourceImg;
-        const margin = 40;
+        const margin = 35;
         const maxW = a4Canvas.width - (margin * 2);
         const maxH = a4Canvas.height - (margin * 2);
         const scale = Math.min(maxW / doc.width, maxH / doc.height);
         const docW = Math.round(doc.width * scale);
         const docH = Math.round(doc.height * scale);
         const startX = (a4Canvas.width - docW) / 2;
-        const topMargin = (a4Canvas.height - docH) / 2;
 
         ctx.save();
         if (pdfRotationAngle !== 0) {
