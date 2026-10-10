@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>NEELSHANK TELECOM - डिजिटल प्रिंट स्टूडियो</title>
   
-  <!-- PWA & Apple Meta Tags -->
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#080c14">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -13,15 +12,10 @@
   <meta name="apple-mobile-web-app-title" content="NEELSHANK">
   <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2874/2874780.png">
 
-  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- PDF.js CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-  <!-- jsPDF लाइब्रेरी -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <!-- Razorpay Checkout SDK -->
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
   <style>
@@ -37,7 +31,6 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* चमकदार गोल्डन-नियॉन ब्रांडिंग */
     .brand-glow {
       font-family: 'Orbitron', 'Rajdhani', sans-serif;
       background: linear-gradient(135deg, #fef08a 0%, #f59e0b 50%, #d97706 100%);
@@ -46,7 +39,6 @@
       text-shadow: 0 0 20px rgba(245, 158, 11, 0.6), 0 0 35px rgba(245, 158, 11, 0.3);
     }
 
-    /* साइबर ग्लास कार्ड */
     .cyber-panel {
       background: rgba(15, 23, 42, 0.85);
       backdrop-filter: blur(12px);
@@ -54,10 +46,10 @@
       box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
     }
 
-    /* वास्तविक A4 शीट (1 : 1.414) - दस्तावेज़ हमेशा ऊपर (Top) से शुरू होगा */
+    /* वास्तविक A4 शीट (1 : 1.414) अनुपात */
     .a4-page-frame {
       width: 100%;
-      max-width: 380px;
+      max-width: 360px;
       aspect-ratio: 1 / 1.414;
       background: #ffffff;
       border-radius: 6px;
@@ -66,14 +58,23 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start !important; /* ऊपर से स्टार्ट (Top-Aligned) */
+      justify-content: flex-start !important;
       position: relative;
       box-sizing: border-box;
-      padding: 14px 10px; /* कम टॉप मार्जिन */
+      padding: 12px 10px;
       border: 2px dashed #94a3b8;
     }
 
-    /* 100% Fit to Printable Area */
+    /* वास्तविक आईडी कार्ड अनुपात (8.56cm : 5.4cm) - A4 शीट पर सही अनुपात */
+    .id-card-view-fit {
+      width: 44% !important;
+      max-width: 150px !important;
+      aspect-ratio: 85.6 / 53.98;
+      object-fit: fill;
+      border-radius: 4px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    }
+
     .printable-content-full {
       width: 100% !important;
       height: 100% !important;
@@ -81,7 +82,6 @@
       display: block;
     }
 
-    /* 8-डॉट क्रॉपिंग कैनवास बॉक्स (कैनवास कभी नहीं कटेगा) */
     .crop-canvas-box {
       position: relative;
       touch-action: none !important;
@@ -89,7 +89,7 @@
       width: 100%;
       background: #020617;
       border-radius: 14px;
-      padding: 10px;
+      padding: 8px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -102,15 +102,8 @@
       max-width: 100%;
       height: auto;
       border-radius: 6px;
-      box-shadow: 0 0 25px rgba(0, 0, 0, 0.95);
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.9);
       display: block;
-    }
-
-    .id-card-view-fit {
-      width: 48% !important;
-      max-width: 165px !important;
-      aspect-ratio: 85 / 55;
-      object-fit: fill;
     }
 
     @keyframes neonGlowPulse {
@@ -132,11 +125,11 @@
 </head>
 <body class="pb-24">
 
-  <!-- ================= शीर्ष हेडर ================= -->
+  <!-- शीर्ष हेडर -->
   <header class="sticky top-0 z-50 bg-slate-900/95 backdrop-blur-md border-b border-indigo-500/30 px-3.5 py-3 shadow-2xl">
     <div class="max-w-2xl mx-auto flex items-center justify-between">
       <div class="flex items-center gap-2.5">
-        <button type="button" onclick="goToHomePage()" title="होम पेज" class="w-10 h-10 bg-indigo-950 hover:bg-indigo-900 border border-indigo-400/50 rounded-xl flex items-center justify-center shadow-lg active:scale-90 transition cursor-pointer">
+        <button type="button" onclick="goToHomePage(true)" title="होम पेज" class="w-10 h-10 bg-indigo-950 hover:bg-indigo-900 border border-indigo-400/50 rounded-xl flex items-center justify-center shadow-lg active:scale-90 transition cursor-pointer">
           <i class="fa-solid fa-house text-base text-amber-400"></i>
         </button>
         <div>
@@ -162,7 +155,7 @@
 
   <main class="max-w-2xl mx-auto px-3.5 mt-3 space-y-3.5">
 
-    <!-- वेलकम साइबर कैफे नोट -->
+    <!-- वेलकम नोट -->
     <div class="cyber-panel p-3.5 rounded-2xl text-xs space-y-2 border-l-4 border-l-amber-400">
       <div class="flex items-center justify-between">
         <span class="text-amber-300 font-bold flex items-center gap-1.5 text-sm">
@@ -173,7 +166,7 @@
         </a>
       </div>
       <p class="text-slate-300 text-[11px] leading-relaxed">
-        आईडी कार्ड, रसीद, पासबुक या 1 से 500+ पेज की PDF अपलोड करें। 8-डॉट से सीधा क्रॉप करें और प्रिंट लें।
+        आईडी कार्ड, रसीद, पासबुक या PDF अपलोड करें। पेज रिफ्रेश करने पर पुरानी फ़ाइल हट जाएगी ताकि नया ऑर्डर शुरू हो सके।
       </p>
     </div>
 
@@ -325,7 +318,7 @@
     <!-- ================= स्टेप 2: 8-डॉट क्रॉप & प्रो-एडिटिंग ================= -->
     <section id="step-2" class="hidden space-y-4">
       <div class="flex items-center justify-between cyber-panel p-2 rounded-xl">
-        <button type="button" onclick="goToHomePage()" class="bg-indigo-950 hover:bg-indigo-900 text-indigo-300 border border-indigo-500/40 text-xs font-bold py-1.5 px-3 rounded-lg flex items-center gap-1.5 active:scale-95 cursor-pointer">
+        <button type="button" onclick="goToHomePage(false)" class="bg-indigo-950 hover:bg-indigo-900 text-indigo-300 border border-indigo-500/40 text-xs font-bold py-1.5 px-3 rounded-lg flex items-center gap-1.5 active:scale-95 cursor-pointer">
           <i class="fa-solid fa-house"></i> Home
         </button>
         <span class="text-xs font-bold text-cyan-300">8-डॉट क्रॉप व अलाइन</span>
@@ -347,7 +340,7 @@
               <i class="fa-solid fa-wand-magic-sparkles"></i> ऑटो-क्रॉप
             </button>
             <button type="button" onclick="setCropRatio('id')" class="px-2.5 py-1.5 bg-slate-800 border border-indigo-400/40 text-indigo-300 rounded-lg font-bold">
-              ID कार्ड
+              ID कार्ड (मानक अनुपात)
             </button>
             <button type="button" onclick="resetCrop()" class="px-2.5 py-1.5 bg-slate-800 border border-slate-700 text-slate-300 rounded-lg font-bold">
               <i class="fa-solid fa-expand"></i> पूरा फ्रेम
@@ -358,7 +351,7 @@
           </button>
         </div>
 
-        <!-- 8-डॉट कैनवास कंटेनर (पूरा दिखाई देगा) -->
+        <!-- 8-डॉट कैनवास कंटेनर -->
         <div class="crop-canvas-box">
           <canvas id="canvas-crop"></canvas>
         </div>
@@ -367,7 +360,7 @@
           👉 8 नीले/हरे बिंदुओं से कोनों को पकड़कर दस्तावेज़ सीधा करें (या बीच से पूरा बॉक्स खिसकाएँ)
         </p>
 
-        <!-- वास्तविक CamScanner स्टाइल फ़िल्टर (सफेदी vs अक्षर गहरे) -->
+        <!-- वास्तविक CamScanner स्टाइल फ़िल्टर -->
         <div class="pt-2 border-t border-slate-800 space-y-2.5">
           <div class="flex justify-between items-center">
             <span class="text-xs font-bold text-slate-300"><i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i> लिखावट सुधारें (एडवांस फ़िल्टर):</span>
@@ -417,7 +410,7 @@
         <button type="button" onclick="goToStep(activeTab === 'pdf' ? 1 : 2)" class="bg-rose-950/60 hover:bg-rose-900 text-rose-300 border border-rose-500/40 text-xs font-bold py-1.5 px-3 rounded-lg flex items-center gap-1.5 active:scale-95 cursor-pointer">
           <i class="fa-solid fa-arrow-left"></i> वापस जाएं
         </button>
-        <button type="button" onclick="goToHomePage()" class="bg-indigo-950 hover:bg-indigo-900 text-indigo-300 border border-indigo-500/40 text-xs font-bold py-1.5 px-3.5 rounded-lg flex items-center gap-1.5 active:scale-95 cursor-pointer">
+        <button type="button" onclick="goToHomePage(false)" class="bg-indigo-950 hover:bg-indigo-900 text-indigo-300 border border-indigo-500/40 text-xs font-bold py-1.5 px-3.5 rounded-lg flex items-center gap-1.5 active:scale-95 cursor-pointer">
           <i class="fa-solid fa-house"></i> Home
         </button>
       </div>
@@ -429,7 +422,7 @@
         </span>
         <div class="grid grid-cols-2 gap-2 text-xs font-bold">
           <button type="button" id="btn-size-id" onclick="setDocPrintSize('id')" class="p-2.5 rounded-xl border border-slate-700 bg-slate-900 text-slate-300">
-            ID कार्ड साइज़
+            ID कार्ड साइज़ (8.5×5.4 cm)
           </button>
           <button type="button" id="btn-size-postcard" onclick="setDocPrintSize('postcard')" class="p-2.5 rounded-xl border border-slate-700 bg-slate-900 text-slate-300">
             पोस्टकार्ड (A6)
@@ -573,7 +566,7 @@
         <div id="payment-status-badge" class="hidden text-xs font-bold py-2 px-3 rounded-xl text-center"></div>
       </div>
 
-      <!-- ================= 📄 A4 वास्तविक प्रिंट प्रीव्यू (TOP-ALIGNED, NO MIDDLE HOLE) ================= -->
+      <!-- A4 प्रिंटेबल प्रीव्यू (शीर्ष से शुरू) -->
       <div class="cyber-panel p-3.5 rounded-2xl space-y-2.5">
         <div class="flex items-center justify-between">
           <p class="font-bold text-xs text-amber-300 flex items-center gap-1.5">
@@ -593,7 +586,7 @@
           </button>
         </div>
         
-        <!-- A4 शीट बॉक्स: दस्तावेज़ ऊपर (Top) से शुरू होगा -->
+        <!-- A4 शीट बॉक्स: ऊपर से अलाइन -->
         <div class="a4-page-frame">
           <div id="printable-sheet" class="w-full flex flex-col items-center justify-start overflow-hidden"></div>
         </div>
@@ -623,7 +616,7 @@
     </section>
   </main>
 
-  <!-- ================= 3D सक्सेस मोडल पॉपअप ================= -->
+  <!-- 3D सक्सेस मोडल पॉपअप -->
   <div id="modal-success-screen" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4">
     <div class="cyber-panel rounded-3xl max-w-sm w-full p-6 text-center shadow-2xl border-2 border-emerald-400 animate-pop-modal relative">
       <div class="w-20 h-20 bg-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-xl shadow-emerald-500/40">
@@ -657,7 +650,7 @@
     </div>
   </div>
 
-  <!-- ================= PWA ऐप इंस्टॉल बैनर ================= -->
+  <!-- PWA ऐप इंस्टॉल बैनर -->
   <div id="pwa-install-banner" class="hidden fixed bottom-3 left-3 right-3 max-w-xl mx-auto cyber-panel text-white p-3.5 rounded-2xl shadow-2xl border border-amber-400 z-50 flex items-center justify-between gap-3 animate-pop-modal">
     <div class="flex items-center gap-3">
       <div class="w-11 h-11 bg-amber-400 text-slate-950 rounded-xl flex items-center justify-center text-xl shadow-md">
@@ -726,10 +719,58 @@
     const MID_HANDLE_RADIUS = 9;
     const TOUCH_DETECT_RADIUS = 34;
 
-    function goToHomePage() {
+    // ================= 🏠 होम पेज पर जाने का फ़ंक्शन (क्लीन रीसेट) =================
+    function goToHomePage(forceReset = false) {
+      if (forceReset) {
+        clearAllStateAndInputs();
+      }
       goToStep(1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+
+    function clearAllStateAndInputs() {
+      loadedImages.front = null;
+      loadedImages.back = null;
+      loadedImages.single = null;
+      finalizedCanvases.front = null;
+      finalizedCanvases.back = null;
+      finalizedCanvases.single = null;
+      cornersStore.front = null;
+      cornersStore.back = null;
+      cornersStore.single = null;
+
+      ['front', 'back', 'single'].forEach(s => {
+        const thumb = document.getElementById(`thumb-${s}`);
+        if (thumb) {
+          thumb.src = "";
+          thumb.classList.add('hidden');
+        }
+        const lbl = document.getElementById(`label-${s}`);
+        if (lbl) lbl.innerText = "फोटो खींचें या गैलरी से लोड करें";
+        
+        const camIn = document.getElementById(`cam-${s}`);
+        if (camIn) camIn.value = "";
+        const galIn = document.getElementById(`gal-${s}`);
+        if (galIn) galIn.value = "";
+      });
+
+      const filePdf = document.getElementById('file-pdf');
+      if (filePdf) filePdf.value = "";
+      const pdfBadge = document.getElementById('pdf-preview-indicator');
+      if (pdfBadge) pdfBadge.classList.add('hidden');
+      const pdfSelector = document.getElementById('pdf-page-selector-box');
+      if (pdfSelector) pdfSelector.classList.add('hidden');
+
+      pdfDocGlobal = null;
+      pdfRenderedImagesCache = {};
+      sessionStorage.clear();
+      localStorage.removeItem('neelshank_current_order_state');
+    }
+
+    // ग्राहक द्वारा रिफ्रेश करने पर सब कुछ साफ़
+    window.addEventListener('beforeunload', () => {
+      sessionStorage.clear();
+    });
 
     // PWA Engine
     let deferredPrompt = null;
@@ -761,7 +802,7 @@
       document.getElementById('pwa-install-banner').classList.add('hidden');
     }
 
-    // ================= 🛡️ मेमोरी-सेफ इंस्टेंट इमेज हैंडलर (No Reload / No Crash) =================
+    // ================= 🛡️ मेमोरी-सेफ इंस्टेंट इमेज हैंडलर =================
     function onNativeFileSelected(e, type) {
       const file = e.target.files && e.target.files[0];
       if (!file) return;
@@ -774,7 +815,6 @@
       img.onload = function() {
         URL.revokeObjectURL(blobUrl);
 
-        // तुरंत 1200px में सुरक्षित री-स्केल
         const maxDim = 1200;
         let w = img.naturalWidth || img.width;
         let h = img.naturalHeight || img.height;
@@ -794,7 +834,7 @@
         const ctx = scaleCanvas.getContext('2d');
         ctx.drawImage(img, 0, 0, w, h);
 
-        const compressedDataUrl = scaleCanvas.toDataURL('image/jpeg', 0.84);
+        const compressedDataUrl = scaleCanvas.toDataURL('image/jpeg', 0.85);
 
         const safeImg = new Image();
         safeImg.onload = function() {
@@ -808,12 +848,6 @@
             thumb.classList.remove('hidden');
           }
           if (lbl) lbl.innerText = "फोटो लोड हो गई ✔";
-
-          try {
-            sessionStorage.setItem(`saved_img_${type}`, compressedDataUrl);
-          } catch(err) {
-            console.warn("Storage full", err);
-          }
 
           if (activeTab === 'single') {
             setTimeout(() => goToStep(2), 200);
@@ -831,32 +865,6 @@
 
       img.src = blobUrl;
     }
-
-    function tryRestoreStateOnLoad() {
-      try {
-        ['front', 'back', 'single'].forEach(side => {
-          const cached = sessionStorage.getItem(`saved_img_${side}`);
-          if (cached) {
-            const im = new Image();
-            im.onload = function() {
-              loadedImages[side] = im;
-              const thumb = document.getElementById(`thumb-${side}`);
-              if (thumb) {
-                thumb.src = cached;
-                thumb.classList.remove('hidden');
-              }
-              const lbl = document.getElementById(`label-${side}`);
-              if (lbl) lbl.innerText = "फोटो लोड हो गई ✔";
-            };
-            im.src = cached;
-          }
-        });
-      } catch(e) {
-        console.warn("Restore error", e);
-      }
-    }
-
-    window.addEventListener('DOMContentLoaded', tryRestoreStateOnLoad);
 
     function selectMode(mode) {
       activeTab = mode;
@@ -1088,8 +1096,8 @@
       if(!img) return;
 
       const canvas = document.getElementById('canvas-crop');
-      const maxW = Math.min(window.innerWidth - 40, 480);
-      const maxH = Math.min(window.innerHeight * 0.55, 450); // कभी भी स्क्रीन से नीचे नहीं कटेगा
+      const maxW = Math.min(window.innerWidth - 40, 460);
+      const maxH = Math.min(window.innerHeight * 0.52, 420);
 
       let displayW = maxW;
       let displayH = Math.round((img.height * displayW) / img.width);
@@ -1115,7 +1123,7 @@
       const h = canvas.height;
 
       if(activeTab === 'id') {
-        const ratio = 8.5 / 5.5;
+        const ratio = 8.56 / 5.398;
         let boxW = w * 0.88;
         let boxH = boxW / ratio;
         if(boxH > h * 0.88) { boxH = h * 0.88; boxW = boxH * ratio; }
@@ -1139,7 +1147,6 @@
       drawCropCanvas();
     }
 
-    // 8 बिंदुओं की सटीक गणना: 4 कोने + 4 भुजाओं के मध्य बिंदु
     function getEightPoints(c) {
       return {
         tl: { x: c.tl.x, y: c.tl.y },
@@ -1153,7 +1160,7 @@
       };
     }
 
-    // ================= 🖌️ 8 डॉट्स व गाइडलाइन्स रेंडरर =================
+    // ================= 🖌️ 8 डॉट्स व ग्रिड रेंडरर =================
     function drawCropCanvas() {
       const canvas = document.getElementById('canvas-crop');
       const ctx = canvas.getContext('2d');
@@ -1168,11 +1175,9 @@
       ctx.clearRect(0, 0, w, h);
       ctx.drawImage(img, 0, 0, w, h);
 
-      // डार्क विग्नेट ओवरले
       ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
       ctx.fillRect(0, 0, w, h);
 
-      // क्रॉप क्षेत्र को पारदर्शी बनाना
       ctx.save();
       ctx.beginPath();
       ctx.moveTo(c.tl.x, c.tl.y);
@@ -1183,7 +1188,6 @@
       ctx.clip();
       ctx.drawImage(img, 0, 0, w, h);
 
-      // 3x3 ग्रिड लाइन्स
       ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
       ctx.lineWidth = 1;
       for (let i = 1; i <= 2; i++) {
@@ -1200,7 +1204,6 @@
       }
       ctx.restore();
 
-      // नियॉन बाउंड्री लाइन
       ctx.beginPath();
       ctx.moveTo(c.tl.x, c.tl.y);
       ctx.lineTo(c.tr.x, c.tr.y);
@@ -1274,7 +1277,6 @@
       const pts = getEightPoints(c);
       let closestDist = TOUCH_DETECT_RADIUS;
 
-      // 8 डॉट्स में से निकटतम पहचानना
       for(let k of ['tl', 'tr', 'br', 'bl', 'top', 'right', 'bottom', 'left']) {
         const p = pts[k];
         const dist = Math.hypot(p.x - pos.x, p.y - pos.y);
@@ -1284,7 +1286,6 @@
         }
       }
 
-      // अगर किसी डॉट पर नहीं छुआ, पर बॉक्स के अंदर है, तो पूरा बॉक्स खिसकाएं
       if (!activeHandleKey && isInsideBox(pos, c)) {
         activeHandleKey = 'center_move';
       }
@@ -1382,7 +1383,7 @@
       const w = cropCanvas.width;
       const h = cropCanvas.height;
       if(mode === 'id') {
-        const ratio = 8.5 / 5.5;
+        const ratio = 8.56 / 5.398;
         let boxW = w * 0.90;
         let boxH = boxW / ratio;
         if(boxH > h * 0.90) { boxH = h * 0.90; boxW = boxH * ratio; }
@@ -1412,7 +1413,6 @@
       drawCropCanvas();
     }
 
-    // ================= ⚡ CamScanner मैजिक कलर व फ़िल्टर इंजन =================
     function applyMagicColor() {
       document.getElementById('filter-bright').value = 120;
       document.getElementById('filter-contrast').value = 135;
@@ -1499,7 +1499,7 @@
       let curCorners = cornersStore[type];
       if(!curCorners) {
         if(activeTab === 'id') {
-          const ratio = 8.5 / 5.5;
+          const ratio = 8.56 / 5.398;
           let boxW = img.width * 0.88;
           let boxH = boxW / ratio;
           if(boxH > img.height * 0.88) { boxH = img.height * 0.88; boxW = boxH * ratio; }
@@ -1541,8 +1541,8 @@
 
       let outW, outH;
       if(activeTab === 'id') {
-        outW = 1006;
-        outH = 650;
+        outW = 1010;
+        outH = 638; // 85.6mm x 53.98mm का सटीक 300DPI अनुपात
       } else {
         const topW = Math.hypot(realCorners.tr.x - realCorners.tl.x, realCorners.tr.y - realCorners.tl.y);
         const btmW = Math.hypot(realCorners.br.x - realCorners.bl.x, realCorners.br.y - realCorners.bl.y);
@@ -1564,7 +1564,6 @@
 
       const warpedCanvas = warpPerspective(tempSrcCanvas, realCorners, outW, outH);
 
-      // एडवांस CamScanner फ़िल्टर लॉजिक
       const filterSettings = filtersStore[type] || { bright: 115, contrast: 130 };
       const wCtx = warpedCanvas.getContext('2d');
       const imgData = wCtx.getImageData(0, 0, outW, outH);
@@ -1578,7 +1577,6 @@
         let g = d[i+1] * bMul;
         let b = d[i+2] * bMul;
 
-        // कंट्रास्ट और अक्षर गहरा करने का वक्र (S-Curve for bold text)
         if (cFactor !== 0) {
           r = r + (r - 128) * (cFactor / 100);
           g = g + (g - 128) * (cFactor / 100);
@@ -1619,7 +1617,7 @@
       });
 
       const badge = document.getElementById('preview-size-badge');
-      if(sz === 'id') badge.innerText = "ID कार्ड (8.5×5.5 CM)";
+      if(sz === 'id') badge.innerText = "ID कार्ड (8.5×5.4 CM)";
       else if(sz === 'postcard') badge.innerText = "पोस्टकार्ड (A6)";
       else if(sz === 'half') badge.innerText = "हाफ पेज (A5 आधा A4)";
       else if(sz === 'full') badge.innerText = "फुल पेज (100% Fit to Printable)";
@@ -1764,7 +1762,7 @@
       renderA4SheetLayout();
     }
 
-    // ================= 🎯 A4 100% Fit-to-Printable (TOP-ALIGNED) रेंडरर =================
+    // ================= 🎯 A4 100% Fit-to-Printable (शीर्ष से अलाइन) =================
     async function renderA4SheetLayout() {
       const container = document.getElementById('printable-sheet');
       container.innerHTML = '';
@@ -1796,7 +1794,6 @@
           } else if(docPrintSize === 'half') {
             im.className = "w-[92%] h-auto rounded border border-slate-300 shadow-sm object-contain mt-1";
           } else {
-            // Full Page (Top-to-Bottom Fit)
             im.className = "printable-content-full rounded border border-slate-200 shadow-sm";
           }
           container.appendChild(im);
@@ -1875,22 +1872,22 @@
       badge.classList.remove('hidden');
     }
 
-    // ================= 🖨️ A4 शीट प्रिंटर कैनवास (TOP-ALIGNED, NO MIDDLE PLACEMENT) =================
+    // ================= 🖨️ A4 शीट प्रिंटर कैनवास (TOP-ALIGNED, ACCURATE ID SIZE) =================
     function generateA4PrintImageFromSource(sourceImg) {
       const a4Canvas = document.createElement('canvas');
       a4Canvas.width = 1240;
-      a4Canvas.height = 1754; // A4 standard
+      a4Canvas.height = 1754; // A4 standard 150 DPI
       const ctx = a4Canvas.getContext('2d');
 
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, a4Canvas.width, a4Canvas.height);
 
-      // टॉप मार्जिन: 50px (लगभग 12-15mm)
       const topMargin = 50;
 
       if (activeTab === 'id') {
-        const cardW = 502;
-        const cardH = 325;
+        // असली ID कार्ड साइज़: 85.6mm x 53.98mm (कैनवास पर 505 x 318 पिक्सेल)
+        const cardW = 505;
+        const cardH = 318;
         const gap = 50;
         const totalW = cardW * 2 + gap;
         const startX = (a4Canvas.width - totalW) / 2;
@@ -1912,7 +1909,7 @@
         let targetW, targetH, startX;
 
         if(docPrintSize === 'id') {
-          targetW = 502; targetH = 325;
+          targetW = 505; targetH = 318;
           startX = (a4Canvas.width - targetW) / 2;
         } else if(docPrintSize === 'postcard') {
           targetW = 680; targetH = 950;
@@ -1921,7 +1918,6 @@
           targetW = 980; targetH = 1280;
           startX = (a4Canvas.width - targetW) / 2;
         } else {
-          // 100% Fit to Printable Area
           const margin = 40;
           const maxW = a4Canvas.width - (margin * 2);
           const maxH = a4Canvas.height - (margin * 2);
@@ -1931,7 +1927,6 @@
           startX = (a4Canvas.width - targetW) / 2;
         }
 
-        // दस्तावेज़ हमेशा ऊपर (topMargin) से ही छपेगा
         ctx.drawImage(doc, startX, topMargin, targetW, targetH);
       } else if (activeTab === 'pdf' && sourceImg) {
         const doc = sourceImg;
@@ -2054,7 +2049,7 @@
         let docDescription = "";
 
         if (activeTab === 'id') {
-          docDescription = 'ID Card (8.5x5.5 CM)';
+          docDescription = 'ID Card (8.5x5.4 CM)';
           printPayloadImage = generateA4PrintImageFromSource(null);
         } else if (activeTab === 'single') {
           docDescription = `Single Doc (${docPrintSize.toUpperCase()})`;
@@ -2102,7 +2097,7 @@
 
     function closeSuccessModalAndReset() {
       document.getElementById('modal-success-screen').classList.add('hidden');
-      sessionStorage.clear();
+      clearAllStateAndInputs();
       window.location.reload();
     }
   </script>
