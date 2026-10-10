@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>NEELSHANK TELECOM - डिजिटल प्रिंट </title>
+  <title>NEELSHANK TELECOM - डिजिटल ऑटोमेटिक प्रिंट </title>
   
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#080c14">
@@ -46,7 +46,6 @@
       box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
     }
 
-    /* वास्तविक A4 शीट अनुपात - हमेशा ऊपर से शुरू */
     .a4-page-frame {
       width: 100%;
       max-width: 360px;
@@ -81,19 +80,22 @@
       display: block;
     }
 
+    /* वास्तविक अनुपात में रहने वाला कंटेनर (चपटा नहीं होगा) */
     .canvas-container-box {
       position: relative;
       touch-action: none !important;
       user-select: none !important;
       width: 100%;
+      max-width: 440px;
       background: #020617;
       border-radius: 14px;
-      padding: 8px;
+      padding: 4px;
       display: flex;
       justify-content: center;
       align-items: center;
       border: 1px solid #1e293b;
       box-sizing: border-box;
+      margin: 0 auto;
     }
 
     canvas#canvas-crop, canvas#canvas-live-filter {
@@ -111,14 +113,6 @@
     }
     .neon-pulse {
       animation: neonGlowPulse 2s infinite ease-in-out;
-    }
-
-    @keyframes popModal {
-      0% { transform: scale(0.9); opacity: 0; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-    .animate-pop-modal {
-      animation: popModal 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
     }
   </style>
 </head>
@@ -143,10 +137,10 @@
 
       <div class="flex items-center gap-2">
         <button id="btn-header-install" onclick="triggerPwaInstall()" class="hidden neon-pulse bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs px-3 py-1.5 rounded-full shadow flex items-center gap-1.5 cursor-pointer">
-          <i class="fa-solid fa-download"></i> <span>ऐप लें</span>
+          <i class="fa-solid fa-download"></i> <span>install App</span>
         </button>
         <span class="bg-emerald-500/20 border border-emerald-400/60 text-emerald-300 text-[11px] px-2.5 py-1 rounded-full font-bold shadow-sm whitespace-nowrap flex items-center gap-1.5">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> Active 
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> Active
         </span>
       </div>
     </div>
@@ -162,17 +156,23 @@
         </span>
         <a href="tel:8677942814" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-2.5 py-1 rounded-lg text-[11px] shadow transition flex items-center gap-1">
           <i class="fa-solid fa-phone"></i> 8677 942 814
+          </div>
+      <p class="text-slate-300 text-[11px] leading-relaxed">
+        Shubham Kashyap 
+      </p>
+    </div>
         </a>
+        
       </div>
       <p class="text-slate-300 text-[11px] leading-relaxed">
-        1-साइड पेज में मनचाहा एरिया 8 बिंदुओं से सेलेक्ट करें और A4 शीट पर जो साइज़ चाहिए (A4, A5 हाफ, A6 आदि) वह चुनें।
+        नीलशंक टेलीकॉम में आपका स्वागत है 🙏🏼🙏🏼
       </p>
     </div>
 
     <!-- स्टेप्स नेविगेशन बार -->
     <div class="flex justify-between items-center bg-slate-900 p-1.5 rounded-xl border border-slate-800 text-xs font-bold">
-      <div id="step-nav-1" class="flex-1 text-center text-cyan-400 border-b-2 border-cyan-400 pb-1">1. अपलोड & क्रॉप</div>
-      <div id="step-nav-2" class="flex-1 text-center text-slate-500 pb-1">2. लाइव लिखावट सुधारें</div>
+      <div id="step-nav-1" class="flex-1 text-center text-cyan-400 border-b-2 border-cyan-400 pb-1">1. Document Uplode</div>
+      <div id="step-nav-2" class="flex-1 text-center text-slate-500 pb-1">2. Editing</div>
       <div id="step-nav-3" class="flex-1 text-center text-slate-500 pb-1">3. Pay & Print</div>
     </div>
 
@@ -183,7 +183,7 @@
           <i class="fa-solid fa-id-card text-base mb-0.5 text-amber-300"></i> ID कार्ड (2-साइड)
         </button>
         <button id="tab-single" type="button" onclick="selectMode('single')" class="py-2.5 rounded-lg text-slate-400 hover:text-white flex flex-col items-center">
-          <i class="fa-solid fa-file-invoice text-base mb-0.5"></i> 1-साइड पेज
+          <i class="fa-solid fa-file-invoice text-base mb-0.5"></i> 1-साइड (1-Page)
         </button>
         <button id="tab-pdf" type="button" onclick="selectMode('pdf')" class="py-2.5 rounded-lg text-slate-400 hover:text-white flex flex-col items-center">
           <i class="fa-solid fa-file-pdf text-base mb-0.5"></i> PDF दस्तावेज़
@@ -228,7 +228,7 @@
         <div class="cyber-panel p-4 rounded-2xl text-center space-y-3">
           <div class="flex justify-between items-center">
             <p class="font-bold text-xs text-cyan-300 uppercase tracking-wider">आईडी कार्ड - पीछे का भाग (Back)</p>
-            <span id="badge-status-back" class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded-full font-bold">बाकी है</span>
+            <span id="badge-status-back" class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded-full font-bold">Documents Upload करे</span>
           </div>
           
           <input type="file" id="cam-back" accept="image/*" capture="environment" class="hidden" onchange="onNativeFileSelected(event, 'back')">
@@ -260,7 +260,7 @@
       <!-- 2. सिंगल रसीद / 1-पेज अपलोड एरिया -->
       <div id="section-single-upload" class="hidden cyber-panel p-4 rounded-2xl text-center space-y-3">
         <div class="flex justify-between items-center">
-          <p class="font-bold text-xs text-cyan-300 uppercase tracking-wider">कॉलेज रसीद, चालान, पासबुक या 1 पेज</p>
+          <p class="font-bold text-xs text-cyan-300 uppercase tracking-wider">single page document upload area</p>
           <span id="badge-status-single" class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded-full font-bold">बाकी है</span>
         </div>
         
@@ -339,11 +339,11 @@
       </div>
 
       <button type="button" onclick="validateAndGoToStep(2)" class="w-full bg-gradient-to-r from-indigo-600 via-indigo-500 to-cyan-500 hover:from-indigo-500 hover:to-cyan-400 text-white font-black py-4 rounded-xl shadow-xl transition cursor-pointer text-sm flex items-center justify-center gap-2">
-        <span>अगले स्टेप पर जाएँ (लाइव लिखावट सुधारें)</span> <i class="fa-solid fa-arrow-right"></i>
+        <span>Save & Next</span> <i class="fa-solid fa-arrow-right"></i>
       </button>
     </section>
 
-    <!-- ================= ⚡ स्टेप 2: लाइव लिखावट सुधारें (LIVE PREVIEW CANVAS) ================= -->
+    <!-- ================= स्टेप 2: लाइव लिखावट सुधारें ================= -->
     <section id="step-2" class="hidden space-y-4">
       <div class="flex items-center justify-between cyber-panel p-2 rounded-xl">
         <button type="button" onclick="goToStep(1)" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold py-1.5 px-3 rounded-lg flex items-center gap-1.5 cursor-pointer">
@@ -352,7 +352,6 @@
         <span class="text-xs font-bold text-cyan-300">लाइव एडिटिंग प्रीव्यू</span>
       </div>
 
-      <!-- साइड टॉगल (आईडी कार्ड के लिए) -->
       <div id="filter-side-toggle-group" class="hidden flex gap-2">
         <button type="button" id="btn-filter-side-front" onclick="switchFilterSide('front')" class="flex-1 py-2 bg-indigo-600 text-white font-bold text-xs rounded-xl shadow">
           फ्रंट साइड देखें
@@ -362,7 +361,6 @@
         </button>
       </div>
 
-      <!-- लाइव प्रीव्यू कैनवास -->
       <div class="cyber-panel p-3.5 rounded-2xl space-y-2 text-center">
         <div class="flex justify-between items-center text-xs mb-1">
           <span class="font-bold text-amber-300 flex items-center gap-1">
@@ -379,7 +377,6 @@
         <p class="text-[10px] text-slate-400">स्लाइडर हिलाने पर दस्तावेज़ में तुरंत बदलाव दिखेगा</p>
       </div>
 
-      <!-- स्लाइडर्स और मैजिक कलर -->
       <div class="cyber-panel p-4 rounded-2xl space-y-3">
         <div class="flex justify-between items-center">
           <span class="text-xs font-bold text-slate-200"><i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i> लिखावट सुधारें:</span>
@@ -427,7 +424,7 @@
         </button>
       </div>
 
-      <!-- 📑 A4 पेपर के अंदर दस्तावेज़ का साइज़ चुनने का मल्टीपल पैनल -->
+      <!-- 📑 A4 पेपर पर साइज़ चुनने का विकल्प -->
       <div id="size-options-panel" class="cyber-panel p-3.5 rounded-2xl space-y-2">
         <span class="font-bold text-xs text-amber-300 flex items-center gap-1.5">
           <i class="fa-solid fa-expand text-cyan-400"></i> A4 पेपर पर दस्तावेज़ का प्रिंट साइज़ चुनें:
@@ -555,7 +552,7 @@
       <!-- A4 प्रिंट प्रीव्यू (शीर्ष से अलाइन) -->
       <div class="cyber-panel p-3 rounded-2xl space-y-2">
         <div class="flex items-center justify-between">
-          <span class="text-xs font-bold text-amber-300">A4 प्रिंट प्रीव्यू (शीर्ष से शुरू):</span>
+          <span class="text-xs font-bold text-amber-300">A4 प्रिंट प्रीव्यू:</span>
           <span id="preview-size-badge" class="text-[10px] bg-indigo-900/60 text-cyan-300 border border-indigo-500/40 px-2 py-0.5 rounded font-bold">फुल A4 साइज़</span>
         </div>
 
@@ -582,7 +579,7 @@
     </section>
   </main>
 
-  <!-- ================= 📸 सिंगल लाइव क्रॉप मोडल ================= -->
+  <!-- ================= 📸 8-डॉट लाइव क्रॉप मोडल (असली अनुपात में) ================= -->
   <div id="modal-crop-view" class="hidden fixed inset-0 z-50 bg-black/95 p-3 flex flex-col justify-between items-center">
     <div class="w-full flex items-center justify-between text-white py-1">
       <span class="text-xs font-black text-amber-400" id="crop-modal-title">डॉक्यूमेंट क्रॉप करें</span>
@@ -591,12 +588,13 @@
       </button>
     </div>
 
+    <!-- कैनवास कंटेनर: फ़ोटो का अनुपात कभी नहीं बिगड़ेगा -->
     <div class="w-full flex-1 flex flex-col justify-center items-center my-2">
       <div class="canvas-container-box">
         <canvas id="canvas-crop"></canvas>
       </div>
       <p class="text-[11px] text-emerald-400 font-bold mt-2">
-        👉 8 बिंदुओं को पकड़कर दस्तावेज़ का सही एरिया चुनें
+        👉 8 बिंदुओं को पकड़कर मनचाहा एरिया सेलेक्ट करें
       </p>
     </div>
 
@@ -646,7 +644,7 @@
     let activeTab = 'id';
     let currentTargetSide = 'front';
     let currentFilterSide = 'front';
-    let docPrintSize = 'full'; // 1-साइड में डिफ़ॉल्ट फुल A4
+    let docPrintSize = 'full';
     let pdfOrientation = 'portrait';
     let pdfRotationAngle = 0;
 
@@ -727,7 +725,7 @@
       sessionStorage.clear();
     });
 
-    // ================= 📸 फ़ोटो लोड होते ही तुरंत क्रॉप मोडल =================
+    // ================= 📸 फ़ोटो सेलेक्ट =================
     function onNativeFileSelected(e, type) {
       const file = e.target.files && e.target.files[0];
       if (!file) return;
@@ -770,7 +768,7 @@
       
       if (type === 'front') title.innerText = "आईडी कार्ड (Front) - क्रॉप करें";
       else if (type === 'back') title.innerText = "आईडी कार्ड (Back) - क्रॉप करें";
-      else title.innerText = "1-साइड दस्तावेज़ - क्रॉप करें (मनचाहा एरिया चुनें)";
+      else title.innerText = "1-साइड दस्तावेज़ - मनचाहा एरिया क्रॉप करें";
 
       modal.classList.remove('hidden');
       initCropCanvas(type);
@@ -786,7 +784,6 @@
       }
     }
 
-    // ================= ✔ क्रॉप सेव होते ही तुरंत लॉक करना =================
     function saveActiveCropModal() {
       commitCropToCanvas(currentTargetSide);
       document.getElementById('modal-crop-view').classList.add('hidden');
@@ -820,7 +817,6 @@
       document.getElementById('section-single-upload').classList.toggle('hidden', mode !== 'single');
       document.getElementById('section-pdf-upload').classList.toggle('hidden', mode !== 'pdf');
       
-      // 1-साइड मोड में डिफ़ॉल्ट रूप से 'full' साइज़ रखें
       if (mode === 'single') {
         setDocPrintSize('full');
       }
@@ -1096,15 +1092,16 @@
       renderLiveFilterPreview();
     }
 
-    // ================= 🎯 8-डॉट क्रॉपिंग इंजन (फ्री 8-डॉट अनुपात) =================
+    // ================= 🎯 8-डॉट क्रॉपिंग इंजन (असली अनुपात में) =================
     function initCropCanvas(type) {
       const img = loadedImages[type];
       if(!img) return;
 
       const canvas = document.getElementById('canvas-crop');
-      const maxW = Math.min(window.innerWidth - 40, 460);
-      const maxH = Math.min(window.innerHeight * 0.52, 400);
+      const maxW = Math.min(window.innerWidth - 40, 440);
+      const maxH = Math.min(window.innerHeight * 0.58, 440);
 
+      // फ़ोटो के असली अनुपात (Aspect Ratio) के आधार पर कैनवास का साइज़
       let displayW = maxW;
       let displayH = Math.round((img.height * displayW) / img.width);
 
@@ -1130,9 +1127,9 @@
 
       if(activeTab === 'id') {
         const ratio = 8.56 / 5.398;
-        let boxW = w * 0.88;
+        let boxW = w * 0.90;
         let boxH = boxW / ratio;
-        if(boxH > h * 0.88) { boxH = h * 0.88; boxW = boxH * ratio; }
+        if(boxH > h * 0.90) { boxH = h * 0.90; boxW = boxH * ratio; }
         const sx = (w - boxW) / 2;
         const sy = (h - boxH) / 2;
         cornersStore[currentTargetSide] = {
@@ -1144,10 +1141,10 @@
       } else {
         // 1-साइड में पूरे दस्तावेज़ का नेचुरल एरिया (फ्री 8-डॉट)
         cornersStore[currentTargetSide] = {
-          tl: { x: w * 0.05, y: h * 0.05 },
-          tr: { x: w * 0.95, y: h * 0.05 },
-          br: { x: w * 0.95, y: h * 0.95 },
-          bl: { x: w * 0.05, y: h * 0.95 }
+          tl: { x: w * 0.04, y: h * 0.04 },
+          tr: { x: w * 0.96, y: h * 0.04 },
+          br: { x: w * 0.96, y: h * 0.96 },
+          bl: { x: w * 0.04, y: h * 0.96 }
         };
       }
 
@@ -1471,22 +1468,22 @@
         outW = 1010;
         outH = 638;
       } else {
-        // 1-साइड मोड: वास्तविक क्रॉप किए गए हिस्से की चौड़ाई और ऊँचाई का सही अनुपात
+        // 1-साइड मोड: चुने गए एरिया का वास्तविक अनुपात
         const topW = Math.hypot(realCorners.tr.x - realCorners.tl.x, realCorners.tr.y - realCorners.tl.y);
         const btmW = Math.hypot(realCorners.br.x - realCorners.bl.x, realCorners.br.y - realCorners.bl.y);
         const lftH = Math.hypot(realCorners.bl.x - realCorners.tl.x, realCorners.bl.y - realCorners.tl.y);
         const rgtH = Math.hypot(realCorners.br.x - realCorners.tr.x, realCorners.br.y - realCorners.tr.y);
 
-        const avgW = Math.round((topW + btmW) / 2);
-        const avgH = Math.round((lftH + rgtH) / 2);
+        const avgW = Math.max(10, Math.round((topW + btmW) / 2));
+        const avgH = Math.max(10, Math.round((lftH + rgtH) / 2));
 
         const maxDim = 1400;
-        if(avgW > avgH) {
+        if(avgW >= avgH) {
           outW = maxDim;
-          outH = Math.max(100, Math.round((avgH / avgW) * maxDim));
+          outH = Math.round((avgH / avgW) * maxDim);
         } else {
           outH = maxDim;
-          outW = Math.max(100, Math.round((avgW / avgH) * maxDim));
+          outW = Math.round((avgW / avgH) * maxDim);
         }
       }
 
@@ -1642,7 +1639,7 @@
       renderA4SheetLayout();
     }
 
-    // ================= 🎯 A4 शीट पर 100% Fit-to-Printable (शीर्ष से शुरू) =================
+    // ================= 🎯 A4 100% Fit-to-Printable रेंडरर =================
     async function renderA4SheetLayout() {
       const container = document.getElementById('printable-sheet');
       container.innerHTML = '';
@@ -1771,11 +1768,11 @@
       badge.classList.remove('hidden');
     }
 
-    // ================= 🖨️ A4 शीट प्रिंटर कैनवास (TOP-ALIGNED, ACCURATE A4 SCALING) =================
+    // ================= 🖨️ A4 शीट प्रिंटर कैनवास (TOP-ALIGNED) =================
     function generateA4PrintImageFromSource(sourceImg) {
       const a4Canvas = document.createElement('canvas');
       a4Canvas.width = 1240;
-      a4Canvas.height = 1754; // A4 standard 150 DPI
+      a4Canvas.height = 1754;
       const ctx = a4Canvas.getContext('2d');
 
       ctx.fillStyle = '#ffffff';
@@ -1819,16 +1816,10 @@
           targetW = 680; targetH = 950;
           startX = (a4Canvas.width - targetW) / 2;
         } else if(docPrintSize === 'half') {
-          // A5 हाफ साइज़ (ऊपर का आधा पेज)
-          const margin = 50;
-          const maxW = a4Canvas.width - (margin * 2);
-          const maxH = (a4Canvas.height / 2) - margin;
-          const scale = Math.min(maxW / finalizedCanvases.single.width, maxH / finalizedCanvases.single.height);
-          targetW = Math.round(finalizedCanvases.single.width * scale);
-          targetH = Math.round(finalizedCanvases.single.height * scale);
+          targetW = 980; targetH = 1280;
           startX = (a4Canvas.width - targetW) / 2;
         } else {
-          // Full A4 Page Size (पूरे A4 पेज पर फिट)
+          // Full A4 Size Fit
           const margin = 40;
           const maxW = a4Canvas.width - (margin * 2);
           const maxH = a4Canvas.height - (margin * 2);
